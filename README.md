@@ -1,6 +1,6 @@
 # back.ih.by
 
-This app tested on ubuntu 20.04, python 3.10, sqllite3
+This app tested on ubuntu 24.04, python 3.12
 
 To run this app:
 + install python3, pip3, python3-venv
@@ -29,7 +29,7 @@ ALLOWED_HOSTS=*
 
 DB_ENGINE='django.db.backends.mysql'
 
-DB_NAME='studih'
+DB_NAME=''
 
 DB_USER=''
 
@@ -38,13 +38,3 @@ DB_PASSWORD=''
 DB_HOST='127.0.0.1'
 
 DB_PORT='3306'
-
-EMAIL_HOST='smtp.gmail.com'
-
-EMAIL_HOST_USER=''
-
-EMAIL_HOST_PASSWORD=''
-
-EMAIL_PORT=587
-
-EMAIL_USE_TLS=True
