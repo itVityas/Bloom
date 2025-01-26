@@ -3,14 +3,15 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.permissions import IsAuthenticated
 
 from apps.account.models import User
-from apps.account.serializers.user import UserSerializer
+from apps.account.serializers.user import UserSerializer, UserUpdateSerializer
+from apps.account.permissions import AccountPermissions
 
 
 @extend_schema(tags=['jwt'])
 @extend_schema_view(
     get=extend_schema(
         summary='Получение списка всех пользователй',
-        description='',
+        description='isUser',
     ),
 )
 class UserListView(ListAPIView):
@@ -27,18 +28,18 @@ class UserListView(ListAPIView):
     ),
     put=extend_schema(
         summary='Обновление пользователя',
-        description='',
+        description='isAdmin',
     ),
     patch=extend_schema(
         summary='Частичное обновление пользователя',
-        description='',
+        description='isAdmin',
     ),
     delete=extend_schema(
         summary='Удаление пользователя',
-        description='',
+        description='isAdmin',
     ),
 )
 class UserDetailedView(RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated, AccountPermissions)
+    serializer_class = UserUpdateSerializer
     queryset = User.objects.all()

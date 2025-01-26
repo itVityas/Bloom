@@ -5,6 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.account.models import UserRoles
 from apps.account.serializers.user_roles import UserRolesSerializer
+from apps.account.permissions import AccountPermissions
 
 
 @extend_schema(tags=['UserRoles'])
@@ -15,11 +16,11 @@ from apps.account.serializers.user_roles import UserRolesSerializer
     ),
     post=extend_schema(
         summary='Создание роли и пользователя',
-        description='',
+        description='isAdmin',
     ),
 )
 class UserRolesListView(ListCreateAPIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, AccountPermissions)
     serializer_class = UserRolesSerializer
     queryset = UserRoles.objects.all()
     filter_backends = (DjangoFilterBackend,)
@@ -34,18 +35,18 @@ class UserRolesListView(ListCreateAPIView):
     ),
     put=extend_schema(
         summary='Обновление роли и пользователя',
-        description='',
+        description='isAdmin',
     ),
     patch=extend_schema(
         summary='Частичное обновление роли и пользователя',
-        description='',
+        description='isAdmin',
     ),
     delete=extend_schema(
         summary='Удаление роли и пользователя',
-        description='',
+        description='isAdmin',
     ),
 )
 class UserRolesDetailedView(RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, AccountPermissions)
     serializer_class = UserRolesSerializer
     queryset = UserRoles.objects.all()

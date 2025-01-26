@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from apps.account.models import Role
 from apps.account.serializers.role import RoleSerializer
+from apps.account.permissions import AccountPermissions
 
 
 @extend_schema(tags=['Role'])
@@ -14,11 +15,11 @@ from apps.account.serializers.role import RoleSerializer
     ),
     post=extend_schema(
         summary='Создание роли',
-        description='',
+        description='isAdmin',
     ),
 )
 class RoleListCreateView(ListCreateAPIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, AccountPermissions)
     serializer_class = RoleSerializer
     queryset = Role.objects.all()
 
@@ -31,18 +32,18 @@ class RoleListCreateView(ListCreateAPIView):
     ),
     put=extend_schema(
         summary='Обновление роли',
-        description='',
+        description='isAdmin',
     ),
     patch=extend_schema(
         summary='Частичное обновление роли',
-        description='',
+        description='isAdmin',
     ),
     delete=extend_schema(
         summary='Удаление роли',
-        description='',
+        description='isAdmin',
     ),
 )
 class RoleDetailedView(RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, AccountPermissions)
     serializer_class = RoleSerializer
     queryset = Role.objects.all()
