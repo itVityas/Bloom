@@ -1,6 +1,6 @@
 # back.ih.by
 
-This app tested on ubuntu 24.04, python 3.12
+This app tested on ubuntu 24.04 vs python 3.12, mint vs python 3.10
 
 To run this app:
 + install python3, pip3, python3-venv

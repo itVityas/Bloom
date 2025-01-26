@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os
-from datetime import timedelta  
+from datetime import timedelta
 from pathlib import Path
 import environ
 
@@ -37,9 +37,8 @@ ALLOWED_HOSTS = env("ALLOWED_HOSTS").split()
 
 
 # Application definition
-
 INSTALLED_APPS = [
-    'django.contrib.admin', 
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -187,6 +186,9 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
 
+# use auth class
+AUTH_USER_MODEL = 'account.User'
+
 SPECTACULAR_SETTINGS = {
     "TITLE": "Bloom backend",
     "VERSION": "0.0.1",
@@ -195,7 +197,7 @@ SPECTACULAR_SETTINGS = {
         "filter": True,
     },
     "COMPONENT_SPLIT_REQUEST": True
-}    
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
