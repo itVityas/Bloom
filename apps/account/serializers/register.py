@@ -16,7 +16,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'password2']
+        fields = ['username', 'password', 'password2', 'fio']
 
     def validate(self, attrs):
         password = attrs.get('password', None)
@@ -33,6 +33,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(
             username=validated_data['username'],
             password=validated_data['password'],
+            fio=validated_data.get('fio', None),
         )
         user.save()
         return user
