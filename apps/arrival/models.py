@@ -1,7 +1,7 @@
 from django.db import models
 
-# Create your models here.
 
+# Create your models here.
 class Order(models.Model):
     name = models.CharField(max_length=100)
 
@@ -10,7 +10,8 @@ class Order(models.Model):
 
 
 class Declaration(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True)
+    order = models.ForeignKey(
+        Order, on_delete=models.SET_NULL, null=True, blank=True)
     declaration_number = models.CharField(max_length=18)
     permit_number = models.CharField(max_length=23)
     declaration_date = models.DateTimeField()
