@@ -1,4 +1,5 @@
-from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import (
+    ListAPIView, DestroyAPIView, UpdateAPIView, RetrieveAPIView)
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.permissions import IsAuthenticated
 
@@ -22,10 +23,6 @@ class UserListView(ListAPIView):
 
 @extend_schema(tags=['jwt'])
 @extend_schema_view(
-    get=extend_schema(
-        summary='Получение пользователя по id',
-        description='isUser',
-    ),
     put=extend_schema(
         summary='Обновление пользователя',
         description='isAdmin',
@@ -39,7 +36,20 @@ class UserListView(ListAPIView):
         description='isAdmin',
     ),
 )
-class UserDetailedView(RetrieveUpdateDestroyAPIView):
+class UserDetailedView(DestroyAPIView, UpdateAPIView):
     permission_classes = (IsAuthenticated, AccountPermissions)
     serializer_class = UserUpdateSerializer
+    queryset = User.objects.all()
+
+
+@extend_schema(tags=['jwt'])
+@extend_schema_view(
+    get=extend_schema(
+        summary='Получение пользователя по id',
+        description='isUser',
+    )
+)
+class UserRetrieveView(RetrieveAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserSerializer
     queryset = User.objects.all()

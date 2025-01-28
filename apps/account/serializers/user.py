@@ -12,4 +12,4 @@ class UserSerializer(serializers.ModelSerializer):
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'is_active',]
+        fields = ['username', 'fio', 'is_active',]
