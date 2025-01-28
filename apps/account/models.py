@@ -26,10 +26,6 @@ class User(AbstractBaseUser):
     def __str__(self):
         return self.username
 
-    @property
-    def token(self):
-        return self.__generate_jwt_token()
-
 
 class UserRoles(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
