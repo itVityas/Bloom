@@ -21,7 +21,7 @@ from apps.arrival.permissions import OrderPermission
     ),
 )
 class OrderListCreateAPIView(ListCreateAPIView):
-    permission_classes = (IsAuthenticated, OrderPermission)
+    permission_classes = (IsAuthenticated, OrderPermission,)
     serializer_class = OrderSerializer
     queryset = Order.objects.all()
     filter_backends = (DjangoFilterBackend,)
