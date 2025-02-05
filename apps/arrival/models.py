@@ -52,7 +52,7 @@ class Declaration(models.Model):
     # G242 / Код вида расчета по сделке
     payment_type_code = models.CharField(max_length=3)
     # G542 / Дата представления ЭГТД
-    provision_date = models.DateTimeField()
+    provision_date = models.DateField()
     # GBN / Количество записей в файле GB.dbf
     paid_payment_details_count = models.SmallIntegerField()
     # DECL_ID / ID декларации из таможни
@@ -79,7 +79,7 @@ class Declaration(models.Model):
     # G47_KS / Курс евро
     euro_rate = models.DecimalField(max_digits=19, decimal_places=4)
     # DATEC / Дата декларации
-    declaration_date = models.DateTimeField()
+    declaration_date = models.DateField()
     # G013 / Код вида таможенного разрешения
     permit_code = models.CharField(max_length=3)
     # G031, FORWCODE, FORWNAME, CONTRACT, COST, ST_CODE, ST_NAME, ADD_INFO, VID_CORR, CODE_CORR (пропущены)
