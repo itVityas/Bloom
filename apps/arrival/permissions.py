@@ -14,3 +14,19 @@ class ArrivalPermission(BasePermission):
         if allowed_roles.intersection(user_roles):
             return True
         return False
+
+
+class ContainerPermission(BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        user_roles = [userrole.role.name for userrole in user.userroles_set.all()]
+
+        if request.method == 'GET':
+            allowed_roles = {'admin', 'arrival_writer', 'arrival_reader', 'container'}
+        else:
+            allowed_roles = {'admin', 'arrival_writer',  'container'}
+
+        if allowed_roles.intersection(user_roles):
+            return True
+
+        return False
