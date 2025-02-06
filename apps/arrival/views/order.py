@@ -6,7 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.arrival.models import Order
 from apps.arrival.serializers.order import OrderSerializer
-from apps.arrival.permissions import OrderPermission
+from apps.arrival.permissions import ArrivalPermission
 
 
 @extend_schema(tags=['Orders'])
@@ -21,7 +21,7 @@ from apps.arrival.permissions import OrderPermission
     ),
 )
 class OrderListCreateAPIView(ListCreateAPIView):
-    permission_classes = (IsAuthenticated, OrderPermission)
+    permission_classes = (IsAuthenticated, ArrivalPermission)
     serializer_class = OrderSerializer
     queryset = Order.objects.all()
     filter_backends = (DjangoFilterBackend,)
@@ -48,6 +48,6 @@ class OrderListCreateAPIView(ListCreateAPIView):
     ),
 )
 class OrderDetailedView(RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticated, OrderPermission)
+    permission_classes = (IsAuthenticated, ArrivalPermission)
     serializer_class = OrderSerializer
     queryset = Order.objects.all()

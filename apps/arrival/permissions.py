@@ -1,7 +1,7 @@
 from rest_framework.permissions import BasePermission
 
 
-class OrderPermission(BasePermission):
+class ArrivalPermission(BasePermission):
     def has_permission(self, request, view):
         user = request.user
         user_roles = [userrole.role.name for userrole in user.userroles_set.all()]
