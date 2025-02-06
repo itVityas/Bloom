@@ -5,8 +5,42 @@ from django.db import models
 class Order(models.Model):
     name = models.CharField(max_length=100)
 
+    class Meta:
+        ordering = ['-id']
+
     def __str__(self):
         return self.name
+
+
+class Container(models.Model):
+    name = models.CharField(max_length=30)
+    suppose_date = models.DateField()
+    exit_date = models.DateField()
+    delivery = models.CharField(max_length=100, blank=True, null=True)
+    location = models.CharField(max_length=100, blank=True, null=True)
+    state = models.CharField(max_length=20, default="Created")
+    invoice = models.CharField(max_length=50, blank=True, null=True)
+    order = models.ForeignKey(
+        Order, on_delete=models.SET_NULL, null=True, blank=True)
+
+    class Meta:
+        ordering = ['-id']
+
+    def __str__(self):
+        return self.name
+
+
+class Content(models.Model):
+    name = models.CharField(max_length=100)
+    shot_name = models.CharField(max_length=30)
+    count = models.PositiveIntegerField()
+    container = models.ForeignKey(Container, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['-id']
+
+    def __str__(self):
+        return self.shot_name
 
 
 class Declaration(models.Model):
