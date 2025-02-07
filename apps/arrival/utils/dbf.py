@@ -5,7 +5,6 @@ from django.utils import timezone
 from apps.arrival.models import Declaration
 
 
-
 def read_dbf_records(file_path):
     """
     Открывает DBF-файл и возвращает список записей.
@@ -31,9 +30,9 @@ def make_date_aware(dt):
     """
     if dt is None:
         return None
-    # Извлекаем дату и создаём новый datetime в полночь с информацией о часовом поясе UTC.
+    # Извлекаем дату и создаём новый datetime в полночь
+    # с информацией о часовом поясе UTC.
     return datetime(dt.year, dt.month, dt.day, tzinfo=timezone.utc)
-
 
 
 def dbf_to_dict(record):
@@ -94,6 +93,7 @@ def save_declaration_to_db(declarations_data):
         print(f"Save {len(declarations)} declarations to db.")
     else:
         print("No data to save")
+
 
 def process_dbf_file(file_path):
     try:
