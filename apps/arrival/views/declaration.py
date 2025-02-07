@@ -10,9 +10,9 @@ from rest_framework.response import Response
 
 from apps.arrival.permissions import ArrivalPermission
 from apps.arrival.models import Declaration
-from apps.arrival.serializers.declaration import DeclarationSerializer, DeclarationFileUploadSerializer
+from apps.arrival.serializers.declaration import (
+    DeclarationSerializer, DeclarationFileUploadSerializer)
 from apps.arrival.utils.dbf import process_dbf_file
-
 
 
 @extend_schema(tags=['Declarations'])
@@ -42,7 +42,8 @@ class DeclarationListCreateAPIView(ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         uploaded_file = request.FILES.get('file')
         if not uploaded_file:
-            return Response({'error': 'File not found. Please pass file with key "file".'}, status=400)
+            return Response({'error': 'File not found. '
+                             'Please pass file with key "file".'}, status=400)
 
         try:
             with NamedTemporaryFile(delete=False, suffix=".dbf") as tmp_file:
@@ -53,14 +54,16 @@ class DeclarationListCreateAPIView(ListCreateAPIView):
             process_dbf_file(tmp_file_path)
 
         except Exception as e:
-            return Response({'error': f'Ошибка обработки файла: {str(e)}'}, status=500)
+            return Response({'error': f'Ошибка обработки файла: {str(e)}'},
+                            status=500)
 
         finally:
             # Удаляем временный файл
             if os.path.exists(tmp_file_path):
                 os.remove(tmp_file_path)
 
-        return Response({'status': 'Файл обработан и декларации созданы.'}, status=201)
+        return Response({'status': 'Файл обработан и декларации созданы.'},
+                        status=201)
 
 
 @extend_schema(tags=['Declarations'])
