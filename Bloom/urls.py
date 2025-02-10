@@ -32,4 +32,5 @@ urlpatterns = [
 
     path('api/v1/', include('apps.account.urls')),
     path('api/v1/', include('apps.arrival.urls')),
+    path('api/v1/', include('apps.sgp.urls')),
 ]
