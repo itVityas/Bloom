@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'corsheaders',
 
     'apps.account',
-    'apps.arrival'
+    'apps.arrival',
+    'apps.sgp',
 ]
 
 MIDDLEWARE = [
