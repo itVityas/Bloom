@@ -14,15 +14,15 @@ from apps.sgp.serializers.consignment import ConsignmentSerializer
         description='''
         isAdmin
     document_number = CharField(max_length=20)
-    doc_date = DateField()
+    doc_date = Integer (timestamp)
     recipient = CharField(max_length=250)
     recipient_code = CharField(max_length=7)
-    quantity = IntegerField()
-    article = CharField(max_length=25)
-    invoice_number = CharField(max_length=20)
-    invoice_series = CharField(max_length=4)
+    quantity = FloatField()
+    article = CharField(max_length=25, required=False)
+    invoice_number = CharField(max_length=20, required=False)
+    invoice_series = CharField(max_length=4, required=False)
     unp = CharField(max_length=20)
-    gtin = CharField(max_length=14)
+    gtin = CharField(max_length=14, required=False)
         '''
     ),
 )
@@ -31,7 +31,7 @@ class ConsignmentCreateView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
-        serializer = ConsignmentSerializer(data=request.data)
+        serializer = ConsignmentSerializer(data=request.data, many=True)
         if not serializer.is_valid():
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
