@@ -90,7 +90,7 @@ class Declaration(models.Model):
     # GBN / Количество записей в файле GB.dbf
     paid_payment_details_count = models.SmallIntegerField()
     # DECL_ID / ID декларации из таможни
-    declaration_id = models.IntegerField()
+    declaration_id = models.IntegerField(unique=True)
     # NOM_REG / Регистрационный номер
     declaration_number = models.CharField(max_length=18)
     # GA / Номер свидетельства, номер разрешения
@@ -182,15 +182,6 @@ class DeclaredItem(models.Model):
     # G43 / Метод определения таможенной стоимости
     valuation_method = models.CharField(max_length=2)
     # G21_A, G21_0, G21_1 / пропущены
-
-    def save(self, *args, **kwargs):
-        if isinstance(self.declaration, int):
-            try:
-                self.declaration = Declaration.objects.get(declaration_id=self.declaration)
-            except Declaration.DoesNotExist:
-                raise ValueError(f"Declaration with ID {self.declaration} not found.")
-
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.declaration} - {self.ordinal_number}'
