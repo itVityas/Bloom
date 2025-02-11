@@ -33,6 +33,7 @@ class DeclarationListCreateAPIView(ListCreateAPIView):
     queryset = Declaration.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filerset_fields = ('order', 'declaration_id')
+    pagination_class = None
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
