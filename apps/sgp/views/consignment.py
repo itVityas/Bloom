@@ -31,7 +31,7 @@ class ConsignmentCreateView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
-        serializer = ConsignmentSerializer(data=request.data)
+        serializer = ConsignmentSerializer(data=request.data, many=True)
         if not serializer.is_valid():
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
