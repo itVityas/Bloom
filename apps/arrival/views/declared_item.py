@@ -9,36 +9,36 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from apps.arrival.permissions import ArrivalPermission
-from apps.arrival.models import Declaration
-from apps.arrival.serializers.declaration import (
-    DeclarationSerializer, DeclarationFileUploadSerializer)
-from apps.arrival.utils.dbf.decl import process_decl_dbf_file
+from apps.arrival.models import DeclaredItem
+from apps.arrival.serializers.declared_item import (
+    DeclaredItemSerializer, DeclaredItemFileUploadSerializer)
+from apps.arrival.utils.dbf.tovar import process_tovar_dbf_file
 
 
-@extend_schema(tags=['Declarations'])
+@extend_schema(tags=['DeclaredItem'])
 @extend_schema_view(
     get=extend_schema(
-        summary='Список всех деклараций',
+        summary='Список всех товаров',
         description='isArrivalReader, isArrivalWriter',
     ),
     post=extend_schema(
-        summary='Загрузить файл для создания декларации',
+        summary='Загрузить файл для создания товаров',
         description='isArrivalWriter',
-        request=DeclarationFileUploadSerializer,
+        request=DeclaredItemFileUploadSerializer,
     ),
 )
-class DeclarationListCreateAPIView(ListCreateAPIView):
+class DeclaredItemListCreateAPIView(ListCreateAPIView):
     permission_classes = (IsAuthenticated, ArrivalPermission)
-    serializer_class = DeclarationSerializer
-    queryset = Declaration.objects.all()
+    serializer_class = DeclaredItemSerializer
+    queryset = DeclaredItem.objects.all()
     filter_backends = (DjangoFilterBackend,)
-    filerset_fields = ('order', 'declaration_id')
+    filerset_fields = ('ordinal_number', 'declaration_id')
     pagination_class = None
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
-            return DeclarationFileUploadSerializer
-        return DeclarationSerializer
+            return DeclaredItemFileUploadSerializer
+        return DeclaredItemSerializer
 
     def create(self, request, *args, **kwargs):
         uploaded_file = request.FILES.get('file')
@@ -52,7 +52,7 @@ class DeclarationListCreateAPIView(ListCreateAPIView):
                     tmp_file.write(chunk)
                 tmp_file_path = tmp_file.name
 
-            process_decl_dbf_file(tmp_file_path)
+            process_tovar_dbf_file(tmp_file_path)
 
         except Exception as e:
             return Response({'error': f'Ошибка обработки файла: {str(e)}'},
@@ -63,30 +63,30 @@ class DeclarationListCreateAPIView(ListCreateAPIView):
             if os.path.exists(tmp_file_path):
                 os.remove(tmp_file_path)
 
-        return Response({'status': 'Файл обработан и декларации созданы.'},
+        return Response({'status': 'Файл обработан и товары созданы.'},
                         status=201)
 
 
-@extend_schema(tags=['Declarations'])
+@extend_schema(tags=['DeclaredItem'])
 @extend_schema_view(
     get=extend_schema(
-        summary='Получить декларацию по id',
+        summary='Получить товар по id',
         description='isArrivalReader, isArrivalWriter',
     ),
     put=extend_schema(
-        summary='Обновить декларацию',
+        summary='Обновить товар',
         description='isArrivalWritter',
     ),
     patch=extend_schema(
-        summary='Частичное обновление декларации',
+        summary='Частичное обновление товара',
         description='isArrivalWriter'
     ),
     delete=extend_schema(
-        summary='Удалить декларацию',
+        summary='Удалить товар',
         description='isArrivalWriter',
     ),
 )
-class DeclarationDetailedView(RetrieveUpdateDestroyAPIView):
+class DeclaredItemDetailedView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, ArrivalPermission)
-    serializer_class = DeclarationSerializer
-    queryset = Declaration.objects.all()
+    serializer_class = DeclaredItemSerializer
+    queryset = DeclaredItem.objects.all()
