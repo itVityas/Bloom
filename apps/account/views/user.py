@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from apps.account.models import User
 from apps.account.serializers.user import UserSerializer, UserUpdateSerializer
 from apps.account.permissions import AccountPermissions
+from Bloom.paginator import StandartResultPaginator
 
 
 @extend_schema(tags=['jwt'])
@@ -19,6 +20,7 @@ class UserListView(ListAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserSerializer
     queryset = User.objects.all()
+    pagination_class = StandartResultPaginator
 
 
 @extend_schema(tags=['jwt'])

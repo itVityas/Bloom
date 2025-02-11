@@ -116,8 +116,11 @@ class Declaration(models.Model):
     declaration_date = models.DateField()
     # G013 / Код вида таможенного разрешения
     permit_code = models.CharField(max_length=3)
-    # G031, FORWCODE, FORWNAME, CONTRACT, COST, ST_CODE, ST_NAME, ADD_INFO, VID_CORR, CODE_CORR (пропущены)
+    # G031, FORWCODE, FORWNAME, CONTRACT, COST, ST_CODE, ST_NAME,
+    # ADD_INFO, VID_CORR, CODE_CORR (пропущены)
 
     def __str__(self):
         return self.declaration_number or "Unnamed Declaration"
 
+    class Meta:
+        ordering = ['-id']

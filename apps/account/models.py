@@ -11,6 +11,9 @@ class Role(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ['id']
+
 
 class User(AbstractBaseUser):
     username = models.CharField(db_index=True, max_length=30, unique=True)
@@ -28,6 +31,9 @@ class User(AbstractBaseUser):
     def __str__(self):
         return self.username
 
+    class Meta:
+        ordering = ['id']
+
 
 class UserRoles(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -36,3 +42,4 @@ class UserRoles(models.Model):
 
     class Meta:
         unique_together = ('user', 'role')
+        ordering = ['id']

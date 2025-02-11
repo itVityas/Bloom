@@ -7,6 +7,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from apps.arrival.models import Order
 from apps.arrival.serializers.order import OrderSerializer
 from apps.arrival.permissions import ArrivalPermission
+from Bloom.paginator import StandartResultPaginator
 
 
 @extend_schema(tags=['Orders'])
@@ -26,6 +27,7 @@ class OrderListCreateAPIView(ListCreateAPIView):
     queryset = Order.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('name',)
+    pagination_class = StandartResultPaginator
 
 
 @extend_schema(tags=['Orders'])

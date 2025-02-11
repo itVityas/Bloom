@@ -7,6 +7,7 @@ from apps.arrival.models import Container
 from apps.arrival.serializers.container import (
     ContainerFullSerializer, ContainerSetSerializer)
 from apps.arrival.permissions import ContainerPermission
+from Bloom.paginator import StandartResultPaginator
 
 
 @extend_schema(tags=['Containers'])
@@ -20,6 +21,7 @@ class ContainerListView(ListAPIView):
     permission_classes = (IsAuthenticated, ContainerPermission)
     serializer_class = ContainerFullSerializer
     queryset = Container.objects.all()
+    pagination_class = StandartResultPaginator
 
 
 @extend_schema(tags=['Containers'])

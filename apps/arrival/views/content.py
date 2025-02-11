@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from apps.arrival.models import Content
 from apps.arrival.serializers.content import ContentSerializer
 from apps.arrival.permissions import ContainerPermission
+from Bloom.paginator import StandartResultPaginator
 
 
 @extend_schema(tags=['Contents'])
@@ -23,6 +24,7 @@ class ContentListView(ListCreateAPIView):
     permission_classes = (IsAuthenticated, ContainerPermission)
     serializer_class = ContentSerializer
     queryset = Content.objects.all()
+    pagination_class = StandartResultPaginator
 
 
 @extend_schema(tags=['Contents'])
