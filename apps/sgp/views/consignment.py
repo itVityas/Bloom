@@ -18,11 +18,13 @@ from apps.sgp.serializers.consignment import ConsignmentSerializer
     recipient = CharField(max_length=250)
     recipient_code = CharField(max_length=7)
     quantity = FloatField()
-    article = CharField(max_length=25, required=False)
-    invoice_number = CharField(max_length=20, required=False)
-    invoice_series = CharField(max_length=4, required=False)
+    article = CharField(max_length=25, blank=True, null=true)
+    invoice_number = CharField(max_length=20,
+        required=False, blank=True, null=true)
+    invoice_series = CharField(max_length=4,
+        required=False, blank=True, null=True)
     unp = CharField(max_length=20)
-    gtin = CharField(max_length=14, required=False)
+    gtin = CharField(max_length=14, required=False, blank=True, null=True)
         '''
     ),
 )
