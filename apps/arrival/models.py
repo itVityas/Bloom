@@ -127,6 +127,10 @@ class Declaration(models.Model):
 
 
 class DeclaredItem(models.Model):
+    declaration_id = models.ForeignKey(
+        Declaration, on_delete=models.CASCADE, related_name='declared_items'
+    )
+
     # G312 / Коммерческое или контрактное наименование товара
     name = models.CharField(max_length=250)
     # G314 / пропущен
@@ -153,9 +157,7 @@ class DeclaredItem(models.Model):
     # G44N / Количество записей в файле G44.DBF
     document_details_count = models.IntegerField()
     # DECL_ID / номер декларации
-    declaration = models.ForeignKey(
-        Declaration, on_delete=models.CASCADE, related_name='declared_items'
-    )
+    declaration = models.IntegerField()
     # G33 / Код товара по ТН ВЭД
     code = models.CharField(max_length=50)
     # G16 / Страна происхождения товаров, заявленных в ЭГТД
