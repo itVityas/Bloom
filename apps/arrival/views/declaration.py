@@ -12,7 +12,7 @@ from apps.arrival.permissions import ArrivalPermission
 from apps.arrival.models import Declaration
 from apps.arrival.serializers.declaration import (
     DeclarationSerializer, DeclarationFileUploadSerializer)
-from apps.arrival.utils.dbf import process_dbf_file
+from apps.arrival.utils.dbf.decl import process_decl_dbf_file
 
 
 @extend_schema(tags=['Declarations'])
@@ -52,7 +52,7 @@ class DeclarationListCreateAPIView(ListCreateAPIView):
                     tmp_file.write(chunk)
                 tmp_file_path = tmp_file.name
 
-            process_dbf_file(tmp_file_path)
+            process_decl_dbf_file(tmp_file_path)
 
         except Exception as e:
             return Response({'error': f'Ошибка обработки файла: {str(e)}'},
