@@ -3,7 +3,7 @@ from tempfile import NamedTemporaryFile
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import (
-    ListCreateAPIView, RetrieveUpdateDestroyAPIView)
+    ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView, ListAPIView)
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from apps.arrival.permissions import ArrivalPermission
 from apps.arrival.models import Declaration
 from apps.arrival.serializers.declaration import (
-    DeclarationSerializer, DeclarationFileUploadSerializer)
+    DeclarationSerializer, DeclarationFileUploadSerializer, DeclarationAndItemSerializer)
 from apps.arrival.utils.dbf.decl import process_decl_dbf_file
 
 
@@ -89,4 +89,33 @@ class DeclarationListCreateAPIView(ListCreateAPIView):
 class DeclarationDetailedView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, ArrivalPermission)
     serializer_class = DeclarationSerializer
+    queryset = Declaration.objects.all()
+
+
+@extend_schema(tags=['Declarations'])
+@extend_schema_view(
+    get=extend_schema(
+        summary='Список всех деклараций с товарами',
+        description='isArrivalReader, isArrivalWriter',
+    ),
+)
+class DeclarationAndItemView(ListAPIView):
+    permission_classes = (IsAuthenticated, ArrivalPermission)
+    serializer_class = DeclarationAndItemSerializer
+    queryset = Declaration.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filerset_fields = ('order',)
+    pagination_class = None
+
+
+@extend_schema(tags=['Declarations'])
+@extend_schema_view(
+    get=extend_schema(
+        summary='Получить декларацию по id с товарами',
+        description='isArrivalReader, isArrivalWriter',
+    ),
+)
+class DeclarationAndItemDetailedView(RetrieveAPIView):
+    permission_classes = (IsAuthenticated, ArrivalPermission)
+    serializer_class = DeclarationAndItemSerializer
     queryset = Declaration.objects.all()
