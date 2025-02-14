@@ -3,7 +3,7 @@ from tempfile import NamedTemporaryFile
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import (
-    ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView, ListAPIView)
+    ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView, ListAPIView, CreateAPIView)
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -11,8 +11,10 @@ from rest_framework.response import Response
 from apps.arrival.permissions import ArrivalPermission
 from apps.arrival.models import Declaration
 from apps.arrival.serializers.declaration import (
-    DeclarationSerializer, DeclarationFileUploadSerializer, DeclarationAndItemSerializer)
+    DeclarationSerializer, DeclarationFileUploadSerializer, DeclarationAndItemSerializer,
+    DeclarationAndItemFileUploadSerializer)
 from apps.arrival.utils.dbf.decl import process_decl_dbf_file
+from apps.arrival.utils.dbf.tovar import process_tovar_dbf_file
 
 
 @extend_schema(tags=['Declarations'])
@@ -59,7 +61,6 @@ class DeclarationListCreateAPIView(ListCreateAPIView):
                             status=500)
 
         finally:
-            # Удаляем временный файл
             if os.path.exists(tmp_file_path):
                 os.remove(tmp_file_path)
 
@@ -119,3 +120,52 @@ class DeclarationAndItemDetailedView(RetrieveAPIView):
     permission_classes = (IsAuthenticated, ArrivalPermission)
     serializer_class = DeclarationAndItemSerializer
     queryset = Declaration.objects.all()
+
+
+
+
+@extend_schema(tags=['Declarations'])
+@extend_schema_view(
+    post=extend_schema(
+        summary='Загрузить файл деклараций и товаров',
+        description='isArrivalWriter',
+    ),
+)
+class DeclarationAndItemCreateAPIView(CreateAPIView):
+    permission_classes = (IsAuthenticated, ArrivalPermission)
+    serializer_class = DeclarationAndItemFileUploadSerializer
+
+    def create(self, request, *args, **kwargs):
+        decl_dbf = request.FILES.get('decl_file')
+        tovar_dbf = request.FILES.get('tovar_file')
+
+        if not decl_dbf or not tovar_dbf:
+            return Response({'error': 'File not found. '
+                                      'Please pass file with key "file".'}, status=400)
+
+        try:
+            with NamedTemporaryFile(delete=False, suffix=".dbf") as tmp_file:
+                for chunk in decl_dbf.chunks():
+                    tmp_file.write(chunk)
+                decl_tmp_file_path = tmp_file.name
+
+            with NamedTemporaryFile(delete=False, suffix=".dbf") as tmp_file:
+                for chunk in tovar_dbf.chunks():
+                    tmp_file.write(chunk)
+                tovar_tmp_file_path = tmp_file.name
+
+            process_decl_dbf_file(decl_tmp_file_path)
+            process_tovar_dbf_file(tovar_tmp_file_path)
+
+        except Exception as e:
+            return Response({'error': f'Ошибка обработки файла: {str(e)}'},
+                            status=500)
+
+        finally:
+            if os.path.exists(decl_tmp_file_path):
+                os.remove(decl_tmp_file_path)
+            if os.path.exists(tovar_tmp_file_path):
+                os.remove(tovar_tmp_file_path)
+
+        return Response({'status': 'Файлы обработан и декларации созданы.'},
+                        status=201)

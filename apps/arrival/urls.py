@@ -2,7 +2,8 @@ from django.urls import path
 
 from apps.arrival.views.declaration import (
     DeclarationListCreateAPIView, DeclarationDetailedView,
-    DeclarationAndItemView, DeclarationAndItemDetailedView)
+    DeclarationAndItemView, DeclarationAndItemDetailedView,
+    DeclarationAndItemCreateAPIView)
 from apps.arrival.views.declared_item import (
     DeclaredItemListCreateAPIView, DeclaredItemDetailedView)
 from apps.arrival.views.order import (
@@ -22,6 +23,7 @@ urlpatterns = [
     path('declaration/detailed/<int:pk>/', DeclarationDetailedView.as_view()),
     path('declaration_and_items/', DeclarationAndItemView.as_view()),
     path('declaration_and_items/<int:pk>/', DeclarationAndItemDetailedView.as_view()),
+    path('declaration_and_items/create/', DeclarationAndItemCreateAPIView.as_view()),
 
     # DeclaredItem
     path('declared_item/', DeclaredItemListCreateAPIView.as_view()),
