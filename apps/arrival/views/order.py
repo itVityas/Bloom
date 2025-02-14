@@ -1,13 +1,27 @@
 from rest_framework.generics import (
-    ListCreateAPIView, RetrieveUpdateDestroyAPIView)
+    ListAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView)
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.arrival.models import Order
-from apps.arrival.serializers.order import OrderSerializer
+from apps.arrival.serializers.order import (
+    OrderSerializer, OrderListSerializer)
 from apps.arrival.permissions import ArrivalPermission
 from Bloom.paginator import StandartResultPaginator
+
+
+@extend_schema(tags=['Orders'])
+@extend_schema_view(
+    post=extend_schema(
+        summary='Создать заказ',
+        description='isArrivalWriter',
+    ),
+)
+class OrderCreateAPIView(CreateAPIView):
+    permission_classes = (IsAuthenticated, ArrivalPermission)
+    serializer_class = OrderSerializer
+    queryset = Order.objects.all()
 
 
 @extend_schema(tags=['Orders'])
@@ -16,14 +30,10 @@ from Bloom.paginator import StandartResultPaginator
         summary='Список всех заказов',
         description='isArrivalReader, isArrivalWriter',
     ),
-    post=extend_schema(
-        summary='Создать заказ',
-        description='isArrivalWriter',
-    ),
 )
-class OrderListCreateAPIView(ListCreateAPIView):
+class OrderListView(ListAPIView):
     permission_classes = (IsAuthenticated, ArrivalPermission)
-    serializer_class = OrderSerializer
+    serializer_class = OrderListSerializer
     queryset = Order.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('name',)
