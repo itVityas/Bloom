@@ -21,6 +21,10 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
     SpectacularRedocView,
 )
+from rest_framework_simplejwt.views import (
+    TokenRefreshView,
+    TokenVerifyView,
+)
 
 urlpatterns = [
     # DJANGO-ADMIN
@@ -28,7 +32,12 @@ urlpatterns = [
     # swagger
     path('', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),
     path('api/v1/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path("api/v1/schema/redoc/", SpectacularRedocView.as_view(url_name="schema")),
+    path("api/v1/schema/redoc/", SpectacularRedocView.as_view(
+        url_name="schema")),
+
+    # autorization
+    path('api/v1/token/refresh/', TokenRefreshView.as_view()),
+    path('api/v1/token/verify/', TokenVerifyView.as_view()),
 
     path('api/v1/', include('apps.account.urls')),
     path('api/v1/', include('apps.arrival.urls')),
