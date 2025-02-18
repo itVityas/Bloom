@@ -20,3 +20,17 @@ class DeclarationAndItemSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     declared_items = DeclaredItemSerializer(many=True, read_only=True)
+
+
+class DeclarationAndItemFileUploadSerializer(serializers.Serializer):
+    decl_file = serializers.FileField()
+    tovar_file = serializers.FileField()
+    container_id = serializers.IntegerField()
+
+
+class DeclarationBindSerializer(serializers.Serializer):
+    container_id = serializers.IntegerField()
+    declaration_ids = serializers.ListField(
+        child=serializers.IntegerField(),
+        allow_empty=False
+    )

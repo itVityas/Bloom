@@ -1,12 +1,13 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import (
-    ListAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView)
+    ListAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView, RetrieveAPIView)
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.permissions import IsAuthenticated
 
 from apps.arrival.models import Container
 from apps.arrival.serializers.container import (
-    ContainerFullSerializer, ContainerSetSerializer)
-from apps.arrival.permissions import ContainerPermission
+    ContainerFullSerializer, ContainerSetSerializer, ContainerAndDeclarationSerializer)
+from apps.arrival.permissions import ContainerPermission, ArrivalPermission
 from Bloom.paginator import StandartResultPaginator
 
 
@@ -56,3 +57,35 @@ class ContainerUpdateView(UpdateAPIView, DestroyAPIView):
     permission_classes = (IsAuthenticated, ContainerPermission)
     serializer_class = ContainerSetSerializer
     queryset = Container.objects.all()
+
+
+@extend_schema(tags=['Containers'])
+@extend_schema_view(
+    get=extend_schema(
+        summary='Лист всех контейнеров с декларациями',
+        description='isArrivalReader, isArrivalWriter',
+    ),
+)
+class ContainerAndDeclarationView(ListAPIView):
+    permission_classes = (IsAuthenticated, ArrivalPermission)
+    serializer_class = ContainerAndDeclarationSerializer
+    queryset = Container.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filerset_fields = ('name',)
+    pagination_class = None
+
+
+@extend_schema(tags=['Containers'])
+@extend_schema_view(
+    get=extend_schema(
+        summary='Контейнер с декларациями',
+        description='isArrivalReader, isArrivalWriter',
+    ),
+)
+class ContainerAndDeclarationDetailView(RetrieveAPIView):
+    permission_classes = (IsAuthenticated, ArrivalPermission)
+    serializer_class = ContainerAndDeclarationSerializer
+    queryset = Container.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filerset_fields = ('name',)
+    pagination_class = None

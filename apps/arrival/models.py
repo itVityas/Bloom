@@ -13,6 +13,9 @@ class Order(models.Model):
 
 
 class Container(models.Model):
+    order = models.ForeignKey(
+        Order, on_delete=models.SET_NULL, null=True, blank=True, related_name='order'
+    )
     name = models.CharField(max_length=30)
     suppose_date = models.DateField()
     exit_date = models.DateField()
@@ -20,8 +23,6 @@ class Container(models.Model):
     location = models.CharField(max_length=100, blank=True, null=True)
     state = models.CharField(max_length=20, default="Created")
     invoice = models.CharField(max_length=50, blank=True, null=True)
-    order = models.ForeignKey(
-        Order, on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
         ordering = ['-id']
@@ -47,8 +48,8 @@ class Declaration(models.Model):
     # Порядок полей соответствует порядку столбцов в DBF
 
     # Внешний ключ (не из DBF)
-    order = models.ForeignKey(
-        Order, on_delete=models.SET_NULL, null=True, blank=True
+    container = models.ForeignKey(
+        Container, on_delete=models.SET_NULL, null=True, blank=True, related_name='container'
     )
 
     # G011 / Код типа таможенной декларации

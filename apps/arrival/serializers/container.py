@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from apps.arrival.models import Container, Content
 from apps.arrival.serializers.content import ContentSerializer
+from apps.arrival.serializers.declaration import DeclarationSerializer
 
 
 class ContainerFullSerializer(serializers.ModelSerializer):
@@ -39,3 +40,12 @@ class ContainerSetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Container
         fields = "__all__"
+
+
+class ContainerAndDeclarationSerializer(serializers.ModelSerializer):
+
+    declarations = DeclarationSerializer(many=True, read_only=True, source='container')
+
+    class Meta:
+        model = Container
+        fields = '__all__'
