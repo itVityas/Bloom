@@ -10,7 +10,8 @@ from apps.arrival.views.order import (
     OrderCreateAPIView, OrderListView, OrderDetailedView)
 from apps.arrival.views.content import ContentListView, ContentDetailView
 from apps.arrival.views.conteiner import (
-    ContainerListView, ContainerCreateView, ContainerUpdateView)
+    ContainerListView, ContainerCreateView, ContainerUpdateView, ContainerAndDeclarationView,
+    ContainerAndDeclarationDetailView)
 
 urlpatterns = [
     # order
@@ -37,4 +38,6 @@ urlpatterns = [
     path('container/', ContainerListView.as_view()),
     path('container/create/', ContainerCreateView.as_view()),
     path('container/detailed/<int:pk>/', ContainerUpdateView.as_view()),
+    path('container_and_declaration/', ContainerAndDeclarationView.as_view()),
+    path('container_and_declaration/<int:pk>/', ContainerAndDeclarationDetailView.as_view()),
 ]

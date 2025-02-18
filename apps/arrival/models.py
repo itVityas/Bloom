@@ -49,7 +49,7 @@ class Declaration(models.Model):
 
     # Внешний ключ (не из DBF)
     container = models.ForeignKey(
-        Container, on_delete=models.SET_NULL, null=True, blank=True
+        Container, on_delete=models.SET_NULL, null=True, blank=True, related_name='container'
     )
 
     # G011 / Код типа таможенной декларации
