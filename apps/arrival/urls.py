@@ -7,7 +7,7 @@ from apps.arrival.views.declaration import (
 from apps.arrival.views.declared_item import (
     DeclaredItemListCreateAPIView, DeclaredItemDetailedView)
 from apps.arrival.views.order import (
-    OrderCreateAPIView, OrderListView, OrderDetailedView)
+    OrderCreateAPIView, OrderListView, OrderDetailedView, OrderAndContainerListView, OrderAndContainerDetailView)
 from apps.arrival.views.content import ContentListView, ContentDetailView
 from apps.arrival.views.conteiner import (
     ContainerListView, ContainerCreateView, ContainerUpdateView, ContainerAndDeclarationView,
@@ -18,6 +18,8 @@ urlpatterns = [
     path('order/', OrderListView.as_view()),
     path('order/create/', OrderCreateAPIView.as_view()),
     path('order/detailed/<int:pk>/', OrderDetailedView.as_view()),
+    path('order_and_container/', OrderAndContainerListView.as_view()),
+    path('order_and_container/<int:pk>/', OrderAndContainerDetailView.as_view()),
 
     # declaration
     path('declaration/', DeclarationListCreateAPIView.as_view()),

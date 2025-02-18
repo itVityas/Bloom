@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from apps.arrival.models import Order, Container
-from apps.arrival.serializers.container import ContainerFullSerializer
+from apps.arrival.serializers.container import ContainerFullSerializer, ContainerAndDeclarationSerializer
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -24,3 +24,12 @@ class OrderListSerializer(serializers.ModelSerializer):
     def get_containers(self, obj) -> dict:
         containers = Container.objects.filter(order=obj)
         return ContainerFullSerializer(containers, many=True).data
+
+
+class OrderWithContainerSerializer(serializers.ModelSerializer):
+
+    container = ContainerAndDeclarationSerializer(many=True, read_only=True, source='order')
+
+    class Meta:
+        model = Order
+        fields = '__all__'

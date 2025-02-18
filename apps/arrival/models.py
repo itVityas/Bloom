@@ -14,7 +14,7 @@ class Order(models.Model):
 
 class Container(models.Model):
     order = models.ForeignKey(
-        Order, on_delete=models.SET_NULL, null=True, blank=True
+        Order, on_delete=models.SET_NULL, null=True, blank=True, related_name='order'
     )
     name = models.CharField(max_length=30)
     suppose_date = models.DateField()

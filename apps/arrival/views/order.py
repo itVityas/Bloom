@@ -1,12 +1,12 @@
 from rest_framework.generics import (
-    ListAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView)
+    ListAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView, RetrieveAPIView)
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.arrival.models import Order
 from apps.arrival.serializers.order import (
-    OrderSerializer, OrderListSerializer)
+    OrderSerializer, OrderListSerializer, OrderWithContainerSerializer)
 from apps.arrival.permissions import ArrivalPermission
 from Bloom.paginator import StandartResultPaginator
 
@@ -62,4 +62,33 @@ class OrderListView(ListAPIView):
 class OrderDetailedView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, ArrivalPermission)
     serializer_class = OrderSerializer
+    queryset = Order.objects.all()
+
+
+@extend_schema(tags=['Orders'])
+@extend_schema_view(
+    get=extend_schema(
+        summary='Список всех заказов c контейнерами',
+        description='isArrivalReader, isArrivalWriter',
+    ),
+)
+class OrderAndContainerListView(ListAPIView):
+    permission_classes = (IsAuthenticated, ArrivalPermission)
+    serializer_class = OrderWithContainerSerializer
+    queryset = Order.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('name',)
+    pagination_class = StandartResultPaginator
+
+
+@extend_schema(tags=['Orders'])
+@extend_schema_view(
+    get=extend_schema(
+        summary='Pаказ c контейнерами',
+        description='isArrivalReader, isArrivalWriter',
+    ),
+)
+class OrderAndContainerDetailView(RetrieveAPIView):
+    permission_classes = (IsAuthenticated, ArrivalPermission)
+    serializer_class = OrderWithContainerSerializer
     queryset = Order.objects.all()
