@@ -3,13 +3,13 @@ from tempfile import NamedTemporaryFile
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import (
-    ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView, ListAPIView, CreateAPIView)
+    ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView, ListAPIView, CreateAPIView, get_object_or_404)
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from apps.arrival.permissions import ArrivalPermission
-from apps.arrival.models import Declaration
+from apps.arrival.models import Declaration, Container
 from apps.arrival.serializers.declaration import (
     DeclarationSerializer, DeclarationFileUploadSerializer, DeclarationAndItemSerializer,
     DeclarationAndItemFileUploadSerializer)
@@ -136,12 +136,19 @@ class DeclarationAndItemCreateAPIView(CreateAPIView):
     serializer_class = DeclarationAndItemFileUploadSerializer
 
     def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        container_id = serializer.validated_data.get('container_id')
+        container = get_object_or_404(Container, pk=container_id)
+
         decl_dbf = request.FILES.get('decl_file')
         tovar_dbf = request.FILES.get('tovar_file')
 
         if not decl_dbf or not tovar_dbf:
-            return Response({'error': 'File not found. '
-                                      'Please pass file with key "file".'}, status=400)
+            return Response(
+                {'error': 'File not found. Please pass files with keys "decl_file" and "tovar_file".'},
+                status=400
+            )
 
         try:
             with NamedTemporaryFile(delete=False, suffix=".dbf") as tmp_file:
@@ -154,7 +161,7 @@ class DeclarationAndItemCreateAPIView(CreateAPIView):
                     tmp_file.write(chunk)
                 tovar_tmp_file_path = tmp_file.name
 
-            process_decl_dbf_file(decl_tmp_file_path)
+            process_decl_dbf_file(decl_tmp_file_path, container=container)
             process_tovar_dbf_file(tovar_tmp_file_path)
 
         except Exception as e:
@@ -167,5 +174,6 @@ class DeclarationAndItemCreateAPIView(CreateAPIView):
             if os.path.exists(tovar_tmp_file_path):
                 os.remove(tovar_tmp_file_path)
 
-        return Response({'status': 'Файлы обработан и декларации созданы.'},
-                        status=201)
+        declarations = Declaration.objects.filter(container=container)
+        declaration_serializer = DeclarationSerializer(declarations, many=True)
+        return Response(declaration_serializer.data, status=201)

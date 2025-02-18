@@ -63,7 +63,7 @@ def save_declaration_to_db(declarations_data):
 
     for data in declarations_data:
         if not Declaration.objects.filter(declaration_id=data['declaration_id']).exists():
-            declarations.append(data(**data))
+            declarations.append(Declaration(**data))
         else:
             declarations_exist.append(data['declaration_id'])
 
@@ -76,13 +76,16 @@ def save_declaration_to_db(declarations_data):
         raise Exception("No data to save")
 
 
-def process_decl_dbf_file(file_path):
+def process_decl_dbf_file(file_path, container=None):
     """
     Общая функция для обработки dbf файла
     """
     try:
         records = read_dbf_records(file_path)
         list_declarations = list_of_dict_dbf_records(records)
+        if container:
+            for data in list_declarations:
+                data['container'] = container
         save_declaration_to_db(list_declarations)
     except Exception as e:
         raise e

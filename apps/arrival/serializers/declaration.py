@@ -25,3 +25,4 @@ class DeclarationAndItemSerializer(serializers.ModelSerializer):
 class DeclarationAndItemFileUploadSerializer(serializers.Serializer):
     decl_file = serializers.FileField()
     tovar_file = serializers.FileField()
+    container_id = serializers.IntegerField()
