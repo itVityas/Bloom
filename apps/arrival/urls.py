@@ -3,7 +3,7 @@ from django.urls import path
 from apps.arrival.views.declaration import (
     DeclarationListCreateAPIView, DeclarationDetailedView,
     DeclarationAndItemView, DeclarationAndItemDetailedView,
-    DeclarationAndItemCreateAPIView)
+    DeclarationAndItemCreateAPIView, BindDeclarationsToContainerAPIView)
 from apps.arrival.views.declared_item import (
     DeclaredItemListCreateAPIView, DeclaredItemDetailedView)
 from apps.arrival.views.order import (
@@ -27,6 +27,7 @@ urlpatterns = [
     path('declaration_and_items/', DeclarationAndItemView.as_view()),
     path('declaration_and_items/<int:pk>/', DeclarationAndItemDetailedView.as_view()),
     path('declaration_and_items/create/', DeclarationAndItemCreateAPIView.as_view()),
+    path('declaration/assign/', BindDeclarationsToContainerAPIView.as_view()),
 
     # DeclaredItem
     path('declared_item/', DeclaredItemListCreateAPIView.as_view()),

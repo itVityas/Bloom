@@ -7,12 +7,13 @@ from rest_framework.generics import (
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from apps.arrival.permissions import ArrivalPermission
 from apps.arrival.models import Declaration, Container
 from apps.arrival.serializers.declaration import (
     DeclarationSerializer, DeclarationFileUploadSerializer, DeclarationAndItemSerializer,
-    DeclarationAndItemFileUploadSerializer)
+    DeclarationAndItemFileUploadSerializer, DeclarationBindSerializer)
 from apps.arrival.utils.dbf.decl import process_decl_dbf_file
 from apps.arrival.utils.dbf.tovar import process_tovar_dbf_file
 
@@ -177,3 +178,23 @@ class DeclarationAndItemCreateAPIView(CreateAPIView):
         declarations = Declaration.objects.filter(container=container)
         declaration_serializer = DeclarationSerializer(declarations, many=True)
         return Response(declaration_serializer.data, status=201)
+
+
+class BindDeclarationsToContainerAPIView(APIView):
+    permission_classes = (IsAuthenticated, ArrivalPermission)
+
+    def post(self, request, *args, **kwargs):
+        serializer = DeclarationBindSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        container_id = serializer.validated_data['container_id']
+        declaration_ids = serializer.validated_data['declaration_ids']
+
+        container = get_object_or_404(Container, pk=container_id)
+
+        updated_count = Declaration.objects.filter(id__in=declaration_ids).update(container=container)
+
+        return Response({
+            'status': f'{updated_count} деклараций обновлены',
+            'container_id': container_id,
+            'declaration_ids': declaration_ids
+        })
