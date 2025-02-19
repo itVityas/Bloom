@@ -2,13 +2,13 @@ import os
 from tempfile import NamedTemporaryFile
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from apps.arrival.permissions import ArrivalPermission
 from apps.arrival.models import DeclaredItem
+from apps.arrival.permissions import DeclarationPermission
 from apps.arrival.serializers.declared_item import (
     DeclaredItemSerializer, DeclaredItemFileUploadSerializer
 )
@@ -19,16 +19,16 @@ from apps.arrival.utils.dbf.tovar import process_tovar_dbf_file
 @extend_schema_view(
     get=extend_schema(
         summary='List all items',
-        description='Permissions: isArrivalReader, isArrivalWriter',
+        description='Permission: admin, arrival_reader, declaration_writer',
     ),
     post=extend_schema(
         summary='Upload file to create items',
-        description='Permission: isArrivalWriter',
+        description='Permission: admin, arrival_reader, declaration_writer',
         request=DeclaredItemFileUploadSerializer,
     ),
 )
 class DeclaredItemListCreateAPIView(ListCreateAPIView):
-    permission_classes = (IsAuthenticated, ArrivalPermission)
+    permission_classes = (IsAuthenticated, DeclarationPermission)
     serializer_class = DeclaredItemSerializer
     queryset = DeclaredItem.objects.all()
     filter_backends = (DjangoFilterBackend,)
@@ -85,22 +85,22 @@ class DeclaredItemListCreateAPIView(ListCreateAPIView):
 @extend_schema_view(
     get=extend_schema(
         summary='Get item by id',
-        description='Permissions: isArrivalReader, isArrivalWriter',
+        description='Permission: admin, arrival_reader, declaration_writer',
     ),
     put=extend_schema(
         summary='Update item',
-        description='Permission: isArrivalWriter',
+        description='Permission: admin, arrival_reader, declaration_writer',
     ),
     patch=extend_schema(
         summary='Partial update of item',
-        description='Permission: isArrivalWriter',
+        description='Permission: admin, arrival_reader, declaration_writer',
     ),
     delete=extend_schema(
         summary='Delete item',
-        description='Permission: isArrivalWriter',
+        description='Permission: admin, arrival_reader, declaration_writer',
     ),
 )
 class DeclaredItemDetailedView(RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticated, ArrivalPermission)
+    permission_classes = (IsAuthenticated, DeclarationPermission)
     serializer_class = DeclaredItemSerializer
     queryset = DeclaredItem.objects.all()

@@ -1,23 +1,23 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.generics import (
     ListAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView, RetrieveAPIView
 )
-from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.permissions import IsAuthenticated
 
+from Bloom.paginator import StandartResultPaginator
 from apps.arrival.models import Container
+from apps.arrival.permissions import ContainerPermission
 from apps.arrival.serializers.container import (
     ContainerFullSerializer, ContainerSetSerializer, ContainerAndDeclarationSerializer
 )
-from apps.arrival.permissions import ContainerPermission, ArrivalPermission
-from Bloom.paginator import StandartResultPaginator
 
 
 @extend_schema(tags=['Containers'])
 @extend_schema_view(
     get=extend_schema(
         summary='List all containers',
-        description='Permissions: isAdmin, isArrival, isContainer',
+        description='Permission: admin, arrival_reader, container_writer',
     ),
 )
 class ContainerListView(ListAPIView):
@@ -31,7 +31,7 @@ class ContainerListView(ListAPIView):
 @extend_schema_view(
     post=extend_schema(
         summary='Create container',
-        description='Permissions: isAdmin, isArrival_writer, isContainer',
+        description='Permission: admin, container_writer',
     ),
 )
 class ContainerCreateView(CreateAPIView):
@@ -44,15 +44,15 @@ class ContainerCreateView(CreateAPIView):
 @extend_schema_view(
     put=extend_schema(
         summary='Full update container',
-        description='Permissions: isAdmin, isArrival_writer, isContainer',
+        description='Permission: admin, container_writer',
     ),
     patch=extend_schema(
         summary='Partial update container',
-        description='Permissions: isAdmin, isArrival_writer, isContainer',
+        description='Permission: admin, container_writer',
     ),
     delete=extend_schema(
         summary='Delete container',
-        description='Permissions: isAdmin, isArrival_writer, isContainer',
+        description='Permission: admin, container_writer',
     ),
 )
 class ContainerUpdateView(UpdateAPIView, DestroyAPIView):
@@ -65,11 +65,11 @@ class ContainerUpdateView(UpdateAPIView, DestroyAPIView):
 @extend_schema_view(
     get=extend_schema(
         summary='List all containers with declarations',
-        description='Permissions: isArrivalReader, isArrivalWriter',
+        description='Permission: admin, arrival_reader, container_writer',
     ),
 )
 class ContainerAndDeclarationView(ListAPIView):
-    permission_classes = (IsAuthenticated, ArrivalPermission)
+    permission_classes = (IsAuthenticated, ContainerPermission)
     serializer_class = ContainerAndDeclarationSerializer
     queryset = Container.objects.all()
     filter_backends = (DjangoFilterBackend,)
@@ -81,11 +81,11 @@ class ContainerAndDeclarationView(ListAPIView):
 @extend_schema_view(
     get=extend_schema(
         summary='Retrieve container with declarations',
-        description='Permissions: isArrivalReader, isArrivalWriter',
+        description='Permission: admin, arrival_reader, container_writer',
     ),
 )
 class ContainerAndDeclarationDetailView(RetrieveAPIView):
-    permission_classes = (IsAuthenticated, ArrivalPermission)
+    permission_classes = (IsAuthenticated, ContainerPermission)
     serializer_class = ContainerAndDeclarationSerializer
     queryset = Container.objects.all()
     filter_backends = (DjangoFilterBackend,)

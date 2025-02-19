@@ -2,16 +2,16 @@ import os
 from tempfile import NamedTemporaryFile
 
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView, ListAPIView, CreateAPIView, get_object_or_404
 )
-from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.arrival.permissions import ArrivalPermission
 from apps.arrival.models import Declaration, Container
+from apps.arrival.permissions import DeclarationPermission
 from apps.arrival.serializers.declaration import (
     DeclarationSerializer, DeclarationFileUploadSerializer, DeclarationAndItemSerializer,
     DeclarationAndItemFileUploadSerializer, DeclarationBindSerializer
@@ -24,16 +24,16 @@ from apps.arrival.utils.dbf.tovar import process_tovar_dbf_file
 @extend_schema_view(
     get=extend_schema(
         summary='List all declarations',
-        description='Permissions: isArrivalReader, isArrivalWriter',
+        description='Permission: admin, arrival_reader, declaration_writer',
     ),
     post=extend_schema(
         summary='Upload file to create declarations',
-        description='Permission: isArrivalWriter',
+        description='Permission: admin, declaration_writer',
         request=DeclarationFileUploadSerializer,
     ),
 )
 class DeclarationListCreateAPIView(ListCreateAPIView):
-    permission_classes = (IsAuthenticated, ArrivalPermission)
+    permission_classes = (IsAuthenticated, DeclarationPermission)
     serializer_class = DeclarationSerializer
     queryset = Declaration.objects.all()
     filter_backends = (DjangoFilterBackend,)
@@ -88,23 +88,23 @@ class DeclarationListCreateAPIView(ListCreateAPIView):
 @extend_schema_view(
     get=extend_schema(
         summary='Retrieve declaration by id',
-        description='Permissions: isArrivalReader, isArrivalWriter',
+        description='Permission: admin, arrival_reader, declaration_writer',
     ),
     put=extend_schema(
         summary='Update declaration',
-        description='Permission: isArrivalWriter',
+        description='Permission: admin, declaration_writer',
     ),
     patch=extend_schema(
         summary='Partial update of declaration',
-        description='Permission: isArrivalWriter',
+        description='Permission: admin, declaration_writer',
     ),
     delete=extend_schema(
         summary='Delete declaration',
-        description='Permission: isArrivalWriter',
+        description='Permission: admin, declaration_writer',
     ),
 )
 class DeclarationDetailedView(RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticated, ArrivalPermission)
+    permission_classes = (IsAuthenticated, DeclarationPermission)
     serializer_class = DeclarationSerializer
     queryset = Declaration.objects.all()
 
@@ -113,11 +113,11 @@ class DeclarationDetailedView(RetrieveUpdateDestroyAPIView):
 @extend_schema_view(
     get=extend_schema(
         summary='List all declarations with items',
-        description='Permissions: isArrivalReader, isArrivalWriter',
+        description='Permission: admin, arrival_reader, declaration_writer',
     ),
 )
 class DeclarationAndItemView(ListAPIView):
-    permission_classes = (IsAuthenticated, ArrivalPermission)
+    permission_classes = (IsAuthenticated, DeclarationPermission)
     serializer_class = DeclarationAndItemSerializer
     queryset = Declaration.objects.all()
     filter_backends = (DjangoFilterBackend,)
@@ -129,11 +129,11 @@ class DeclarationAndItemView(ListAPIView):
 @extend_schema_view(
     get=extend_schema(
         summary='Retrieve declaration by id with items',
-        description='Permissions: isArrivalReader, isArrivalWriter',
+        description='Permission: admin, arrival_reader, declaration_writer',
     ),
 )
 class DeclarationAndItemDetailedView(RetrieveAPIView):
-    permission_classes = (IsAuthenticated, ArrivalPermission)
+    permission_classes = (IsAuthenticated, DeclarationPermission)
     serializer_class = DeclarationAndItemSerializer
     queryset = Declaration.objects.all()
 
@@ -142,11 +142,11 @@ class DeclarationAndItemDetailedView(RetrieveAPIView):
 @extend_schema_view(
     post=extend_schema(
         summary='Upload declarations and items files',
-        description='Permission: isArrivalWriter',
+        description='Permission: admin, declaration_writer',
     ),
 )
 class DeclarationAndItemCreateAPIView(CreateAPIView):
-    permission_classes = (IsAuthenticated, ArrivalPermission)
+    permission_classes = (IsAuthenticated, DeclarationPermission)
     serializer_class = DeclarationAndItemFileUploadSerializer
 
     def create(self, request, *args, **kwargs):
@@ -200,11 +200,18 @@ class DeclarationAndItemCreateAPIView(CreateAPIView):
         return Response(declaration_serializer.data, status=201)
 
 
+@extend_schema(tags=['Declarations'])
+@extend_schema_view(
+    post=extend_schema(
+        summary='Binds given declarations to the specified container.',
+        description='Permission: admin, declaration_writer',
+    ),
+)
 class BindDeclarationsToContainerAPIView(APIView):
     """
     Binds given declarations to the specified container.
     """
-    permission_classes = (IsAuthenticated, ArrivalPermission)
+    permission_classes = (IsAuthenticated, DeclarationPermission)
 
     def post(self, request, *args, **kwargs):
         serializer = DeclarationBindSerializer(data=request.data)
