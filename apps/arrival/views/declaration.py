@@ -212,9 +212,10 @@ class BindDeclarationsToContainerAPIView(APIView):
     Binds given declarations to the specified container.
     """
     permission_classes = (IsAuthenticated, DeclarationPermission)
+    serializer_class = DeclarationBindSerializer  # Добавляем это
 
     def post(self, request, *args, **kwargs):
-        serializer = DeclarationBindSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         container_id = serializer.validated_data['container_id']
         declaration_ids = serializer.validated_data['declaration_ids']
