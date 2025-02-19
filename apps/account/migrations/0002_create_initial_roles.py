@@ -28,7 +28,7 @@ def reverse_roles(apps, _schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0004_alter_role_options_alter_user_options_and_more'),
+        ('account', '0001_initial'),
     ]
 
     operations = [
