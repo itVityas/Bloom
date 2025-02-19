@@ -2,18 +2,20 @@ import os
 from tempfile import NamedTemporaryFile
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.generics import (
-    ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView, ListAPIView, CreateAPIView, get_object_or_404)
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework.generics import (
+    ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView, ListAPIView, CreateAPIView, get_object_or_404
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.arrival.permissions import ArrivalPermission
 from apps.arrival.models import Declaration, Container
+from apps.arrival.permissions import DeclarationPermission
 from apps.arrival.serializers.declaration import (
     DeclarationSerializer, DeclarationFileUploadSerializer, DeclarationAndItemSerializer,
-    DeclarationAndItemFileUploadSerializer, DeclarationBindSerializer)
+    DeclarationAndItemFileUploadSerializer, DeclarationBindSerializer
+)
 from apps.arrival.utils.dbf.decl import process_decl_dbf_file
 from apps.arrival.utils.dbf.tovar import process_tovar_dbf_file
 
@@ -21,34 +23,43 @@ from apps.arrival.utils.dbf.tovar import process_tovar_dbf_file
 @extend_schema(tags=['Declarations'])
 @extend_schema_view(
     get=extend_schema(
-        summary='Список всех деклараций',
-        description='isArrivalReader, isArrivalWriter',
+        summary='List all declarations',
+        description='Permission: admin, arrival_reader, declaration_writer',
     ),
     post=extend_schema(
-        summary='Загрузить файл для создания декларации',
-        description='isArrivalWriter',
+        summary='Upload file to create declarations',
+        description='Permission: admin, declaration_writer',
         request=DeclarationFileUploadSerializer,
     ),
 )
 class DeclarationListCreateAPIView(ListCreateAPIView):
-    permission_classes = (IsAuthenticated, ArrivalPermission)
+    permission_classes = (IsAuthenticated, DeclarationPermission)
     serializer_class = DeclarationSerializer
     queryset = Declaration.objects.all()
     filter_backends = (DjangoFilterBackend,)
-    filerset_fields = ('order', 'declaration_id')
+    filterset_fields = ('container', 'declaration_id')
     pagination_class = None
 
     def get_serializer_class(self):
+        """
+        Return the appropriate serializer class based on the request method.
+        """
         if self.request.method == 'POST':
             return DeclarationFileUploadSerializer
         return DeclarationSerializer
 
     def create(self, request, *args, **kwargs):
+        """
+        Handles file upload and processes the DBF file to create Declaration instances.
+        """
         uploaded_file = request.FILES.get('file')
         if not uploaded_file:
-            return Response({'error': 'File not found. '
-                             'Please pass file with key "file".'}, status=400)
+            return Response(
+                {'error': 'File not found. Please pass file with key "file".'},
+                status=400
+            )
 
+        tmp_file_path = None
         try:
             with NamedTemporaryFile(delete=False, suffix=".dbf") as tmp_file:
                 for chunk in uploaded_file.chunks():
@@ -58,38 +69,42 @@ class DeclarationListCreateAPIView(ListCreateAPIView):
             process_decl_dbf_file(tmp_file_path)
 
         except Exception as e:
-            return Response({'error': f'Ошибка обработки файла: {str(e)}'},
-                            status=500)
+            return Response(
+                {'error': f'File processing error: {str(e)}'},
+                status=500
+            )
 
         finally:
-            if os.path.exists(tmp_file_path):
+            if tmp_file_path and os.path.exists(tmp_file_path):
                 os.remove(tmp_file_path)
 
-        return Response({'status': 'Файл обработан и декларации созданы.'},
-                        status=201)
+        return Response(
+            {'status': 'File processed and declarations created.'},
+            status=201
+        )
 
 
 @extend_schema(tags=['Declarations'])
 @extend_schema_view(
     get=extend_schema(
-        summary='Получить декларацию по id',
-        description='isArrivalReader, isArrivalWriter',
+        summary='Retrieve declaration by id',
+        description='Permission: admin, arrival_reader, declaration_writer',
     ),
     put=extend_schema(
-        summary='Обновить декларацию',
-        description='isArrivalWritter',
+        summary='Update declaration',
+        description='Permission: admin, declaration_writer',
     ),
     patch=extend_schema(
-        summary='Частичное обновление декларации',
-        description='isArrivalWriter'
+        summary='Partial update of declaration',
+        description='Permission: admin, declaration_writer',
     ),
     delete=extend_schema(
-        summary='Удалить декларацию',
-        description='isArrivalWriter',
+        summary='Delete declaration',
+        description='Permission: admin, declaration_writer',
     ),
 )
 class DeclarationDetailedView(RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticated, ArrivalPermission)
+    permission_classes = (IsAuthenticated, DeclarationPermission)
     serializer_class = DeclarationSerializer
     queryset = Declaration.objects.all()
 
@@ -97,46 +112,48 @@ class DeclarationDetailedView(RetrieveUpdateDestroyAPIView):
 @extend_schema(tags=['Declarations'])
 @extend_schema_view(
     get=extend_schema(
-        summary='Список всех деклараций с товарами',
-        description='isArrivalReader, isArrivalWriter',
+        summary='List all declarations with items',
+        description='Permission: admin, arrival_reader, declaration_writer',
     ),
 )
 class DeclarationAndItemView(ListAPIView):
-    permission_classes = (IsAuthenticated, ArrivalPermission)
+    permission_classes = (IsAuthenticated, DeclarationPermission)
     serializer_class = DeclarationAndItemSerializer
     queryset = Declaration.objects.all()
     filter_backends = (DjangoFilterBackend,)
-    filerset_fields = ('order',)
+    filterset_fields = ('container',)
     pagination_class = None
 
 
 @extend_schema(tags=['Declarations'])
 @extend_schema_view(
     get=extend_schema(
-        summary='Получить декларацию по id с товарами',
-        description='isArrivalReader, isArrivalWriter',
+        summary='Retrieve declaration by id with items',
+        description='Permission: admin, arrival_reader, declaration_writer',
     ),
 )
 class DeclarationAndItemDetailedView(RetrieveAPIView):
-    permission_classes = (IsAuthenticated, ArrivalPermission)
+    permission_classes = (IsAuthenticated, DeclarationPermission)
     serializer_class = DeclarationAndItemSerializer
     queryset = Declaration.objects.all()
-
-
 
 
 @extend_schema(tags=['Declarations'])
 @extend_schema_view(
     post=extend_schema(
-        summary='Загрузить файл деклараций и товаров',
-        description='isArrivalWriter',
+        summary='Upload declarations and items files',
+        description='Permission: admin, declaration_writer',
     ),
 )
 class DeclarationAndItemCreateAPIView(CreateAPIView):
-    permission_classes = (IsAuthenticated, ArrivalPermission)
+    permission_classes = (IsAuthenticated, DeclarationPermission)
     serializer_class = DeclarationAndItemFileUploadSerializer
 
     def create(self, request, *args, **kwargs):
+        """
+        Handles file uploads for declarations and items, processes both DBF files,
+        and associates the declarations with the specified container.
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         container_id = serializer.validated_data.get('container_id')
@@ -150,6 +167,9 @@ class DeclarationAndItemCreateAPIView(CreateAPIView):
                 {'error': 'File not found. Please pass files with keys "decl_file" and "tovar_file".'},
                 status=400
             )
+
+        decl_tmp_file_path = None
+        tovar_tmp_file_path = None
 
         try:
             with NamedTemporaryFile(delete=False, suffix=".dbf") as tmp_file:
@@ -166,13 +186,13 @@ class DeclarationAndItemCreateAPIView(CreateAPIView):
             process_tovar_dbf_file(tovar_tmp_file_path)
 
         except Exception as e:
-            return Response({'error': f'Ошибка обработки файла: {str(e)}'},
+            return Response({'error': f'File processing error: {str(e)}'},
                             status=500)
 
         finally:
-            if os.path.exists(decl_tmp_file_path):
+            if decl_tmp_file_path and os.path.exists(decl_tmp_file_path):
                 os.remove(decl_tmp_file_path)
-            if os.path.exists(tovar_tmp_file_path):
+            if tovar_tmp_file_path and os.path.exists(tovar_tmp_file_path):
                 os.remove(tovar_tmp_file_path)
 
         declarations = Declaration.objects.filter(container=container)
@@ -180,8 +200,18 @@ class DeclarationAndItemCreateAPIView(CreateAPIView):
         return Response(declaration_serializer.data, status=201)
 
 
+@extend_schema(tags=['Declarations'])
+@extend_schema_view(
+    post=extend_schema(
+        summary='Binds given declarations to the specified container.',
+        description='Permission: admin, declaration_writer',
+    ),
+)
 class BindDeclarationsToContainerAPIView(APIView):
-    permission_classes = (IsAuthenticated, ArrivalPermission)
+    """
+    Binds given declarations to the specified container.
+    """
+    permission_classes = (IsAuthenticated, DeclarationPermission)
 
     def post(self, request, *args, **kwargs):
         serializer = DeclarationBindSerializer(data=request.data)
@@ -194,7 +224,7 @@ class BindDeclarationsToContainerAPIView(APIView):
         updated_count = Declaration.objects.filter(id__in=declaration_ids).update(container=container)
 
         return Response({
-            'status': f'{updated_count} деклараций обновлены',
+            'status': f'{updated_count} declarations updated.',
             'container_id': container_id,
             'declaration_ids': declaration_ids
         })

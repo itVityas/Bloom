@@ -1,20 +1,26 @@
 from django.db import models
 
 
-# Create your models here.
 class Order(models.Model):
+    """
+    Model representing an order.
+    """
     name = models.CharField(max_length=100)
 
     class Meta:
         ordering = ['-id']
 
     def __str__(self):
+        """Return the string representation of the Order."""
         return self.name
 
 
 class Container(models.Model):
+    """
+    Model representing a container.
+    """
     order = models.ForeignKey(
-        Order, on_delete=models.SET_NULL, null=True, blank=True, related_name='order'
+        Order, on_delete=models.SET_NULL, null=True, blank=True, related_name='containers'
     )
     name = models.CharField(max_length=30)
     suppose_date = models.DateField()
@@ -28,163 +34,169 @@ class Container(models.Model):
         ordering = ['-id']
 
     def __str__(self):
+        """Return the string representation of the Container."""
         return self.name
 
 
 class Content(models.Model):
+    """
+    Model representing content associated with a container.
+    """
     name = models.CharField(max_length=100)
     shot_name = models.CharField(max_length=30)
     count = models.PositiveIntegerField()
-    container = models.ForeignKey(Container, on_delete=models.CASCADE)
+    container = models.ForeignKey(
+        Container, on_delete=models.CASCADE, related_name='contents'
+    )
 
     class Meta:
         ordering = ['-id']
 
     def __str__(self):
+        """Return the string representation of the Content."""
         return self.shot_name
 
 
 class Declaration(models.Model):
-    # Порядок полей соответствует порядку столбцов в DBF
-
-    # Внешний ключ (не из DBF)
+    """
+    Model representing a customs declaration.
+    The order of fields corresponds to the column order in the DBF file.
+    """
+    # Foreign key (not from DBF)
     container = models.ForeignKey(
-        Container, on_delete=models.SET_NULL, null=True, blank=True, related_name='container'
+        Container, on_delete=models.SET_NULL, null=True, blank=True, related_name='declarations'
     )
 
-    # G011 / Код типа таможенной декларации
+    # G011 / Customs declaration type code
     type_code = models.CharField(max_length=3)
-    # G012_1 / Вид таможенной декларации
+    # G012_1 / Type of customs declaration
     type = models.CharField(max_length=3)
-    # G022 / Компания отправитель
+    # G022 / Sender company name
     sender = models.CharField(max_length=38)
-    # G023 / Адрес компании отправителя
+    # G023 / Sender company address
     sender_address = models.CharField(max_length=250)
-    # G20 / Краткое наименование условия поставки
+    # G20 / Delivery terms short name
     delivery_terms = models.CharField(max_length=3)
-    # G21 (пропущено, так как нет данных)
-    # G05 / Общее количество наименований товаров
+    # G05 / Total number of item types
     item_count = models.IntegerField()
-    # G082 / Получатель
+    # G082 / Receiver
     receiver = models.CharField(max_length=38)
-    # G083 / Адрес получателя
+    # G083 / Receiver address
     receiver_address = models.CharField(max_length=250)
-    # G15A / Код страны отправления
+    # G15A / Sender country code
     sender_country_code = models.CharField(max_length=3)
-    # G15A_0 / Буквенный код страны
+    # G15A_0 / Sender alpha country code
     sender_alpha_country_code = models.CharField(max_length=2)
-    # G15A_1 / ???(000 в примере)
+    # G15A_1 / Additional sender country code information
     g15A_1 = models.CharField(max_length=4)
-    # G17A, G17A_0, G17A_1 (пропущены, так как нет данных)
-    # G221 / Код валюты платежа
+    # G221 / Payment currency code
     payment_currency_code = models.CharField(max_length=3)
-    # G222 / Общая фактурная стоимость
+    # G222 / Total invoice cost
     total_cost = models.DecimalField(max_digits=19, decimal_places=4)
-    # G23 / Курс иностранной валюты
+    # G23 / Foreign currency rate
     currency_rate = models.DecimalField(max_digits=19, decimal_places=4)
-    # G241 / Код внешнеэкономической операции
+    # G241 / Foreign economic operation code
     foreign_economic_code = models.CharField(max_length=2)
-    # G242 / Код вида расчета по сделке
+    # G242 / Payment type code for the deal
     payment_type_code = models.CharField(max_length=3)
-    # G542 / Дата представления ЭГТД
+    # G542 / Provision date for EGD
     provision_date = models.DateField()
-    # GBN / Количество записей в файле GB.dbf
+    # GBN / Count of records in GB.dbf file
     paid_payment_details_count = models.SmallIntegerField()
-    # DECL_ID / ID декларации из таможни
+    # DECL_ID / Unique declaration ID from customs
     declaration_id = models.IntegerField(unique=True)
-    # NOM_REG / Регистрационный номер
+    # NOM_REG / Declaration number (registration number)
     declaration_number = models.CharField(max_length=18)
-    # GA / Номер свидетельства, номер разрешения
+    # GA / Permit number or certificate number
     permit_number = models.CharField(max_length=23)
-    # G16 / Страна происхождения товаров
+    # G16 / Country of origin for goods
     country_name = models.CharField(max_length=17)
-    # GE_A12, GE_A11, G142 (пропущены)
-    # G545 / Должность работника
+    # G545 / Declarant's position
     declarant_position = models.CharField(max_length=250)
-    # G546 / ФИО работника
+    # G546 / Declarant's full name
     declarant_FIO = models.CharField(max_length=250)
-    # DOCUMENTID / Уникальный номер документа
+    # DOCUMENTID / Unique document identifier
     document_id = models.CharField(max_length=36)
-    # G15 / Краткое наименование страны отправления
+    # G15 / Sender country short name
     sender_country_name = models.CharField(max_length=17)
-    # G544 / Исходящий номер в делах заявителя
+    # G544 / Outgoing number in applicant's files
     outgoing_number = models.CharField(max_length=50)
-    # G47_KD / Курс доллара
+    # G47_KD / Dollar rate
     dollar_rate = models.DecimalField(max_digits=19, decimal_places=4)
-    # G47_KS / Курс евро
+    # G47_KS / Euro rate
     euro_rate = models.DecimalField(max_digits=19, decimal_places=4)
-    # DATEC / Дата декларации
+    # DATEC / Declaration date
     declaration_date = models.DateField()
-    # G013 / Код вида таможенного разрешения
+    # G013 / Permit code for customs authorization
     permit_code = models.CharField(max_length=3)
-    # G031, FORWCODE, FORWNAME, CONTRACT, COST, ST_CODE, ST_NAME,
-    # ADD_INFO, VID_CORR, CODE_CORR (пропущены)
-
-    def __str__(self):
-        return self.declaration_number or "Unnamed Declaration"
 
     class Meta:
         ordering = ['-id']
 
+    def __str__(self):
+        """Return the string representation of the Declaration."""
+        return self.declaration_number or "Unnamed Declaration"
+
 
 class DeclaredItem(models.Model):
-    declaration_id = models.ForeignKey(
+    """
+    Model representing an item declared in a customs declaration.
+    Field names correspond to the columns from the DBF file.
+    """
+    # DECL_ID / Customs declaration number (FK)
+    declaration = models.ForeignKey(
         Declaration, on_delete=models.CASCADE, related_name='declared_items'
     )
-
-    # G312 / Коммерческое или контрактное наименование товара
+    # G312 / Commercial or contract item name
     name = models.CharField(max_length=250)
-    # G314 / пропущен
-    # G32 / Номер товара
+    # G32 / Item ordinal number
     ordinal_number = models.IntegerField()
-    # G34 / Код страны происхождения товара
+    # G34 / Country code of origin for the item
     country_code = models.CharField(max_length=3)
-    # G34A / Буквенный код страны происхождения товара
+    # G34A / Alpha country code of origin for the item
     alpha_country_code = models.CharField(max_length=3)
-    # G38 / Брутто. Вес нетто в кг
+    # G38 / Gross weight in kg (net weight in kg for some cases)
     gross_weight = models.FloatField()
-    # G41 / Количество товара в доп единицах измерения
+    # G41 / Quantity in additional measurement units
     quantity = models.FloatField(null=True, blank=True)
-    # G41A / Код доп единицы измерения
+    # G41A / Code for additional measurement unit
     unit_code = models.CharField(max_length=10, null=True, blank=True)
-    # G41B / Наименование доп единицы измерения
+    # G41B / Name of additional measurement unit
     unit_name = models.CharField(max_length=20, null=True, blank=True)
-    # G42 / Фактурная стоимость товара в валюте платежа, указанной в поле G221 в файле DECL.DBF(payment_currency_code)
+    # G42 / Invoice cost in payment currency as specified in G221
     cost = models.DecimalField(max_digits=19, decimal_places=4)
-    # G46 / Статистическая стоимость товара в долларах США
+    # G46 / Statistical cost in USD
     statistical_cost = models.DecimalField(max_digits=19, decimal_places=4)
-    # G47N / Связан с файлом G47.DBF, для чего не знаю
+    # G47N / Payment details count (related to G47.DBF)
     payment_details_count = models.IntegerField()
-    # G44N / Количество записей в файле G44.DBF
+    # G44N / Count of records in G44.DBF file
     document_details_count = models.IntegerField()
-    # DECL_ID / номер декларации
-    declaration = models.IntegerField()
-    # G33 / Код товара по ТН ВЭД
+    # G33 / Customs tariff code (HS code)
     code = models.CharField(max_length=50)
-    # G16 / Страна происхождения товаров, заявленных в ЭГТД
+    # G16 / Country of origin as declared in the EGD
     country_name = models.CharField(max_length=17)
-    # G37 / ??
+    # G37 / Additional field (meaning unclear)
     g37 = models.CharField(max_length=2)
-    # G38A / Чистый вес нетто в кг
+    # G38A / Net weight in kg
     net_weight = models.FloatField()
-    # G372 / Код предшествующего таможенного режима, установленного ранее таможенным органом в отношении товара
+    # G372 / Code for the previous customs regime
     previous_customs_regime_code = models.CharField(max_length=2)
-    # G373 / ???
+    # G373 / Additional field (meaning unclear)
     g373 = models.CharField(max_length=3)
-    # G45 / Таможенная стоимость товара в белорусских рублях
+    # G45 / Customs cost in local currency
     customs_cost = models.DecimalField(max_digits=19, decimal_places=4)
-    # G31STZ / ???
+    # G31STZ / Additional field (meaning unclear)
     g31stz = models.CharField(max_length=50)
-    # G311STZ / ???
+    # G311STZ / Additional field (meaning unclear)
     g311stz = models.CharField(max_length=3)
-    # G312STZ / ???
+    # G312STZ / Additional field (meaning unclear)
     g312STZ = models.CharField(max_length=13)
-    # G15, G15A, G15A_0, G15A_1 / пропущены
-    # G17, G17A, G17A_0, G17A_1 / пропущены
-    # CODE_CORR / пропущен
-    # G43 / Метод определения таможенной стоимости
+    # G43 / Valuation method code for customs cost determination
     valuation_method = models.CharField(max_length=2)
-    # G21_A, G21_0, G21_1 / пропущены
+
+    class Meta:
+        ordering = ['-id']
 
     def __str__(self):
+        """Return the string representation of the DeclaredItem."""
         return f'{self.declaration} - {self.ordinal_number}'

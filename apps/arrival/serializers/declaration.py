@@ -4,31 +4,45 @@ from apps.arrival.serializers.declared_item import DeclaredItemSerializer
 
 
 class DeclarationSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Declaration model.
+    """
     class Meta:
         model = Declaration
         fields = '__all__'
 
 
 class DeclarationFileUploadSerializer(serializers.Serializer):
+    """
+    Serializer for file upload to create Declarations.
+    """
     file = serializers.FileField()
 
 
 class DeclarationAndItemSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Declaration with related DeclaredItems.
+    """
+    declared_items = DeclaredItemSerializer(many=True, read_only=True)
 
     class Meta:
         model = Declaration
         fields = '__all__'
 
-    declared_items = DeclaredItemSerializer(many=True, read_only=True)
-
 
 class DeclarationAndItemFileUploadSerializer(serializers.Serializer):
+    """
+    Serializer for file upload to create Declarations and DeclaredItems.
+    """
     decl_file = serializers.FileField()
     tovar_file = serializers.FileField()
     container_id = serializers.IntegerField()
 
 
 class DeclarationBindSerializer(serializers.Serializer):
+    """
+    Serializer for binding declarations to a container.
+    """
     container_id = serializers.IntegerField()
     declaration_ids = serializers.ListField(
         child=serializers.IntegerField(),
