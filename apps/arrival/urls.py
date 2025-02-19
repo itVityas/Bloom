@@ -26,6 +26,14 @@ urlpatterns = [
     path('order_and_container/', OrderAndContainerListView.as_view(), name='order-and-container-list'),
     path('order_and_container/<int:pk>/', OrderAndContainerDetailView.as_view(), name='order-and-container-detail'),
 
+    # Container endpoints
+    path('container/', ContainerListView.as_view(), name='container-list'),
+    path('container/create/', ContainerCreateView.as_view(), name='container-create'),
+    path('container/detailed/<int:pk>/', ContainerUpdateView.as_view(), name='container-update'),
+    path('container_and_declaration/', ContainerAndDeclarationView.as_view(), name='container-and-declaration-list'),
+    path('container_and_declaration/<int:pk>/', ContainerAndDeclarationDetailView.as_view(),
+         name='container-and-declaration-detail'),
+
     # Declaration endpoints
     path('declaration/', DeclarationListCreateAPIView.as_view(), name='declaration-list'),
     path('declaration/detailed/<int:pk>/', DeclarationDetailedView.as_view(), name='declaration-detail'),
@@ -41,11 +49,4 @@ urlpatterns = [
     # Content endpoints
     path('content/', ContentListView.as_view(), name='content-list'),
     path('content/detailed/<int:pk>/', ContentDetailView.as_view(), name='content-detail'),
-
-    # Container endpoints
-    path('container/', ContainerListView.as_view(), name='container-list'),
-    path('container/create/', ContainerCreateView.as_view(), name='container-create'),
-    path('container/detailed/<int:pk>/', ContainerUpdateView.as_view(), name='container-update'),
-    path('container_and_declaration/', ContainerAndDeclarationView.as_view(), name='container-and-declaration-list'),
-    path('container_and_declaration/<int:pk>/', ContainerAndDeclarationDetailView.as_view(), name='container-and-declaration-detail'),
 ]
