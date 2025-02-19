@@ -1,12 +1,14 @@
 from rest_framework.generics import (
-    ListAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView, RetrieveAPIView)
+    ListAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView, RetrieveAPIView
+)
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.arrival.models import Order
 from apps.arrival.serializers.order import (
-    OrderSerializer, OrderListSerializer, OrderWithContainerSerializer)
+    OrderSerializer, OrderListSerializer, OrderWithContainerSerializer
+)
 from apps.arrival.permissions import ArrivalPermission
 from Bloom.paginator import StandartResultPaginator
 
@@ -14,8 +16,8 @@ from Bloom.paginator import StandartResultPaginator
 @extend_schema(tags=['Orders'])
 @extend_schema_view(
     post=extend_schema(
-        summary='Создать заказ',
-        description='isArrivalWriter',
+        summary='Create order',
+        description='Permission: isArrivalWriter',
     ),
 )
 class OrderCreateAPIView(CreateAPIView):
@@ -27,8 +29,8 @@ class OrderCreateAPIView(CreateAPIView):
 @extend_schema(tags=['Orders'])
 @extend_schema_view(
     get=extend_schema(
-        summary='Список всех заказов',
-        description='isArrivalReader, isArrivalWriter',
+        summary='List all orders',
+        description='Permissions: isArrivalReader, isArrivalWriter',
     ),
 )
 class OrderListView(ListAPIView):
@@ -43,20 +45,20 @@ class OrderListView(ListAPIView):
 @extend_schema(tags=['Orders'])
 @extend_schema_view(
     get=extend_schema(
-        summary='Получить заказ по id',
-        description='isArrivalReader, isArrivalWriter',
+        summary='Retrieve order by ID',
+        description='Permissions: isArrivalReader, isArrivalWriter',
     ),
     put=extend_schema(
-        summary='Обновить заказ',
-        description='isArrivalWritter',
+        summary='Update order',
+        description='Permission: isArrivalWriter',
     ),
     patch=extend_schema(
-        summary='Частичное обновление заказа',
-        description='isArrivalWriter'
+        summary='Partial update order',
+        description='Permission: isArrivalWriter',
     ),
     delete=extend_schema(
-        summary='Удалить заказ',
-        description='isArrivalWriter',
+        summary='Delete order',
+        description='Permission: isArrivalWriter',
     ),
 )
 class OrderDetailedView(RetrieveUpdateDestroyAPIView):
@@ -68,8 +70,8 @@ class OrderDetailedView(RetrieveUpdateDestroyAPIView):
 @extend_schema(tags=['Orders'])
 @extend_schema_view(
     get=extend_schema(
-        summary='Список всех заказов c контейнерами',
-        description='isArrivalReader, isArrivalWriter',
+        summary='List all orders with containers',
+        description='Permissions: isArrivalReader, isArrivalWriter',
     ),
 )
 class OrderAndContainerListView(ListAPIView):
@@ -84,8 +86,8 @@ class OrderAndContainerListView(ListAPIView):
 @extend_schema(tags=['Orders'])
 @extend_schema_view(
     get=extend_schema(
-        summary='Pаказ c контейнерами',
-        description='isArrivalReader, isArrivalWriter',
+        summary='Retrieve order with containers',
+        description='Permissions: isArrivalReader, isArrivalWriter',
     ),
 )
 class OrderAndContainerDetailView(RetrieveAPIView):

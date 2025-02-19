@@ -4,7 +4,10 @@ from apps.arrival.models import Declaration
 
 def dbf_to_dict(record):
     """
-    Принимает строку из dbf файла и записывает их в словарь.
+    Converts a DBF record into a dictionary mapping suitable for the Declaration model.
+
+    :param record: A record from the DBF file.
+    :return: A dictionary containing Declaration field values.
     """
     data = {
         'type_code': clean_str(record.G011),
@@ -44,48 +47,52 @@ def dbf_to_dict(record):
 
 def list_of_dict_dbf_records(records):
     """
-    Создает список из словарей для последующего записи в бд
+    Creates a list of dictionaries for subsequent database insertion.
+
+    :param records: Iterable of DBF records.
+    :return: List of dictionaries.
     """
-    declarations_data = []
-    for record in records:
-        record = dbf_to_dict(record)
-        declarations_data.append(record)
-    return declarations_data
+    return [dbf_to_dict(record) for record in records]
 
 
 def save_declaration_to_db(declarations_data):
     """
-    Принимает список словарей с данными деклараций,
-    создает экземпляры модели Declaration и сохраняет их через bulk_create.
+    Accepts a list of dictionaries with Declaration data, creates Declaration instances,
+    and saves them using bulk_create.
+
+    :param declarations_data: List of dictionaries with Declaration field values.
+    :raises Exception: If any declaration already exists or if no data is provided.
     """
     declarations = []
-    declarations_exist = []
+    duplicate_ids = []
 
     for data in declarations_data:
-        if not Declaration.objects.filter(declaration_id=data['declaration_id']).exists():
-            declarations.append(Declaration(**data))
+        if Declaration.objects.filter(declaration_id=data['declaration_id']).exists():
+            duplicate_ids.append(data['declaration_id'])
         else:
-            declarations_exist.append(data['declaration_id'])
+            declarations.append(Declaration(**data))
 
-    if declarations_exist:
-        raise Exception(f"Declarations {declarations_exist} already exists")
+    if duplicate_ids:
+        raise Exception(f"Declarations with declaration_ids {duplicate_ids} already exist.")
     elif declarations:
         Declaration.objects.bulk_create(declarations)
-        print(f"Save {len(declarations)} declarations to db.")
     else:
-        raise Exception("No data to save")
+        raise Exception("No data to save.")
 
 
 def process_decl_dbf_file(file_path, container=None):
     """
-    Общая функция для обработки dbf файла
+    Main function for processing a DBF file containing Declaration data.
+
+    :param file_path: Path to the DBF file.
+    :param container: Optional container instance to associate with each declaration.
+    :raises Exception: Propagates any exceptions encountered during processing.
     """
-    try:
-        records = read_dbf_records(file_path)
-        list_declarations = list_of_dict_dbf_records(records)
-        if container:
-            for data in list_declarations:
-                data['container'] = container
-        save_declaration_to_db(list_declarations)
-    except Exception as e:
-        raise e
+    records = read_dbf_records(file_path)
+    list_declarations = list_of_dict_dbf_records(records)
+
+    if container:
+        for data in list_declarations:
+            data['container'] = container
+
+    save_declaration_to_db(list_declarations)

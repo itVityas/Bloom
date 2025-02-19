@@ -1,80 +1,74 @@
 from rest_framework.permissions import BasePermission
 
 
-class ArrivalPermission(BasePermission):
+class RoleBasedPermission(BasePermission):
+    """
+    Base permission class for role-based access.
+    Child classes should define the allowed roles for GET requests (allowed_roles_get)
+    and for non-GET requests (allowed_roles_other).
+    """
+    allowed_roles_get = set()
+    allowed_roles_other = set()
+
     def has_permission(self, request, view):
         user = request.user
-        user_roles = [user_role.role.name for user_role in user.userroles_set.all()]
+        # Get set of role names assigned to the user.
+        user_roles = {user_role.role.name for user_role in user.userroles_set.all()}
 
         if request.method == 'GET':
-            allowed_roles = {'admin', 'arrival_reader'}
+            allowed_roles = self.allowed_roles_get
         else:
-            allowed_roles = {'admin'}
+            allowed_roles = self.allowed_roles_other
 
-        if allowed_roles.intersection(user_roles):
-            return True
-        return False
-
-
-class OrderPermission(BasePermission):
-    def has_permission(self, request, view):
-        user = request.user
-        user_roles = [user_role.role.name for user_role in user.userroles_set.all()]
-
-        if request.method == 'GET':
-            allowed_roles = {'admin', 'arrival_reader', 'order_writer'}
-        else:
-            allowed_roles = {'admin',  'order_writer'}
-
-        if allowed_roles.intersection(user_roles):
-            return True
-
-        return False
+        # Return True if there is any intersection between user roles and allowed roles.
+        return bool(user_roles.intersection(allowed_roles))
 
 
-class ContainerPermission(BasePermission):
-    def has_permission(self, request, view):
-        user = request.user
-        user_roles = [user_role.role.name for user_role in user.userroles_set.all()]
-
-        if request.method == 'GET':
-            allowed_roles = {'admin', 'arrival_reader', 'container_writer'}
-        else:
-            allowed_roles = {'admin',  'container_writer'}
-
-        if allowed_roles.intersection(user_roles):
-            return True
-
-        return False
+class ArrivalPermission(RoleBasedPermission):
+    """
+    Permission for arrival operations.
+    - GET: Allowed for 'admin' and 'arrival_reader'.
+    - Other methods: Allowed only for 'admin'.
+    """
+    allowed_roles_get = {'admin', 'arrival_reader'}
+    allowed_roles_other = {'admin'}
 
 
-class DeclarationPermission(BasePermission):
-    def has_permission(self, request, view):
-        user = request.user
-        user_roles = [user_role.role.name for user_role in user.userroles_set.all()]
-
-        if request.method == 'GET':
-            allowed_roles = {'admin', 'arrival_reader', 'declaration_writer'}
-        else:
-            allowed_roles = {'admin', 'declaration_writer'}
-
-        if allowed_roles.intersection(user_roles):
-            return True
-
-        return False
+class OrderPermission(RoleBasedPermission):
+    """
+    Permission for order operations.
+    - GET: Allowed for 'admin', 'arrival_reader' and 'order_writer'.
+    - Other methods: Allowed for 'admin' and 'order_writer'.
+    """
+    allowed_roles_get = {'admin', 'arrival_reader', 'order_writer'}
+    allowed_roles_other = {'admin', 'order_writer'}
 
 
-class ContentPermission(BasePermission):
-    def has_permission(self, request, view):
-        user = request.user
-        user_roles = [user_role.role.name for user_role in user.userroles_set.all()]
+class ContainerPermission(RoleBasedPermission):
+    """
+    Permission for container operations.
+    - GET: Allowed for 'admin', 'arrival_reader' and 'container_writer'.
+    - Other methods: Allowed for 'admin' and 'container_writer'.
+    """
+    allowed_roles_get = {'admin', 'arrival_reader', 'container_writer'}
+    allowed_roles_other = {'admin', 'container_writer'}
 
-        if request.method == 'GET':
-            allowed_roles = {'admin', 'arrival_reader', 'content_writer'}
-        else:
-            allowed_roles = {'admin', 'content_writer'}
 
-        if allowed_roles.intersection(user_roles):
-            return True
+class DeclarationPermission(RoleBasedPermission):
+    """
+    Permission for declaration operations.
+    - GET: Allowed for 'admin', 'arrival_reader' and 'declaration_writer'.
+    - Other methods: Allowed for 'admin' and 'declaration_writer'.
+    """
+    allowed_roles_get = {'admin', 'arrival_reader', 'declaration_writer'}
+    allowed_roles_other = {'admin', 'declaration_writer'}
 
-        return False
+
+class ContentPermission(RoleBasedPermission):
+    """
+    Permission for content operations.
+    - GET: Allowed for 'admin', 'arrival_reader' and 'content_writer'.
+    - Other methods: Allowed for 'admin' and 'content_writer'.
+    """
+    allowed_roles_get = {'admin', 'arrival_reader', 'content_writer'}
+    allowed_roles_other = {'admin', 'content_writer'}

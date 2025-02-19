@@ -1,5 +1,4 @@
-from rest_framework.generics import (
-    ListCreateAPIView, RetrieveUpdateDestroyAPIView)
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.permissions import IsAuthenticated
 
@@ -13,14 +12,17 @@ from Bloom.paginator import StandartResultPaginator
 @extend_schema_view(
     get=extend_schema(
         summary='List all contents',
-        description='isAdmin, isArrival, isContainer',
+        description='Permissions: isAdmin, isArrival, isContainer',
     ),
     post=extend_schema(
         summary='Create content',
-        description='isAdmin, isArrival_writter, isContainer',
+        description='Permissions: isAdmin, isArrival_writer, isContainer',
     ),
 )
 class ContentListView(ListCreateAPIView):
+    """
+    View to list all Content instances or create a new one.
+    """
     permission_classes = (IsAuthenticated, ContainerPermission)
     serializer_class = ContentSerializer
     queryset = Content.objects.all()
@@ -31,22 +33,25 @@ class ContentListView(ListCreateAPIView):
 @extend_schema_view(
     get=extend_schema(
         summary='Detailed content',
-        description='isAdmin, isArrival, isContainer',
+        description='Permissions: isAdmin, isArrival, isContainer',
     ),
     put=extend_schema(
         summary='Full update content',
-        description='isAdmin, isArrival_writter, isContainer',
+        description='Permissions: isAdmin, isArrival_writer, isContainer',
     ),
     patch=extend_schema(
-        summary='Part update content',
-        description='isAdmin, isArrival_writter, isContainer',
+        summary='Partial update content',
+        description='Permissions: isAdmin, isArrival_writer, isContainer',
     ),
     delete=extend_schema(
         summary='Delete content',
-        description='isAdmin, isArrival_writter, isContainer',
+        description='Permissions: isAdmin, isArrival_writer, isContainer',
     ),
 )
 class ContentDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    View to retrieve, update or delete a Content instance.
+    """
     permission_classes = (IsAuthenticated, ContainerPermission)
     serializer_class = ContentSerializer
     queryset = Content.objects.all()
