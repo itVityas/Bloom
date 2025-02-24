@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.arrival.filters import DeclarationFilter
 from apps.arrival.models import Declaration, Container
 from apps.arrival.permissions import DeclarationPermission
 from apps.arrival.serializers.declaration import (
@@ -37,7 +38,7 @@ class DeclarationListCreateAPIView(ListCreateAPIView):
     serializer_class = DeclarationSerializer
     queryset = Declaration.objects.all()
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('container', 'declaration_id')
+    filterset_class = DeclarationFilter
     pagination_class = None
 
     def get_serializer_class(self):
@@ -203,13 +204,15 @@ class DeclarationAndItemCreateAPIView(CreateAPIView):
 @extend_schema(tags=['Declarations'])
 @extend_schema_view(
     post=extend_schema(
-        summary='Binds given declarations to the specified container.',
+        summary='Binds or unbinds given declarations to the specified container.',
         description='Permission: admin, declaration_writer',
     ),
 )
 class BindDeclarationsToContainerAPIView(APIView):
     """
     Binds given declarations to the specified container.
+
+    If 'container_id' is null, the declarations are unbound (container set to None).
     """
     permission_classes = (IsAuthenticated, DeclarationPermission)
     serializer_class = DeclarationBindSerializer
@@ -217,10 +220,13 @@ class BindDeclarationsToContainerAPIView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        container_id = serializer.validated_data['container_id']
+        container_id = serializer.validated_data.get('container_id')
         declaration_ids = serializer.validated_data['declaration_ids']
 
-        container = get_object_or_404(Container, pk=container_id)
+        if container_id is not None:
+            container = get_object_or_404(Container, pk=container_id)
+        else:
+            container = None
 
         updated_count = Declaration.objects.filter(id__in=declaration_ids).update(container=container)
 
