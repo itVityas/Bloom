@@ -42,8 +42,10 @@ class DeclarationAndItemFileUploadSerializer(serializers.Serializer):
 class DeclarationBindSerializer(serializers.Serializer):
     """
     Serializer for binding declarations to a container.
+
+    If 'container_id' is null, declarations will be unbound (container set to None).
     """
-    container_id = serializers.IntegerField()
+    container_id = serializers.IntegerField(required=False, allow_null=True)
     declaration_ids = serializers.ListField(
         child=serializers.IntegerField(),
         allow_empty=False
