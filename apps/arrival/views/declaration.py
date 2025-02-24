@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.arrival.filters import DeclarationFilter
 from apps.arrival.models import Declaration, Container
 from apps.arrival.permissions import DeclarationPermission
 from apps.arrival.serializers.declaration import (
@@ -37,7 +38,7 @@ class DeclarationListCreateAPIView(ListCreateAPIView):
     serializer_class = DeclarationSerializer
     queryset = Declaration.objects.all()
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('container', 'declaration_id')
+    filterset_class = DeclarationFilter
     pagination_class = None
 
     def get_serializer_class(self):
