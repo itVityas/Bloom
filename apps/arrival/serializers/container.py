@@ -59,12 +59,14 @@ class ContainerAndDeclarationSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class DeclarationBindSerializer(serializers.Serializer):
+class ContainerBindSerializer(serializers.Serializer):
     """
-    Serializer for binding containers to an order.
+    Serializer for binding containers to an order or unbinding them.
+
+    If 'order_id' is null, containers will be unbound (order set to None).
     """
-    order_id = serializers.IntegerField()
+    order_id = serializers.IntegerField(required=False, allow_null=True)
     container_ids = serializers.ListField(
         child=serializers.IntegerField(),
-        allow_empty=True
+        allow_empty=False
     )

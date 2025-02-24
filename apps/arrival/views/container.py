@@ -11,7 +11,7 @@ from Bloom.paginator import StandartResultPaginator
 from apps.arrival.models import Container, Order
 from apps.arrival.permissions import ContainerPermission
 from apps.arrival.serializers.container import (
-    ContainerFullSerializer, ContainerSetSerializer, ContainerAndDeclarationSerializer, DeclarationBindSerializer
+    ContainerFullSerializer, ContainerSetSerializer, ContainerAndDeclarationSerializer, ContainerBindSerializer
 )
 
 
@@ -98,29 +98,32 @@ class ContainerAndDeclarationDetailView(RetrieveAPIView):
 @extend_schema(tags=['Containers'])
 @extend_schema_view(
     post=extend_schema(
-        summary='Binds given containers to the specified order.',
+        summary='Binds or unbinds given containers to/from the specified order.',
         description='Permission: admin, container_writer',
     ),
 )
 class BindContainersToOrderAPIView(APIView):
     """
-    Binds given containers to the specified order.
+    Binds given containers to the specified order. If 'order_id' is null, containers are unbound.
     """
     permission_classes = (IsAuthenticated, ContainerPermission)
-    serializer_class = DeclarationBindSerializer
+    serializer_class = ContainerBindSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        order_id = serializer.validated_data['order_id']
+        order_id = serializer.validated_data.get('order_id')
         container_ids = serializer.validated_data['container_ids']
 
-        order = get_object_or_404(Order, pk=order_id)
+        if order_id is not None:
+            order = get_object_or_404(Order, pk=order_id)
+        else:
+            order = None
 
         updated_count = Container.objects.filter(id__in=container_ids).update(order=order)
 
         return Response({
-            'status': f'{updated_count} container updated.',
+            'status': f'{updated_count} container(s) updated.',
             'order_id': order_id,
             'container_ids': container_ids
         })
