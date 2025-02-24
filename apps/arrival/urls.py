@@ -15,7 +15,7 @@ from apps.arrival.views.order import (
 from apps.arrival.views.content import ContentListView, ContentDetailView
 from apps.arrival.views.container import (
     ContainerListView, ContainerCreateView, ContainerUpdateView,
-    ContainerAndDeclarationView, ContainerAndDeclarationDetailView
+    ContainerAndDeclarationView, ContainerAndDeclarationDetailView, BindContainersToOrderAPIView
 )
 
 urlpatterns = [
@@ -33,6 +33,7 @@ urlpatterns = [
     path('container_and_declaration/', ContainerAndDeclarationView.as_view(), name='container-and-declaration-list'),
     path('container_and_declaration/<int:pk>/', ContainerAndDeclarationDetailView.as_view(),
          name='container-and-declaration-detail'),
+    path('container/assign/', BindContainersToOrderAPIView.as_view(), name='bind-containers'),
 
     # Declaration endpoints
     path('declaration/', DeclarationListCreateAPIView.as_view(), name='declaration-list'),

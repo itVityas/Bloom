@@ -57,3 +57,14 @@ class ContainerAndDeclarationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Container
         fields = '__all__'
+
+
+class DeclarationBindSerializer(serializers.Serializer):
+    """
+    Serializer for binding containers to an order.
+    """
+    order_id = serializers.IntegerField()
+    container_ids = serializers.ListField(
+        child=serializers.IntegerField(),
+        allow_empty=True
+    )

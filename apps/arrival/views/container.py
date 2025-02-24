@@ -1,15 +1,17 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.generics import (
-    ListAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView, RetrieveAPIView
+    ListAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView, RetrieveAPIView, get_object_or_404
 )
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from Bloom.paginator import StandartResultPaginator
-from apps.arrival.models import Container
+from apps.arrival.models import Container, Order
 from apps.arrival.permissions import ContainerPermission
 from apps.arrival.serializers.container import (
-    ContainerFullSerializer, ContainerSetSerializer, ContainerAndDeclarationSerializer
+    ContainerFullSerializer, ContainerSetSerializer, ContainerAndDeclarationSerializer, DeclarationBindSerializer
 )
 
 
@@ -91,3 +93,34 @@ class ContainerAndDeclarationDetailView(RetrieveAPIView):
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('name',)
     pagination_class = None
+
+
+@extend_schema(tags=['Containers'])
+@extend_schema_view(
+    post=extend_schema(
+        summary='Binds given containers to the specified order.',
+        description='Permission: admin, container_writer',
+    ),
+)
+class BindContainersToOrderAPIView(APIView):
+    """
+    Binds given containers to the specified order.
+    """
+    permission_classes = (IsAuthenticated, ContainerPermission)
+    serializer_class = DeclarationBindSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        order_id = serializer.validated_data['order_id']
+        container_ids = serializer.validated_data['container_ids']
+
+        order = get_object_or_404(Order, pk=order_id)
+
+        updated_count = Container.objects.filter(id__in=container_ids).update(order=order)
+
+        return Response({
+            'status': f'{updated_count} container updated.',
+            'order_id': order_id,
+            'container_ids': container_ids
+        })
