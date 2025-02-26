@@ -244,7 +244,7 @@ class ClearedItem(models.Model):
         ClearanceInvoice,
         null=True,
         blank=True,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name='cleared_items'
     )
     declared_item_id = models.ForeignKey(
