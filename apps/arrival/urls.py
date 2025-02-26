@@ -1,5 +1,9 @@
 from django.urls import path
 
+from apps.arrival.views.clearance_invoice import ClearanceInvoiceListCreateAPIView, ClearanceInvoiceDetailedView
+from apps.arrival.views.clearance_invoice_items import ClearanceInvoiceItemDetailedView, \
+    ClearanceInvoiceItemListCreateAPIView
+from apps.arrival.views.cleared_item import ClearedItemDetailedView, ClearedItemListCreateAPIView
 from apps.arrival.views.declaration import (
     DeclarationListCreateAPIView, DeclarationDetailedView,
     DeclarationAndItemView, DeclarationAndItemDetailedView,
@@ -50,4 +54,19 @@ urlpatterns = [
     # Content endpoints
     path('content/', ContentListView.as_view(), name='content-list'),
     path('content/detailed/<int:pk>/', ContentDetailView.as_view(), name='content-detail'),
+
+    # ClearanceInvoice endpoints
+    path('clearance_invoice/', ClearanceInvoiceListCreateAPIView.as_view(), name='clearance-invoice-list'),
+    path('clearance_invoice/detailed/<int:pk>/', ClearanceInvoiceDetailedView.as_view(),
+         name='clearance-invoice-detail'),
+
+    # ClearanceInvoiceItems endpoints
+    path('clearance_invoice_items/', ClearanceInvoiceItemListCreateAPIView.as_view(),
+         name='clearance-invoice-item-list'),
+    path('clearance_invoice_items/detailed/<int:pk>/', ClearanceInvoiceItemDetailedView.as_view(),
+         name='clearance-invoice-item-detail'),
+
+    # ClearedItem endpoints
+    path('cleared_item/', ClearedItemListCreateAPIView.as_view(), name='cleared-item-list'),
+    path('cleared_item/detailed/<int:pk>/', ClearedItemDetailedView.as_view(), name='cleared-item-detail'),
 ]
