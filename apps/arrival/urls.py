@@ -1,6 +1,7 @@
 from django.urls import path
 
-from apps.arrival.views.clearance_invoice import ClearanceInvoiceListCreateAPIView, ClearanceInvoiceDetailedView
+from apps.arrival.views.clearance_invoice import (
+    ClearanceInvoiceListCreateAPIView, ClearanceInvoiceDetailedView, GetFullClearanceInvoiceView)
 from apps.arrival.views.clearance_invoice_items import ClearanceInvoiceItemDetailedView, \
     ClearanceInvoiceItemListCreateAPIView
 from apps.arrival.views.cleared_item import ClearedItemDetailedView, ClearedItemListCreateAPIView
@@ -59,6 +60,7 @@ urlpatterns = [
     path('clearance_invoice/', ClearanceInvoiceListCreateAPIView.as_view(), name='clearance-invoice-list'),
     path('clearance_invoice/detailed/<int:pk>/', ClearanceInvoiceDetailedView.as_view(),
          name='clearance-invoice-detail'),
+    path('clearance_invoice/full/<int:pk>/', GetFullClearanceInvoiceView.as_view()),
 
     # ClearanceInvoiceItems endpoints
     path('clearance_invoice_items/', ClearanceInvoiceItemListCreateAPIView.as_view(),

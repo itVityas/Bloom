@@ -205,9 +205,15 @@ class DeclaredItem(models.Model):
 
 class ClearanceInvoice(models.Model):
     count = models.IntegerField()
-    cleared = models.IntegerField()
+    cleared = models.BooleanField()
+    ttn = models.CharField(max_length=20, blank=True, null=True)
+    series = models.CharField(max_length=10, blank=True, null=True)
+    recipient = models.CharField(max_length=100, blank=True, null=True)
+    quantity_shipped = models.IntegerField(default=0)
     create_at = models.DateTimeField(default=datetime.now)
+    date_cleared = models.DateField(blank=True, null=True)
     date_payments = models.DateTimeField()
+    date_calc = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return f"ClearanceInvoice #{self.pk}"
@@ -222,6 +228,8 @@ class ClearanceInvoiceItems(models.Model):
         related_name='clearance_invoice_items',
     )
     model_id = models.IntegerField()
+    model_name = models.CharField(max_length=20, blank=True, null=True)
+    model_code = models.CharField(max_length=10, blank=True, null=True)
     declared_item = models.ForeignKey(
         DeclaredItem,
         null=True,
@@ -230,6 +238,7 @@ class ClearanceInvoiceItems(models.Model):
         related_name='clearance_invoice_items',
     )
     quantity = models.FloatField()
+    actual_quantity = models.FloatField(default=0)
 
     def __str__(self):
         return f"InvoiceItem #{self.pk} (Invoice #{self.clearance_invoice_id})"
