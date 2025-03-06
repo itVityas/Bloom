@@ -44,7 +44,7 @@ class FullClearanceInvoiceSerializer(serializers.ModelSerializer):
             'items',
         ]
 
-    def get_items(self, obj):
+    def get_items(self, obj) -> dict:
         """
         Returns the nested ClearanceInvoiceItems for the given ClearanceInvoice.
         """

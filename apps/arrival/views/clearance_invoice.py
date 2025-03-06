@@ -1,10 +1,13 @@
 from rest_framework.generics import (
-    ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView)
+    ListCreateAPIView, RetrieveUpdateDestroyAPIView,
+    RetrieveAPIView, ListAPIView)
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
+
 from apps.arrival.models import ClearanceInvoice
 from apps.arrival.permissions import ClearanceInvoicePermission
-from apps.arrival.serializers.clearance_invoice import ClearanceInvoiceSerializer
+from apps.arrival.serializers.clearance_invoice import (
+    ClearanceInvoiceSerializer, FullClearanceInvoiceSerializer)
 
 
 @extend_schema(tags=['ClearanceInvoice'])
@@ -67,5 +70,21 @@ class GetFullClearanceInvoiceView(RetrieveAPIView):
     Get ClearanceInvoice + ClearanceInvoiceItem
     """
     permission_classes = (IsAuthenticated, ClearanceInvoicePermission)
-    serializer_class = ClearanceInvoiceSerializer
+    serializer_class = FullClearanceInvoiceSerializer
+    queryset = ClearanceInvoice.objects.all()
+
+
+@extend_schema(tags=['ClearanceInvoice'])
+@extend_schema_view(
+    get=extend_schema(
+        summary='List all clearance invoices + items',
+        description='Permission: admin, arrival_reader, clearance_invoice_writer',
+    ),
+)
+class GetFullClearancesInvoiceListView(ListAPIView):
+    """
+    Get ClearanceInvoice + ClearanceInvoiceItem
+    """
+    permission_classes = (IsAuthenticated, ClearanceInvoicePermission)
+    serializer_class = FullClearanceInvoiceSerializer
     queryset = ClearanceInvoice.objects.all()

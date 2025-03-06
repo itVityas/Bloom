@@ -1,7 +1,10 @@
 from django.urls import path
 
 from apps.arrival.views.clearance_invoice import (
-    ClearanceInvoiceListCreateAPIView, ClearanceInvoiceDetailedView, GetFullClearanceInvoiceView)
+    ClearanceInvoiceListCreateAPIView,
+    ClearanceInvoiceDetailedView,
+    GetFullClearanceInvoiceView,
+    GetFullClearancesInvoiceListView)
 from apps.arrival.views.clearance_invoice_items import ClearanceInvoiceItemDetailedView, \
     ClearanceInvoiceItemListCreateAPIView
 from apps.arrival.views.cleared_item import ClearedItemDetailedView, ClearedItemListCreateAPIView
@@ -44,8 +47,10 @@ urlpatterns = [
     path('declaration/', DeclarationListCreateAPIView.as_view(), name='declaration-list'),
     path('declaration/detailed/<int:pk>/', DeclarationDetailedView.as_view(), name='declaration-detail'),
     path('declaration_and_items/', DeclarationAndItemView.as_view(), name='declaration-and-item-list'),
-    path('declaration_and_items/<int:pk>/', DeclarationAndItemDetailedView.as_view(), name='declaration-and-item-detail'),
-    path('declaration_and_items/create/', DeclarationAndItemCreateAPIView.as_view(), name='declaration-and-item-create'),
+    path('declaration_and_items/<int:pk>/', DeclarationAndItemDetailedView.as_view(),
+         name='declaration-and-item-detail'),
+    path('declaration_and_items/create/', DeclarationAndItemCreateAPIView.as_view(),
+         name='declaration-and-item-create'),
     path('declaration/assign/', BindDeclarationsToContainerAPIView.as_view(), name='bind-declarations'),
 
     # DeclaredItem endpoints
@@ -61,6 +66,7 @@ urlpatterns = [
     path('clearance_invoice/detailed/<int:pk>/', ClearanceInvoiceDetailedView.as_view(),
          name='clearance-invoice-detail'),
     path('clearance_invoice/full/<int:pk>/', GetFullClearanceInvoiceView.as_view()),
+    path('clearance_invoice/full/', GetFullClearancesInvoiceListView.as_view()),
 
     # ClearanceInvoiceItems endpoints
     path('clearance_invoice_items/', ClearanceInvoiceItemListCreateAPIView.as_view(),
