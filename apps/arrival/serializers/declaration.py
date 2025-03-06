@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from apps.arrival.models import Declaration
+
+from apps.arrival.models import Declaration, Order, Container
 from apps.arrival.serializers.declared_item import DeclaredItemSerializer
 
 
@@ -7,9 +8,32 @@ class DeclarationSerializer(serializers.ModelSerializer):
     """
     Serializer for the Declaration model.
     """
+    containers = serializers.SerializerMethodField()
+    orders = serializers.SerializerMethodField()
+
     class Meta:
         model = Declaration
         fields = '__all__'
+
+    def get_containers(self, obj) -> dict:
+        """
+        Get the container IDs associated with the declaration.
+        """
+        if obj.container is None:
+            return None
+        containers = obj.container
+        return ContainerSmallSerializer(containers).data
+
+    def get_orders(self, obj) -> dict:
+        """
+        Get the order IDs associated with the declaration.
+        """
+        if obj.container is None:
+            return None
+        if obj.container.order is None:
+            return None
+        orders = obj.container.order
+        return OrderSmallSerializer(orders).data
 
 
 class DeclarationFileUploadSerializer(serializers.Serializer):
@@ -50,3 +74,21 @@ class DeclarationBindSerializer(serializers.Serializer):
         child=serializers.IntegerField(),
         allow_empty=False
     )
+
+
+class ContainerSmallSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Container model with id and name
+    """
+    class Meta:
+        model = Container
+        fields = ('id', 'name')
+
+
+class OrderSmallSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Order model with id and name
+    """
+    class Meta:
+        model = Order
+        fields = ('id', 'name')

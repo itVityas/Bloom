@@ -4,8 +4,12 @@ from tempfile import NamedTemporaryFile
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.generics import (
-    ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView, ListAPIView, CreateAPIView, get_object_or_404
-)
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+    RetrieveAPIView,
+    ListAPIView,
+    CreateAPIView,
+    get_object_or_404)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -14,8 +18,11 @@ from apps.arrival.filters import DeclarationFilter
 from apps.arrival.models import Declaration, Container
 from apps.arrival.permissions import DeclarationPermission
 from apps.arrival.serializers.declaration import (
-    DeclarationSerializer, DeclarationFileUploadSerializer, DeclarationAndItemSerializer,
-    DeclarationAndItemFileUploadSerializer, DeclarationBindSerializer
+    DeclarationSerializer,
+    DeclarationFileUploadSerializer,
+    DeclarationAndItemSerializer,
+    DeclarationAndItemFileUploadSerializer,
+    DeclarationBindSerializer
 )
 from apps.arrival.utils.dbf.decl import process_decl_dbf_file
 from apps.arrival.utils.dbf.tovar import process_tovar_dbf_file
@@ -39,7 +46,6 @@ class DeclarationListCreateAPIView(ListCreateAPIView):
     queryset = Declaration.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DeclarationFilter
-    pagination_class = None
 
     def get_serializer_class(self):
         """
