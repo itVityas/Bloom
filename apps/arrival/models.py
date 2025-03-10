@@ -29,7 +29,6 @@ class Container(models.Model):
     delivery = models.CharField(max_length=100, blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
     state = models.CharField(max_length=20, default="Created")
-    invoice = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
         ordering = ['-id']

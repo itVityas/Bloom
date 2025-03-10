@@ -21,7 +21,6 @@ class ContainerFullSerializer(serializers.ModelSerializer):
             'delivery',
             'location',
             'state',
-            'invoice',
             'order',
             'contents',
         ]

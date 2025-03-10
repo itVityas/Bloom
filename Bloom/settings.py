@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'apps.account',
     'apps.arrival',
     'apps.sgp',
+    'apps.invoice',
 ]
 
 MIDDLEWARE = [
