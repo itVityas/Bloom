@@ -1,5 +1,5 @@
 import django_filters
-from apps.arrival.models import Declaration
+from apps.declaration.models import Declaration
 
 class DeclarationFilter(django_filters.FilterSet):
     """

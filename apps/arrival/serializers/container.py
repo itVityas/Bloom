@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from apps.arrival.models import Container, Content
 from apps.arrival.serializers.content import ContentSerializer
-from apps.arrival.serializers.declaration import DeclarationSerializer
+from apps.declaration.serializers.declaration import DeclarationSerializer
 
 
 class ContainerFullSerializer(serializers.ModelSerializer):

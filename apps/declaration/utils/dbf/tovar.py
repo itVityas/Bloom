@@ -1,5 +1,5 @@
-from apps.arrival.utils.dbf.util import clean_str, read_dbf_records
-from apps.arrival.models import DeclaredItem, Declaration
+from apps.declaration.utils.dbf.util import clean_str, read_dbf_records
+from apps.declaration.models import DeclaredItem, Declaration
 
 
 def get_declaration(record):

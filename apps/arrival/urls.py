@@ -8,14 +8,6 @@ from apps.arrival.views.clearance_invoice import (
 from apps.arrival.views.clearance_invoice_items import ClearanceInvoiceItemDetailedView, \
     ClearanceInvoiceItemListCreateAPIView
 from apps.arrival.views.cleared_item import ClearedItemDetailedView, ClearedItemListCreateAPIView
-from apps.arrival.views.declaration import (
-    DeclarationListCreateAPIView, DeclarationDetailedView,
-    DeclarationAndItemView, DeclarationAndItemDetailedView,
-    DeclarationAndItemCreateAPIView, BindDeclarationsToContainerAPIView
-)
-from apps.arrival.views.declared_item import (
-    DeclaredItemListCreateAPIView, DeclaredItemDetailedView
-)
 from apps.arrival.views.order import (
     OrderCreateAPIView, OrderListView, OrderDetailedView,
     OrderAndContainerListView, OrderAndContainerDetailView
@@ -42,20 +34,6 @@ urlpatterns = [
     path('container_and_declaration/<int:pk>/', ContainerAndDeclarationDetailView.as_view(),
          name='container-and-declaration-detail'),
     path('container/assign/', BindContainersToOrderAPIView.as_view(), name='bind-containers'),
-
-    # Declaration endpoints
-    path('declaration/', DeclarationListCreateAPIView.as_view(), name='declaration-list'),
-    path('declaration/detailed/<int:pk>/', DeclarationDetailedView.as_view(), name='declaration-detail'),
-    path('declaration_and_items/', DeclarationAndItemView.as_view(), name='declaration-and-item-list'),
-    path('declaration_and_items/<int:pk>/', DeclarationAndItemDetailedView.as_view(),
-         name='declaration-and-item-detail'),
-    path('declaration_and_items/create/', DeclarationAndItemCreateAPIView.as_view(),
-         name='declaration-and-item-create'),
-    path('declaration/assign/', BindDeclarationsToContainerAPIView.as_view(), name='bind-declarations'),
-
-    # DeclaredItem endpoints
-    path('declared_item/', DeclaredItemListCreateAPIView.as_view(), name='declared-item-list'),
-    path('declared_item/detailed/<int:pk>/', DeclaredItemDetailedView.as_view(), name='declared-item-detail'),
 
     # Content endpoints
     path('content/', ContentListView.as_view(), name='content-list'),

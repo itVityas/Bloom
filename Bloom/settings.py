@@ -53,6 +53,7 @@ INSTALLED_APPS = [
 
     'apps.account',
     'apps.arrival',
+    'apps.declaration',
     'apps.sgp',
     'apps.invoice',
 ]
