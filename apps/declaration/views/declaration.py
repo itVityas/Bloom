@@ -14,18 +14,20 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.arrival.filters import DeclarationFilter
-from apps.arrival.models import Declaration, Container
+from apps.declaration.filters import DeclarationFilter
+from apps.arrival.models import Container
 from apps.arrival.permissions import DeclarationPermission
-from apps.arrival.serializers.declaration import (
+from apps.declaration.models import Declaration
+
+from apps.declaration.serializers.declaration import (
     DeclarationSerializer,
     DeclarationFileUploadSerializer,
     DeclarationAndItemSerializer,
     DeclarationAndItemFileUploadSerializer,
     DeclarationBindSerializer
 )
-from apps.arrival.utils.dbf.decl import process_decl_dbf_file
-from apps.arrival.utils.dbf.tovar import process_tovar_dbf_file
+from apps.declaration.utils.dbf.decl import process_decl_dbf_file
+from apps.declaration.utils.dbf.tovar import process_tovar_dbf_file
 
 
 @extend_schema(tags=['Declarations'])

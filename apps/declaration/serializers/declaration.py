@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
-from apps.arrival.models import Declaration, Order, Container
-from apps.arrival.serializers.declared_item import DeclaredItemSerializer
+from apps.arrival.models import Order, Container
+from apps.declaration.models import Declaration
+from apps.declaration.serializers.declared_item import DeclaredItemSerializer
 
 
 class DeclarationSerializer(serializers.ModelSerializer):

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.arrival.models import DeclaredItem
+from apps.declaration.models import DeclaredItem
 
 
 class DeclaredItemSerializer(serializers.ModelSerializer):

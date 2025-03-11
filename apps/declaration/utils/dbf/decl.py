@@ -1,5 +1,5 @@
-from apps.arrival.utils.dbf.util import clean_str, read_dbf_records
-from apps.arrival.models import Declaration
+from apps.declaration.utils.dbf.util import clean_str, read_dbf_records
+from apps.declaration.models import Declaration
 
 
 def dbf_to_dict(record):

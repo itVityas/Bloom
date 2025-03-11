@@ -7,12 +7,12 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from apps.arrival.models import DeclaredItem
 from apps.arrival.permissions import DeclarationPermission
-from apps.arrival.serializers.declared_item import (
+from apps.declaration.models import DeclaredItem
+from apps.declaration.serializers.declared_item import (
     DeclaredItemSerializer, DeclaredItemFileUploadSerializer
 )
-from apps.arrival.utils.dbf.tovar import process_tovar_dbf_file
+from apps.declaration.utils.dbf.tovar import process_tovar_dbf_file
 
 
 @extend_schema(tags=['DeclaredItem'])
