@@ -8,6 +8,7 @@ from apps.declaration.views.declaration import (
 from apps.declaration.views.declared_item import (
     DeclaredItemListCreateAPIView, DeclaredItemDetailedView
 )
+from apps.declaration.views.upload_declaration import ZipFileUploadAPIView
 
 urlpatterns = [
     # Declaration endpoints
@@ -23,4 +24,5 @@ urlpatterns = [
     # DeclaredItem endpoints
     path('declared_item/', DeclaredItemListCreateAPIView.as_view(), name='declared-item-list'),
     path('declared_item/detailed/<int:pk>/', DeclaredItemDetailedView.as_view(), name='declared-item-detail'),
+    path('declaration/upload_zip/', ZipFileUploadAPIView.as_view(), name='zip-upload'),
     ]
