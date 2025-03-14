@@ -44,4 +44,5 @@ urlpatterns = [
     path('api/v1/', include('apps.declaration.urls')),
     path('api/v1/', include('apps.sgp.urls')),
     path('api/v1/', include('apps.invoice.urls')),
+    path('api/v1/', include('apps.sez.urls')),
 ]

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>   
+    <div style="text-align: center;">
+        <div>ОТЧЕТ СТЗ-1</div>
+        <div>об использовании товаров в свободной таможенной зоне</div>
+    </div>
+    <div style="display: flex;justify-content: center;">
+        <div style="display: block;">
+        <div>1. Транспортный или коммерческий документ: № <b><u>{{ttn}} от {{ttn_date}}г.</u></b></div>
+        <div>2. Исходящий номер ГТД: № <b><u>{{document}} от     .    .{{year}}г.</u></b></div>
+        </div>
+    </div>
+
+    <br>
+    <div style="text-align: center;">
+        <div>Наименование предприятия <b><u>Открытое акционерное общество "Витязь"    УНП 30031652</b></u></div>
+    </div>
+
+    <br>
+    <div style="width=100%">
+        <table border="1" cols="7" cellpadding="7" style="border-collapse: collapse;width: 100%;">
+            <thead>
+                <tr>
+                    <th colspan=6>Сведения о сырье, материалах и комлпектующих, ввезенных в СТЗ и использованыых для изготовления вывозимого из СТЗ товара</th>
+                    <th rowspan=2>Примечание</th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th>Номер и дата таможенного свидетельства</th>
+                    <th>Номер товара</th>
+                    <th>Краткое наименование товара</th>
+                    <th>Кол-во</th>
+                    <th>Ед-ца изм.</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>№п/п</td>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>3</td>
+                    <td>4</td>
+                    <td>5</td>
+                    <td>6</td>
+                </tr>
+
+                {% for decl in declarations %}
+                    <tr>
+                        {% for decl_item in declaration_items %}
+                            <td>1</td>
+                            <td>{{decl.declaration_number}} от {{decl.provision_date}}г.</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <br>
+    <div style="display: flex;justify-content: center;">
+        <div style="display: block;">
+            <p>Руководитель    _______   __________________</p>
+            <p>Гл. бухгалтер   _______   __________________</p>
+            <p>Отчет принят: ___.___.20__   _______________ (                 ) № свидетельства _________________ ЛНП</p>
+        </div>
+    </div>
+
+</body>
+</head>
+</html>
