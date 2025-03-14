@@ -25,10 +25,12 @@ class Container(models.Model):
     )
     name = models.CharField(max_length=30)
     suppose_date = models.DateField()
+    load_date = models.DateField(blank=True, null=True)
     exit_date = models.DateField()
     delivery = models.CharField(max_length=100, blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
     state = models.CharField(max_length=20, default="Created")
+    notice = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ['-id']
@@ -43,7 +45,7 @@ class Content(models.Model):
     Model representing content associated with a container.
     """
     name = models.CharField(max_length=100)
-    shot_name = models.CharField(max_length=30)
+    short_name = models.CharField(max_length=30)
     count = models.PositiveIntegerField()
     container = models.ForeignKey(
         Container, on_delete=models.CASCADE, related_name='contents'

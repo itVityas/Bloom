@@ -1,3 +1,5 @@
+from django.db.models import Sum
+
 from rest_framework import serializers
 from apps.arrival.models import Container, Content
 from apps.arrival.serializers.content import ContentSerializer
@@ -10,6 +12,7 @@ class ContainerFullSerializer(serializers.ModelSerializer):
     This serializer includes the contents associated with the container.
     """
     contents = serializers.SerializerMethodField()
+    count = serializers.SerializerMethodField()
 
     class Meta:
         model = Container
@@ -17,11 +20,14 @@ class ContainerFullSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'suppose_date',
+            'load_date',
             'exit_date',
             'delivery',
             'location',
             'state',
+            'count',
             'order',
+            'notice',
             'contents',
         ]
 
@@ -34,6 +40,15 @@ class ContainerFullSerializer(serializers.ModelSerializer):
         """
         contents = Content.objects.filter(container=obj)
         return ContentSerializer(contents, many=True).data
+
+    def get_count(self, obj) -> int:
+        """
+        Returns the count of contents for the container.
+
+        :return: Count of contents.
+        """
+        count = Content.objects.filter(container=obj).aggregate(total=Sum('count'))['total']
+        return count if count else 0
 
 
 class ContainerSetSerializer(serializers.ModelSerializer):
