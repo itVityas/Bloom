@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
-from rest_framework.generics import GenericAPIView
+from drf_spectacular.utils import (
+    extend_schema, extend_schema_view, OpenApiParameter, OpenApiResponse)
+from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django.http import HttpResponse
 from django.template.loader import render_to_string
@@ -32,25 +33,27 @@ from apps.sez.permissions import STZPermission
                 required=True,
                 type=int,
             ),
-        ]
+        ],
+        responses={
+            200: OpenApiResponse(description="PDF file"),
+            400: OpenApiResponse(description="Missing required parameters"),
+        }
     ),
 )
-class ReportSTZ1View(GenericAPIView):
+class ReportSTZ1View(APIView):
     permission_classes = (IsAuthenticated, STZPermission)
-    queryset = Declaration.objects.all()
 
     def get(self, request):
         ttn = request.query_params.get('ttn', None)
         document = request.query_params.get('document', None)
+        print(ttn, document)
         if not ttn or not document:
             return HttpResponse("Missing required parameters", status=400)
 
-        declaration = Declaration.objects.all()
-        declaration_items = DeclaredItem.objects.all()
+        declaration = DeclaredItem.objects.select_related('declaration').all()
 
         context = {
             "declarations": declaration,
-            "declaration_items": declaration_items,
             "ttn": ttn,
             "ttn_date": "13.03.2025",
             "document": document,
