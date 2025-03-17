@@ -16,7 +16,7 @@ from rest_framework.views import APIView
 
 from apps.declaration.filters import DeclarationFilter
 from apps.arrival.models import Container
-from apps.arrival.permissions import DeclarationPermission
+from apps.declaration.permissions import DeclarationPermission
 from apps.declaration.models import Declaration
 
 from apps.declaration.serializers.declaration import (
