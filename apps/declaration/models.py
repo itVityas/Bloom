@@ -182,3 +182,27 @@ class G313(models.Model):
 
     def __str__(self):
         return f"DBF Record {self.id} - Declaration {self.declaration.declaration_id}"
+
+
+class G44(models.Model):
+    """
+    Model for storing records from the G44.DBF file.
+    Each record is associated with a Declaration (via DECL_ID).
+    """
+    declaration = models.ForeignKey(
+        Declaration,
+        on_delete=models.CASCADE,
+        related_name='g44',
+        to_field='declaration_id'
+    )
+    g32 = models.IntegerField(null=True, blank=True)
+    g44kd = models.CharField(max_length=50, null=True, blank=True)
+    g44nd = models.CharField(max_length=255, null=True, blank=True)
+    g44dd = models.DateField(null=True, blank=True)
+    g44i = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-id']
+
+    def __str__(self):
+        return f"G44Record {self.id} - Declaration {self.declaration.declaration_id}"
