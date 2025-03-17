@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 from weasyprint import HTML
 from weasyprint.fonts import FontConfiguration
 
-from apps.declaration.models import Declaration, DeclaredItem
+from apps.declaration.models import DeclaredItem
 from apps.sez.permissions import STZPermission
 
 
@@ -24,14 +24,14 @@ from apps.sez.permissions import STZPermission
                 location=OpenApiParameter.QUERY,
                 description='TTN number',
                 required=True,
-                type=int,
+                type=str,
             ),
             OpenApiParameter(
                 name='document',
                 location=OpenApiParameter.QUERY,
                 description='Document number',
                 required=True,
-                type=int,
+                type=str,
             ),
         ],
         responses={
@@ -46,11 +46,11 @@ class ReportSTZ1View(APIView):
     def get(self, request):
         ttn = request.query_params.get('ttn', None)
         document = request.query_params.get('document', None)
-        print(ttn, document)
         if not ttn or not document:
             return HttpResponse("Missing required parameters", status=400)
 
-        declaration = DeclaredItem.objects.select_related('declaration').all()
+        declaration = DeclaredItem.objects.select_related(
+            'declaration').all().order_by('declaration')
 
         context = {
             "declarations": declaration,
@@ -66,7 +66,7 @@ class ReportSTZ1View(APIView):
             )
         font_config = FontConfiguration()
 
-        file_path = 'tmp/' + f'{ttn}{document}.pdf'
+        file_path = 'tmp/' + f'{ttn}_{document}.pdf'
         HTML(string=html_message).write_pdf(file_path, font_config=font_config)
 
         document = open(file_path, 'rb')
