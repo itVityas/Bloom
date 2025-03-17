@@ -148,3 +148,37 @@ class DeclaredItem(models.Model):
     def __str__(self):
         """Return the string representation of the DeclaredItem."""
         return f'{self.declaration} - {self.ordinal_number}'
+
+
+class G313(models.Model):
+    """
+    Model for storing G313.DBF file records.
+    """
+    # DECL_ID
+    declaration = models.ForeignKey(
+        Declaration,
+        on_delete=models.CASCADE,
+        related_name="G313",
+        to_field="declaration_id"
+    )
+    g32 = models.IntegerField(null=True, blank=True)
+    g313i = models.IntegerField(null=True, blank=True)
+    g31_nm = models.CharField(max_length=255, null=True, blank=True)
+    g31_tm = models.CharField(max_length=255, null=True, blank=True)
+    g31_pb = models.CharField(max_length=255, null=True, blank=True)
+    g31_pm = models.CharField(max_length=255, null=True, blank=True)
+    g31_mg = models.CharField(max_length=255, null=True, blank=True)
+    g31_sp = models.CharField(max_length=255, null=True, blank=True)
+    g31_sn = models.CharField(max_length=255, null=True, blank=True)
+    g31_vg = models.CharField(max_length=255, null=True, blank=True)
+    g31_rd = models.DateField(null=True, blank=True)
+    g31_qg = models.FloatField(null=True, blank=True)
+    g31_nu = models.CharField(max_length=50, null=True, blank=True)
+    g31_cu = models.CharField(max_length=50, null=True, blank=True)
+    g31_gg = models.TextField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-id']
+
+    def __str__(self):
+        return f"DBF Record {self.id} - Declaration {self.declaration.declaration_id}"
