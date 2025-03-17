@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'apps.declaration',
     'apps.sgp',
     'apps.invoice',
+    'apps.sez',
 ]
 
 MIDDLEWARE = [
