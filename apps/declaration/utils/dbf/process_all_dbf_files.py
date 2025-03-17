@@ -6,7 +6,7 @@ from .decl import process_decl_dbf_file
 from .tovar import process_tovar_dbf_file
 # from .g18 import process_g18_dbf_file
 # from .g40 import process_g40_dbf_file
-from .g44 import process_g44_dbf_file
+# from .g44 import process_g44_dbf_file
 # from .g47 import process_g47_dbf_file
 # from .g48 import process_g48_dbf_file
 from .g313 import process_g313_dbf_file
@@ -21,7 +21,7 @@ PROCESSING_FUNCTIONS = {
     # 'G44.DBF': process_g44_dbf_file,
     # 'G47.DBF': process_g47_dbf_file,
     # 'G48.DBF': process_g48_dbf_file,
-    # 'G313': process_g313_dbf_file,
+    'G313.DBF': process_g313_dbf_file,
     # 'GB.DBF': process_gb_dbf_file,
 }
 
