@@ -162,3 +162,6 @@ cython_debug/
 
 db.sqlite3
 /staticfiles/
+
+temp/*
+!temp
