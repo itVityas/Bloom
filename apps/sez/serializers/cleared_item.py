@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from apps.arrival.models import ClearedItem
+
+from apps.sez.models import ClearedItem
 
 
 class ClearedItemSerializer(serializers.ModelSerializer):

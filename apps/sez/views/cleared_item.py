@@ -1,9 +1,10 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from apps.arrival.models import ClearedItem
-from apps.arrival.permissions import ClearedItemPermission
-from apps.arrival.serializers.cleared_item import ClearedItemSerializer
+
+from apps.sez.models import ClearedItem
+from apps.sez.permissions import ClearedItemPermission
+from apps.sez.serializers.cleared_item import ClearedItemSerializer
 
 
 @extend_schema(tags=['ClearedItem'])

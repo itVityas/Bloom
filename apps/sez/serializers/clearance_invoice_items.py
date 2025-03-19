@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from apps.arrival.models import ClearanceInvoiceItems
+
+from apps.sez.models import ClearanceInvoiceItems
 
 
 class ClearanceInvoiceItemsSerializer(serializers.ModelSerializer):

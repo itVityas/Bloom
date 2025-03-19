@@ -4,9 +4,9 @@ from rest_framework.generics import (
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
-from apps.arrival.models import ClearanceInvoice
-from apps.arrival.permissions import ClearanceInvoicePermission
-from apps.arrival.serializers.clearance_invoice import (
+from apps.sez.models import ClearanceInvoice
+from apps.sez.permissions import ClearanceInvoicePermission
+from apps.sez.serializers.clearance_invoice import (
     ClearanceInvoiceSerializer, FullClearanceInvoiceSerializer)
 
 
@@ -14,7 +14,7 @@ from apps.arrival.serializers.clearance_invoice import (
 @extend_schema_view(
     get=extend_schema(
         summary='List all clearance invoices',
-        description='Permission: admin, arrival_reader, clearance_invoice_writer',
+        description='Permission: admin, stz_reader, clearance_invoice_writer',
     ),
     post=extend_schema(
         summary='Create a clearance invoice',
@@ -34,7 +34,7 @@ class ClearanceInvoiceListCreateAPIView(ListCreateAPIView):
 @extend_schema_view(
     get=extend_schema(
         summary='Retrieve clearance invoice by ID',
-        description='Permission: admin, arrival_reader, clearance_invoice_writer',
+        description='Permission: admin, stz_reader, clearance_invoice_writer',
     ),
     put=extend_schema(
         summary='Update clearance invoice',
@@ -62,7 +62,7 @@ class ClearanceInvoiceDetailedView(RetrieveUpdateDestroyAPIView):
 @extend_schema_view(
     get=extend_schema(
         summary='Get full clearance invoice',
-        description='Permission: admin, arrival_reader, clearance_invoice_writer',
+        description='Permission: admin, stz_reader, clearance_invoice_writer',
     )
 )
 class GetFullClearanceInvoiceView(RetrieveAPIView):
@@ -78,7 +78,7 @@ class GetFullClearanceInvoiceView(RetrieveAPIView):
 @extend_schema_view(
     get=extend_schema(
         summary='List all clearance invoices + items',
-        description='Permission: admin, arrival_reader, clearance_invoice_writer',
+        description='Permission: admin, stz_reader, clearance_invoice_writer',
     ),
 )
 class GetFullClearancesInvoiceListView(ListAPIView):
