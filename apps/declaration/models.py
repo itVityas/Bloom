@@ -16,15 +16,15 @@ class Declaration(models.Model):
     )
 
     # G011 / Customs declaration type code
-    type_code = models.CharField(max_length=3)
+    type_code = models.CharField(max_length=10)
     # G012_1 / Type of customs declaration
-    type = models.CharField(max_length=3)
+    type = models.CharField(max_length=10)
     # G022 / Sender company name
     sender = models.CharField(max_length=38)
     # G023 / Sender company address
     sender_address = models.CharField(max_length=250)
     # G20 / Delivery terms short name
-    delivery_terms = models.CharField(max_length=3)
+    delivery_terms = models.CharField(max_length=10)
     # G05 / Total number of item types
     item_count = models.IntegerField()
     # G082 / Receiver
@@ -32,11 +32,11 @@ class Declaration(models.Model):
     # G083 / Receiver address
     receiver_address = models.CharField(max_length=250)
     # G15A / Sender country code
-    sender_country_code = models.CharField(max_length=3)
+    sender_country_code = models.CharField(max_length=10)
     # G15A_0 / Sender alpha country code
-    sender_alpha_country_code = models.CharField(max_length=2)
+    sender_alpha_country_code = models.CharField(max_length=10)
     # G15A_1 / Additional sender country code information
-    g15A_1 = models.CharField(max_length=4)
+    g15A_1 = models.CharField(max_length=10)
     # G221 / Payment currency code
     payment_currency_code = models.CharField(max_length=3)
     # G222 / Total invoice cost
@@ -44,9 +44,9 @@ class Declaration(models.Model):
     # G23 / Foreign currency rate
     currency_rate = models.DecimalField(max_digits=19, decimal_places=4)
     # G241 / Foreign economic operation code
-    foreign_economic_code = models.CharField(max_length=2)
+    foreign_economic_code = models.CharField(max_length=10)
     # G242 / Payment type code for the deal
-    payment_type_code = models.CharField(max_length=3)
+    payment_type_code = models.CharField(max_length=10)
     # G542 / Provision date for EGD
     provision_date = models.DateField()
     # GBN / Count of records in GB.dbf file
@@ -76,7 +76,7 @@ class Declaration(models.Model):
     # DATEC / Declaration date
     declaration_date = models.DateField()
     # G013 / Permit code for customs authorization
-    permit_code = models.CharField(max_length=3)
+    permit_code = models.CharField(max_length=10)
 
     class Meta:
         ordering = ['-id']
