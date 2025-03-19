@@ -9,14 +9,14 @@ create a .sh file, and paste this code. (you need change to your ubuntu version)
 ```
 # Download the package to configure the Microsoft repo
 #curl -sSL -O https://packages.microsoft.com/config/ubuntu/$(grep VERSION_ID /etc/os-release | cut -d '"' -f 2)/packages-microsoft-prod.deb
-curl -sSL -O https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb
+curl -sSL -O https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb
 # Install the package
 sudo dpkg -i packages-microsoft-prod.deb
 # Delete the file
 rm packages-microsoft-prod.deb
 
 sudo apt-get update
-sudo ACCEPT_EULA=Y apt-get install -y msodbcsql
+sudo ACCEPT_EULA=Y apt-get install -y msodbcsql17
 # optional: for bcp and sqlcmd
 sudo ACCEPT_EULA=Y apt-get install -y mssql-tools
 echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
