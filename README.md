@@ -48,7 +48,7 @@ CipherString = DEFAULT:@SECLEVEL=0
 
 
 ***.env:***
-
+```
 SECRET_KEY=
 
 DEBUG=
@@ -68,3 +68,4 @@ DB_HOST='127.0.0.1'
 DB_PORT='1433'
 
 DB_DRIVER='ODBC Driver 17 for SQL Server'
+```
