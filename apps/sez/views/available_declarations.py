@@ -57,6 +57,7 @@ declaration_declareditem.name
         ).values(
             'declaration__id',
             'declaration__declaration_number',
+            'id',
             'ordinal_number',
             'real_amount',
             'quantity',

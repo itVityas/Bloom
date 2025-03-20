@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 
 class AvailableDeclarationItemSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     declaration__id = serializers.IntegerField()
     declaration__declaration_number = serializers.CharField()
     ordinal_number = serializers.IntegerField()
