@@ -79,7 +79,6 @@ declaration_declareditem.name
             else:
                 decl['items'].append(item)
                 result.append(decl)
-        print(data)
 
         serializer = AvailableDeclarationSerializer(result, many=True)
         return Response(serializer.data)
