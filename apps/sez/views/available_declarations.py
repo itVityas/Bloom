@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 from apps.sez.models import ClearedItem
 from apps.declaration.models import DeclaredItem
-from apps.sez.serializers.available_declaration import AvailableDeclarationSerializer, AvailableDeclarationItemSerializer
+from apps.sez.serializers.available_declaration import AvailableDeclarationSerializer
 from apps.sez.permissions import STZPermission
 
 
