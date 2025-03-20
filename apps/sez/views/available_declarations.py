@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 from apps.sez.models import ClearedItem
 from apps.declaration.models import DeclaredItem
-from apps.sez.serializers.available_declaration import AvailableDeclarationSerializer
+from apps.sez.serializers.available_declaration import AvailableDeclarationSerializer, AvailableDeclarationItemSerializer
 from apps.sez.permissions import STZPermission
 
 
@@ -65,6 +65,21 @@ declaration_declareditem.name
         )
 
         data = list(queryset)
+        result = list()
+        for item in data:
+            decl = {
+                'declaration__id': item['declaration__id'],
+                'declaration__declaration_number': item['declaration__declaration_number'],
+                'items': list()
+                }
+            for i in result:
+                if i['declaration__id'] == item['declaration__id']:
+                    i['items'].append(item)
+                    break
+            else:
+                decl['items'].append(item)
+                result.append(decl)
+        print(data)
 
-        serializer = AvailableDeclarationSerializer(data, many=True)
+        serializer = AvailableDeclarationSerializer(result, many=True)
         return Response(serializer.data)
