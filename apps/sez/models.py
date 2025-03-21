@@ -11,7 +11,7 @@ class ClearanceInvoice(models.Model):
     quantity_shipped = models.IntegerField(default=0)
     create_at = models.DateTimeField(default=datetime.now)
     date_cleared = models.DateField(blank=True, null=True)
-    date_payments = models.DateTimeField()
+    date_payments = models.DateTimeField(blank=True, null=True)
     date_calc = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
