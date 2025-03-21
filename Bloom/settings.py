@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'apps.sgp',
     'apps.invoice',
     'apps.sez',
+    'apps.shtrih',
 ]
 
 MIDDLEWARE = [

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from apps.sez.models import ClearanceInvoice, ClearanceInvoiceItems
+from apps.sez.serializers.clearance_invoice_items import ClearanceInvoiceItemsFullSerializer
 
 
 class ClearanceInvoiceSerializer(serializers.ModelSerializer):
@@ -9,15 +10,6 @@ class ClearanceInvoiceSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = ClearanceInvoice
-        fields = '__all__'
-
-
-class ClearanceInvoiceItemsSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the ClearanceInvoiceItems model.
-    """
-    class Meta:
-        model = ClearanceInvoiceItems
         fields = '__all__'
 
 
@@ -49,5 +41,5 @@ class FullClearanceInvoiceSerializer(serializers.ModelSerializer):
         Returns the nested ClearanceInvoiceItems for the given ClearanceInvoice.
         """
         items = ClearanceInvoiceItems.objects.filter(clearance_invoice=obj)
-        serializer = ClearanceInvoiceItemsSerializer(items, many=True)
+        serializer = ClearanceInvoiceItemsFullSerializer(items, many=True)
         return serializer.data
