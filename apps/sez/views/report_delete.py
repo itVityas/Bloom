@@ -10,7 +10,7 @@ from apps.sez.permissions import ClearanceInvoicePermission
 
 @extend_schema(tags=['ClearanceInvoice'])
 @extend_schema_view(
-    get=extend_schema(
+    put=extend_schema(
         summary='Change cleared = false',
         description='Permission: admin, stz_reader, clearance_invoice_items_writer',
     )
