@@ -16,12 +16,13 @@ from apps.sez.views.cleared_item import (
     ClearedItemDetailedView,
     ClearedItemListCreateAPIView,
 )
+from apps.sez.views.document_sez import DocumentSezView
 from apps.sez.views.available_declarations import GetAvailableDeclarationsView
 
 urlpatterns = [
     # Reports
     path('reportstz1/', ReportSTZ1View.as_view()),
-    path('reportclearancepdf', ReportClearanceInvoicePDFView.as_view()),
+    path('reportclearancepdf/', ReportClearanceInvoicePDFView.as_view()),
 
     # ClearanceInvoice endpoints
     path('clearance_invoice/', ClearanceInvoiceListCreateAPIView.as_view(), name='clearance-invoice-list'),
@@ -42,4 +43,7 @@ urlpatterns = [
 
     # sez
     path('available_declarations/', GetAvailableDeclarationsView.as_view()),
+
+    # Document SEZ
+    path('document_sez/', DocumentSezView.as_view()),
 ]
