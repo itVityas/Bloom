@@ -59,6 +59,6 @@ class DocumentSezView(ListAPIView):
         cleranceinvoice.cleared = True
         cleranceinvoice.save()
 
-        cleared_items = ClearedItem.objects.filter(clearance_invoice=clearanceinvoice_id)
+        cleared_items = ClearedItem.objects.filter()
         serializer = DocumentClearedItemSerializer(cleared_items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
