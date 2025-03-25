@@ -1,6 +1,7 @@
 from django.urls import path
 
 from apps.sez.views.report_stz1 import ReportSTZ1View
+from apps.sez.views.report_clearanceinvoice import ReportClearanceInvoicePDFView
 from apps.sez.views.clearance_invoice import (
     ClearanceInvoiceDetailedView,
     ClearanceInvoiceListCreateAPIView,
@@ -18,7 +19,9 @@ from apps.sez.views.cleared_item import (
 from apps.sez.views.available_declarations import GetAvailableDeclarationsView
 
 urlpatterns = [
+    # Reports
     path('reportstz1/', ReportSTZ1View.as_view()),
+    path('reportclearancepdf', ReportClearanceInvoicePDFView.as_view()),
 
     # ClearanceInvoice endpoints
     path('clearance_invoice/', ClearanceInvoiceListCreateAPIView.as_view(), name='clearance-invoice-list'),

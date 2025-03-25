@@ -12,7 +12,7 @@ from apps.sez.serializers.available_declaration import AvailableDeclarationSeria
 from apps.sez.permissions import STZPermission
 
 
-@extend_schema(tags=['sez'])
+@extend_schema(tags=['Sez'])
 @extend_schema_view(
     get=extend_schema(
         summary='Get available declarations for customs clearance',
