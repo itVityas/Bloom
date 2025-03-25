@@ -17,6 +17,7 @@ from apps.sez.views.cleared_item import (
     ClearedItemListCreateAPIView,
 )
 from apps.sez.views.document_sez import DocumentSezView
+from apps.sez.views.report_delete import ReportDeleteView
 from apps.sez.views.available_declarations import GetAvailableDeclarationsView
 
 urlpatterns = [
@@ -30,6 +31,7 @@ urlpatterns = [
          name='clearance-invoice-detail'),
     path('clearance_invoice/full/<int:pk>/', GetFullClearanceInvoiceView.as_view()),
     path('clearance_invoice/full/', GetFullClearancesInvoiceListView.as_view()),
+    path('clearance_invoice/reportdelete/<int:pk>/', ReportDeleteView.as_view()),
 
     # ClearanceInvoiceItems endpoints
     path('clearance_invoice_items/', ClearanceInvoiceItemListCreateAPIView.as_view(),
