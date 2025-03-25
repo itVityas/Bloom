@@ -23,9 +23,9 @@ class Container(models.Model):
         Order, on_delete=models.SET_NULL, null=True, blank=True, related_name='containers'
     )
     name = models.CharField(max_length=30)
-    suppose_date = models.DateField()
+    suppose_date = models.DateField(blank=True, null=True)
     load_date = models.DateField(blank=True, null=True)
-    exit_date = models.DateField()
+    exit_date = models.DateField(blank=True, null=True)
     delivery = models.CharField(max_length=100, blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
     state = models.CharField(max_length=20, default="Created")
