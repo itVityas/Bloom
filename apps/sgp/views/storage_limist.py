@@ -44,7 +44,7 @@ class StorageLimitsCreateView(CreateAPIView):
         description='Permission: admin, sgp',
     ),
     patch=extend_schema(
-        summary='Update a storage limit',
+        summary='Update a storage limit partial',
         description='Permission: admin, sgp',
     ),
     delete=extend_schema(

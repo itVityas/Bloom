@@ -2,7 +2,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from apps.sgp.models import StorageLimits
+from apps.sgp.models import ShipmentBans
 from apps.sgp.serializers.shipment_bans import ShipmentBansGetSerializer, ShipmentBansPostSerializer
 from apps.sgp.permissions import SGPPermission
 
@@ -15,7 +15,7 @@ from apps.sgp.permissions import SGPPermission
     )
 )
 class ShipmentBansCreateView(CreateAPIView):
-    queryset = StorageLimits.objects.all()
+    queryset = ShipmentBans.objects.all()
     serializer_class = ShipmentBansPostSerializer
     permission_classes = (IsAuthenticated, SGPPermission)
 
@@ -28,7 +28,7 @@ class ShipmentBansCreateView(CreateAPIView):
     )
 )
 class ShipmentBansListView(ListAPIView):
-    queryset = StorageLimits.objects.all()
+    queryset = ShipmentBans.objects.all()
     serializer_class = ShipmentBansGetSerializer
     permission_classes = (IsAuthenticated, SGPPermission)
 
@@ -44,7 +44,7 @@ class ShipmentBansListView(ListAPIView):
         description='Permission: admin, sgp',
     ),
     patch=extend_schema(
-        summary='Partial update a shipment ban',
+        summary='Partial update a shipment ban partial',
         description='Permission: admin, sgp',
     ),
     delete=extend_schema(
@@ -53,6 +53,6 @@ class ShipmentBansListView(ListAPIView):
     ),
 )
 class ShipmentBansRUDView(RetrieveUpdateDestroyAPIView):
-    queryset = StorageLimits.objects.all()
+    queryset = ShipmentBans.objects.all()
     serializer_class = ShipmentBansGetSerializer
     permission_classes = (IsAuthenticated, SGPPermission)
