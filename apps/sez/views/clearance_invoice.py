@@ -8,6 +8,7 @@ from apps.sez.models import ClearanceInvoice
 from apps.sez.permissions import ClearanceInvoicePermission
 from apps.sez.serializers.clearance_invoice import (
     ClearanceInvoiceSerializer, FullClearanceInvoiceSerializer)
+from Bloom.paginator import StandartResultPaginator
 
 
 @extend_schema(tags=['ClearanceInvoice'])
@@ -88,3 +89,4 @@ class GetFullClearancesInvoiceListView(ListAPIView):
     permission_classes = (IsAuthenticated, ClearanceInvoicePermission)
     serializer_class = FullClearanceInvoiceSerializer
     queryset = ClearanceInvoice.objects.all()
+    pagination_class = StandartResultPaginator
