@@ -1,6 +1,7 @@
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
 
 from Bloom.paginator import StandartResultPaginator
 from apps.arrival.models import Content
@@ -27,6 +28,8 @@ class ContentListView(ListCreateAPIView):
     serializer_class = ContentSerializer
     queryset = Content.objects.all()
     pagination_class = StandartResultPaginator
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('container_id',)
 
 
 @extend_schema(tags=['Contents'])
