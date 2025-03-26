@@ -2,7 +2,7 @@ from django.db.models import Sum
 
 from rest_framework import serializers
 from apps.arrival.models import Container, Content
-from apps.arrival.serializers.content import ContentSerializer
+from apps.arrival.serializers.content import ContentSerializer, ContentMultySerializer
 from apps.declaration.serializers.declaration import DeclarationSerializer
 
 
@@ -84,3 +84,24 @@ class ContainerBindSerializer(serializers.Serializer):
         child=serializers.IntegerField(),
         allow_empty=False
     )
+
+
+class ContainerAndContantSetSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Container model including its associated contents.
+    """
+    contents = ContentMultySerializer(many=True)
+
+    class Meta:
+        model = Container
+        fields = '__all__'
+
+    def create(self, validated_data):
+        """
+        Creates a new Container instance with associated contents.
+        """
+        contents_data = validated_data.pop('contents')
+        container = Container.objects.create(**validated_data)
+        for content_data in contents_data:
+            Content.objects.create(container=container, **content_data)
+        return container

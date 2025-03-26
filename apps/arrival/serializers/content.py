@@ -10,3 +10,16 @@ class ContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Content
         fields = "__all__"
+
+
+class ContentMultySerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Content model.
+    """
+    class Meta:
+        model = Content
+        fields = [
+            'name',
+            'short_name',
+            'count'
+        ]

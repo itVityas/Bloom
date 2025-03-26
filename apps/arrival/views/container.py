@@ -11,7 +11,11 @@ from Bloom.paginator import StandartResultPaginator
 from apps.arrival.models import Container, Order
 from apps.arrival.permissions import ContainerPermission
 from apps.arrival.serializers.container import (
-    ContainerFullSerializer, ContainerSetSerializer, ContainerAndDeclarationSerializer, ContainerBindSerializer
+    ContainerFullSerializer,
+    ContainerSetSerializer,
+    ContainerAndDeclarationSerializer,
+    ContainerBindSerializer,
+    ContainerAndContantSetSerializer
 )
 
 
@@ -127,3 +131,16 @@ class BindContainersToOrderAPIView(APIView):
             'order_id': order_id,
             'container_ids': container_ids
         })
+
+
+@extend_schema(tags=['Containers'])
+@extend_schema_view(
+    post=extend_schema(
+        summary='Create container and content',
+        description='Permission: admin, container_writer',
+    ),
+)
+class ContainerAndContentCreateView(CreateAPIView):
+    permission_classes = (IsAuthenticated, ContainerPermission)
+    serializer_class = ContainerAndContantSetSerializer
+    queryset = Container.objects.all()
