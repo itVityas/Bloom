@@ -17,6 +17,9 @@ class ClearanceInvoice(models.Model):
     def __str__(self):
         return f"ClearanceInvoice #{self.pk}"
 
+    class Meta:
+        ordering = ['id']
+
 
 class ClearanceInvoiceItems(models.Model):
     clearance_invoice = models.ForeignKey(
@@ -36,6 +39,9 @@ class ClearanceInvoiceItems(models.Model):
 
     def __str__(self):
         return f"InvoiceItem #{self.pk} (Invoice #{self.clearance_invoice_id})"
+
+    class Meta:
+        ordering = ['id']
 
 
 class ClearedItem(models.Model):
