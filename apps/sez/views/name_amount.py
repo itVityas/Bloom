@@ -1,4 +1,5 @@
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import (
+    extend_schema, extend_schema_view, OpenApiParameter)
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count, Q
@@ -14,6 +15,15 @@ from apps.shtrih.models import Models
     get=extend_schema(
         summary='Get short name code and real_amount',
         description='Permission: admin, stz_reader, stz',
+        parameters=[
+            OpenApiParameter(
+                name='ziro',
+                type=bool,
+                location=OpenApiParameter.HEADER,
+                required=False,
+                description='if ziro having count(products.id)=0 else >0'
+            ),
+        ],
     ),
 )
 class NameAmountView(ListAPIView):
@@ -23,19 +33,29 @@ class NameAmountView(ListAPIView):
 
     def get(self, request):
         """
-SELECT [models].[id], [model_names].[short_name], [models].[code], COUNT_BIG([products].[id]) AS [real_amount]
+SELECT
+[models].[name_id], [model_names].[short_name], [models].[code], COUNT_BIG([products].[id]) AS [real_amount]
 FROM [models]
-INNER JOIN [products] ON ([models].[id] = [products].[model_id])
+LEFT OUTER JOIN [products] ON ([models].[id] = [products].[model_id])
 INNER JOIN [model_names] ON ([models].[name_id] = [model_names].[id])
-WHERE (([products].[cleared] IS NULL OR [products].[cleared] = 0) AND [products].[id] IS NOT NULL)
-GROUP BY [models].[id], [model_names].[short_name], [models].[code] ORDER BY [model_names].[short_name]
+WHERE ([products].[cleared] IS NULL OR [products].[cleared] = 0)
+GROUP BY [models].[name_id], [model_names].[short_name], [models].[code]
+HAVING COUNT_BIG([products].[id]) = 0
+ORDER BY [model_names].[short_name] ASC OFFSET 0 ROWS
         """
-        queryset = Models.objects.filter(
-            Q(products__cleared__isnull=True) | Q(products__cleared=0),
-            products__isnull=False
-        ).values('id', 'name__short_name', 'code').annotate(
-            real_amount=Count('products')
-        ).order_by('name__short_name')
+        ziro = request.query_params.get('ziro', False)
+        if ziro:
+            queryset = Models.objects.filter(
+                Q(products__cleared__isnull=True) | Q(products__cleared=0)
+            ).values('name__id', 'name__short_name', 'code').annotate(
+                real_amount=Count('products')
+            ).filter(real_amount=0).order_by('name__short_name')
+        else:
+            queryset = Models.objects.filter(
+                Q(products__cleared__isnull=True) | Q(products__cleared=0)
+            ).values('name__id', 'name__short_name', 'code').annotate(
+                real_amount=Count('products')
+            ).filter(real_amount__gt=0).order_by('name__short_name')
 
         serializer = NameAmountSerializer(queryset, many=True)
         return Response(serializer.data)
