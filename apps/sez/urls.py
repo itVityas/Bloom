@@ -19,6 +19,7 @@ from apps.sez.views.cleared_item import (
 from apps.sez.views.document_sez import DocumentSezView
 from apps.sez.views.report_delete import ReportDeleteView
 from apps.sez.views.available_declarations import GetAvailableDeclarationsView
+from apps.sez.views.name_amount import NameAmountView
 
 urlpatterns = [
     # Reports
@@ -45,6 +46,7 @@ urlpatterns = [
 
     # sez
     path('available_declarations/', GetAvailableDeclarationsView.as_view()),
+    path('name-amount/', NameAmountView.as_view()),
 
     # Document SEZ
     path('document_sez/', DocumentSezView.as_view()),

@@ -35,3 +35,18 @@ class Models(models.Model):
     class Meta:
         managed = False
         db_table = 'models'
+
+
+class Products(models.Model):
+    barcode = models.CharField(max_length=18)
+    color_id = models.IntegerField(blank=True, null=True)
+    model = models.ForeignKey(Models, on_delete=models.CASCADE, db_column='model_id')
+    consignment_id = models.IntegerField(blank=True, null=True)
+    state = models.IntegerField()
+    nameplate = models.IntegerField(blank=True, null=True)
+    quantity = models.IntegerField()
+    cleared = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'products'
