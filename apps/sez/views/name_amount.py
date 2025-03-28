@@ -43,17 +43,17 @@ GROUP BY [models].[name_id], [model_names].[short_name], [models].[code]
 HAVING COUNT_BIG([products].[id]) = 0
 ORDER BY [model_names].[short_name] ASC OFFSET 0 ROWS
         """
-        ziro = request.query_params.get('ziro', False)
-        if ziro:
+        ziro = request.query_params.get('ziro', 'false').lower()
+        if ziro == 'true':
             queryset = Models.objects.filter(
                 Q(products__cleared__isnull=True) | Q(products__cleared=0)
-            ).values('name__id', 'name__short_name', 'code').annotate(
+            ).values('name__id', 'name__short_name', 'name__name', 'code').annotate(
                 real_amount=Count('products')
             ).filter(real_amount=0).order_by('name__short_name')
         else:
             queryset = Models.objects.filter(
                 Q(products__cleared__isnull=True) | Q(products__cleared=0)
-            ).values('name__id', 'name__short_name', 'code').annotate(
+            ).values('name__id', 'name__short_name', 'name__name', 'code').annotate(
                 real_amount=Count('products')
             ).filter(real_amount__gt=0).order_by('name__short_name')
 
