@@ -67,10 +67,20 @@ class ContainerAndDeclarationSerializer(serializers.ModelSerializer):
     Serializer for the Container model including its associated declarations.
     """
     declarations = DeclarationSerializer(many=True, read_only=True)
+    count = serializers.SerializerMethodField()
 
     class Meta:
         model = Container
         fields = '__all__'
+
+    def get_count(self, obj) -> int:
+        """
+        Returns the count of contents for the container.
+
+        :return: Count of contents.
+        """
+        count = Content.objects.filter(container=obj).aggregate(total=Sum('count'))['total']
+        return count if count else 0
 
 
 class ContainerBindSerializer(serializers.Serializer):
