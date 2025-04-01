@@ -3,12 +3,14 @@ from rest_framework.generics import (
     RetrieveAPIView, ListAPIView)
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.sez.models import ClearanceInvoice
 from apps.sez.permissions import ClearanceInvoicePermission
 from apps.sez.serializers.clearance_invoice import (
     ClearanceInvoiceSerializer, FullClearanceInvoiceSerializer)
 from Bloom.paginator import StandartResultPaginator
+from apps.sez.filterset import ClearanceInvoiceFilter
 
 
 @extend_schema(tags=['ClearanceInvoice'])
@@ -90,3 +92,5 @@ class GetFullClearancesInvoiceListView(ListAPIView):
     serializer_class = FullClearanceInvoiceSerializer
     queryset = ClearanceInvoice.objects.all()
     pagination_class = StandartResultPaginator
+    filter_backends = [DjangoFilterBackend,]
+    filterset_class = ClearanceInvoiceFilter
