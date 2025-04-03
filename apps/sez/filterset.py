@@ -73,7 +73,7 @@ class ClearanceInvoiceFilter(filters.FilterSet):
     date_calc = filters.DateFilter(
         field_name='date_calc',
         lookup_expr='iexact')
-    isnull_date_calc = filters.DateFilter(
+    isnull_date_calc = filters.BooleanFilter(
         field_name='date_calc',
         lookup_expr='isnull')
 
