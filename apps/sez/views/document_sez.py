@@ -6,9 +6,11 @@ from rest_framework.generics import ListAPIView
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.sez.serializers.document_sez import DocumentClearedItemSerializer
 from apps.sez.models import ClearanceInvoice, ClearedItem
+from apps.sez.filterset import DocumentSezFilter
 
 
 @extend_schema(tags=['Sez_document'])
@@ -35,6 +37,8 @@ class DocumentSezView(ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = DocumentClearedItemSerializer
     queryset = ClearedItem.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = DocumentSezFilter
 
     def get(self, request):
         clearanceinvoice_id = request.query_params.get('id', None)
@@ -60,5 +64,9 @@ class DocumentSezView(ListAPIView):
         cleranceinvoice.save()
 
         cleared_items = ClearedItem.objects.filter()
-        serializer = DocumentClearedItemSerializer(cleared_items, many=True)
+
+        # filtering from url
+        filter_queryset = self.filter_queryset(cleared_items)
+
+        serializer = DocumentClearedItemSerializer(filter_queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

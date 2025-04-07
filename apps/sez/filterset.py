@@ -103,3 +103,117 @@ class ClearanceInvoiceFilter(filters.FilterSet):
             'date_calc',
             'isnull_date_calc',
         ]
+
+
+class DocumentSezFilter(filters.FilterSet):
+    product_id = filters.NumberFilter(
+        field_name='product_id',
+        lookup_expr='iexact'
+    )
+    cont_product_id = filters.NumberFilter(
+        field_name='product_id',
+        lookup_expr='icontains'
+    )
+    start_product_id = filters.NumberFilter(
+        field_name='product_id',
+        lookup_expr='istartswith'
+    )
+    end_product_id = filters.NumberFilter(
+        field_name='product_id',
+        lookup_expr='iendswith')
+    exact_id = filters.NumberFilter(
+        field_name='id',
+        lookup_expr='iexact'
+    )
+    cont_id = filters.NumberFilter(
+        field_name='id',
+        lookup_expr='icontains'
+    )
+    start_id = filters.NumberFilter(
+        field_name='id',
+        lookup_expr='istartswith'
+    )
+    end_id = filters.NumberFilter(
+        field_name='id',
+        lookup_expr='iendswith'
+    )
+    declaration_number = filters.CharFilter(
+        field_name='declaration_number',
+        lookup_expr='iexact'
+    )
+    cont_declaration_number = filters.CharFilter(
+        field_name='declaration_number',
+        lookup_expr='icontains'
+    )
+    start_declaration_number = filters.CharFilter(
+        field_name='declaration_number',
+        lookup_expr='istartswith'
+    )
+    end_declaration_number = filters.CharFilter(
+        field_name='declaration_number',
+        lookup_expr='iendswith'
+    )
+    declaration_date = filters.CharFilter(
+        field_name='declaration_date',
+        lookup_expr='iexact'
+    )
+    cont_declaration_date = filters.CharFilter(
+        field_name='declaration_date',
+        lookup_expr='icontains'
+    )
+    start_declaration_date = filters.CharFilter(
+        field_name='declaration_date',
+        lookup_expr='istartswith'
+    )
+    end_declaration_date = filters.CharFilter(
+        field_name='declaration_date',
+        lookup_expr='iendswith'
+    )
+    amount = filters.NumberFilter(
+        field_name='amount',
+        lookup_expr='iexact'
+    )
+    cont_amount = filters.NumberFilter(
+        field_name='amount',
+        lookup_expr='icontains'
+    )
+    start_amount = filters.NumberFilter(
+        field_name='amount',
+        lookup_expr='istartswith'
+    )
+    end_amount = filters.NumberFilter(
+        field_name='amount',
+        lookup_expr='iendswith'
+    )
+    unit = filters.CharFilter(
+        field_name='unit',
+        lookup_expr='iexact'
+    )
+    cont_unit = filters.CharFilter(
+        field_name='unit',
+        lookup_expr='icontains'
+    )
+    start_unit = filters.CharFilter(
+        field_name='unit',
+        lookup_expr='istartswith'
+    )
+    end_unit = filters.CharFilter(
+        field_name='unit',
+        lookup_expr='iendswith'
+    )
+    cost = filters.NumberFilter(
+        field_name='cost',
+        lookup_expr='iexact'
+    )
+    cont_cost = filters.NumberFilter(
+        field_name='cost',
+        lookup_expr='icontains'
+    )
+    start_cost = filters.NumberFilter(
+        field_name='cost',
+        lookup_expr='istartswith'
+    )
+    end_cost = filters.NumberFilter(
+        field_name='cost',
+        lookup_expr='iendswith'
+    )
