@@ -11,6 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from apps.sez.serializers.document_sez import DocumentClearedItemSerializer
 from apps.sez.models import ClearanceInvoice, ClearedItem
 from apps.sez.filterset import DocumentSezFilter
+from Bloom.paginator import StandartResultPaginator
 
 
 @extend_schema(tags=['Sez_document'])
@@ -39,6 +40,7 @@ class DocumentSezView(ListAPIView):
     queryset = ClearedItem.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_class = DocumentSezFilter
+    pagination_class = StandartResultPaginator
 
     def get(self, request):
         clearanceinvoice_id = request.query_params.get('id', None)
@@ -63,10 +65,13 @@ class DocumentSezView(ListAPIView):
         cleranceinvoice.cleared = True
         cleranceinvoice.save()
 
-        cleared_items = ClearedItem.objects.filter()
+        cleared_items = ClearedItem.objects.filter().order_by('id')
 
         # filtering from url
         filter_queryset = self.filter_queryset(cleared_items)
 
-        serializer = DocumentClearedItemSerializer(filter_queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        # pagination
+        page = self.paginate_queryset(filter_queryset)
+
+        serializer = DocumentClearedItemSerializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
