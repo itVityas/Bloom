@@ -10,6 +10,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 from apps.arrival.models import Container
 from apps.declaration.permissions import DeclarationPermission
 from apps.declaration.serializers.upload_declaration import ZipFileUploadSerializer
+from apps.declaration.utils.dbf.duplicate_exception import DuplicateDeclarationException
 from apps.declaration.utils.dbf.process_all_dbf_files import process_all_dbf_files
 
 
@@ -53,6 +54,8 @@ class ZipFileUploadAPIView(APIView):
                 tmp_zip_path = tmp_zip.name
 
             process_all_dbf_files(tmp_zip_path, container=container)
+        except DuplicateDeclarationException as de:
+            return Response({'error': str(de)}, status=409)
         except Exception as e:
             return Response({'error': f'Error processing zip file: {str(e)}'}, status=500)
         finally:

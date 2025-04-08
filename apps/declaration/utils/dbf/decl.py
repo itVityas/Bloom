@@ -1,3 +1,4 @@
+from apps.declaration.utils.dbf.duplicate_exception import DuplicateDeclarationException
 from apps.declaration.utils.dbf.util import clean_str, read_dbf_records
 from apps.declaration.models import Declaration
 
@@ -73,7 +74,7 @@ def save_declaration_to_db(declarations_data):
             declarations.append(Declaration(**data))
 
     if duplicate_ids:
-        raise Exception(f"Declarations with declaration_ids {duplicate_ids} already exist.")
+        raise DuplicateDeclarationException(duplicate_ids)
     elif declarations:
         Declaration.objects.bulk_create(declarations)
     else:
