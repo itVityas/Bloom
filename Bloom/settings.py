@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     'apps.invoice',
     'apps.sez',
     'apps.shtrih',
-    'apps.omega.apps'
+    'apps.omega'
 ]
 
 MIDDLEWARE = [
@@ -110,9 +110,16 @@ DATABASES = {
             'driver': env("DB_DRIVER"),
             'extra_params': 'Encrypt=yes;TrustServerCertificate=yes',
         }
-    }
+    },
+    'oracle_db': {
+        'ENGINE': 'apps.omega.oracle_12',
+        'NAME': env('ORACLE_DB_NAME'),
+        'USER': env("ORACLE_DB_USER"),
+        'PASSWORD': env("ORACLE_DB_PASSWORD"),
+    },
 }
 
+# DATABASE_ROUTERS = ['Bloom.routers.OracleReadOnlyRouter']
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
