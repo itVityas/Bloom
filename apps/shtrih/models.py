@@ -10,7 +10,7 @@ class ModelNames(models.Model):
         db_table = 'model_names'
 
     def __str__(self):
-        return self.short_name
+        return self.shshtrih_consignmentsort_name
 
 
 class Models(models.Model):
@@ -37,11 +37,28 @@ class Models(models.Model):
         db_table = 'models'
 
 
+class Consignments(models.Model):
+    model_name = models.ForeignKey(ModelNames, on_delete=models.CASCADE, db_column='model_name_id')
+    quantity = models.IntegerField()
+    used_quantity = models.IntegerField()
+    declaration_number = models.CharField(max_length=50)
+    declaration_date = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'consignments'
+
+
 class Products(models.Model):
     barcode = models.CharField(max_length=18)
     color_id = models.IntegerField(blank=True, null=True)
     model = models.ForeignKey(Models, on_delete=models.CASCADE, db_column='model_id')
-    consignment_id = models.IntegerField(blank=True, null=True)
+    consignment = models.ForeignKey(
+        Consignments,
+        on_delete=models.CASCADE,
+        db_column='consignment_id',
+        blank=True,
+        null=True)
     state = models.IntegerField()
     nameplate = models.IntegerField(blank=True, null=True)
     quantity = models.IntegerField()
