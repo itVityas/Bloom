@@ -113,7 +113,7 @@ DATABASES = {
     },
     'oracle_db': {
         'ENGINE': 'apps.omega.oracle_12',
-        'NAME': '192.168.2.200:1521/omega',  # строка подключения TNS-style
+        'NAME': env('ORACLE_DB_NAME'),
         'USER': env("ORACLE_DB_USER"),
         'PASSWORD': env("ORACLE_DB_PASSWORD"),
     },
