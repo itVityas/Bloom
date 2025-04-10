@@ -13,7 +13,7 @@ from apps.account.permissions import AccountPermissions
 from Bloom.paginator import StandartResultPaginator
 
 
-@extend_schema(tags=['jwt'])
+@extend_schema(tags=['user'])
 @extend_schema_view(
     get=extend_schema(
         summary='Получение списка всех пользователй',
@@ -27,7 +27,7 @@ class UserListView(ListAPIView):
     pagination_class = StandartResultPaginator
 
 
-@extend_schema(tags=['jwt'])
+@extend_schema(tags=['user'])
 @extend_schema_view(
     put=extend_schema(
         summary='Обновление пользователя',
@@ -48,7 +48,7 @@ class UserDetailedView(DestroyAPIView, UpdateAPIView):
     queryset = User.objects.all()
 
 
-@extend_schema(tags=['jwt'])
+@extend_schema(tags=['user'])
 @extend_schema_view(
     get=extend_schema(
         summary='Получение пользователя по id',
@@ -61,7 +61,7 @@ class UserRetrieveView(RetrieveAPIView):
     queryset = User.objects.all()
 
 
-@extend_schema(tags=['jwt'])
+@extend_schema(tags=['user'])
 @extend_schema_view(
     delete=extend_schema(
         summary='Удаление роли у пользователя',
