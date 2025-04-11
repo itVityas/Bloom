@@ -23,6 +23,7 @@ class User(AbstractBaseUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     departmant = models.CharField(max_length=30, blank=True, null=True)
+    position = models.CharField(max_length=50, blank=True, null=True)
     room = models.CharField(max_length=30, blank=True, null=True)
 
     USERNAME_FIELD = 'username'
