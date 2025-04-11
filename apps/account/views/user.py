@@ -6,11 +6,13 @@ from drf_spectacular.utils import (
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.account.models import User, UserRoles
 from apps.account.serializers.user import UserSerializer, UserUpdateSerializer
 from apps.account.permissions import AccountPermissions
 from Bloom.paginator import StandartResultPaginator
+from apps.account.filterset import UserFilter
 
 
 @extend_schema(tags=['user'])
@@ -25,6 +27,8 @@ class UserListView(ListAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
     pagination_class = StandartResultPaginator
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = UserFilter
 
 
 @extend_schema(tags=['user'])
