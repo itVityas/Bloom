@@ -95,6 +95,8 @@ class DeclaredItem(models.Model):
     declaration = models.ForeignKey(
         Declaration, on_delete=models.CASCADE, related_name='declared_items'
     )
+    factory_code = models.CharField(max_length=20, null=True, blank=True)
+    is_selected = models.BooleanField(default=False, null=True, blank=True)
     # G312 / Commercial or contract item name
     name = models.CharField(max_length=250)
     # G32 / Item ordinal number
