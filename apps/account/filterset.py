@@ -29,6 +29,11 @@ class UserFilter(filters.FilterSet):
     start_room = filters.CharFilter(field_name='room', lookup_expr='istartswith')
     end_room = filters.CharFilter(field_name='room', lookup_expr='iendswith')
     is_active = filters.BooleanFilter(field_name='is_active', lookup_expr='exact')
+    created = filters.CharFilter(method='filter_created')
+    role = filters.CharFilter(method='filter_role')
+    cont_role = filters.CharFilter(method='filter_cont_role')
+    start_role = filters.CharFilter(method='filter_start_role')
+    end_role = filters.CharFilter(method='filter_end_role')
 
     class Meta:
         model = User
@@ -55,4 +60,30 @@ class UserFilter(filters.FilterSet):
             'start_room',
             'end_room',
             'is_active',
+            'created',
+            'role',
+            'cont_role',
+            'start_role',
+            'end_role',
         ]
+
+    def filter_created(self, queryset, name, value):
+        filter_date = value.split('-')
+        if len(filter_date) == 3:
+            return queryset.filter(
+                created_at__year=filter_date[0],
+                created_at__month=filter_date[1],
+                created_at__day=filter_date[2])
+        return queryset
+
+    def filter_role(self, queryset, name, value):
+        return queryset.filter(userroles__role__name=value)
+
+    def filter_cont_role(self, queryset, name, value):
+        return queryset.filter(userroles__role__name__icontains=value)
+
+    def filter_start_role(self, queryset, name, value):
+        return queryset.filter(userroles__role__name__istartswith=value)
+
+    def filter_end_role(self, queryset, name, value):
+        return queryset.filter(userroles__role__name__iendswith=value)
