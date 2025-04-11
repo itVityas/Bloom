@@ -24,6 +24,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             'fio',
             'departmant',
             'room',
+            'position',
             ]
 
     def validate(self, attrs):
@@ -44,6 +45,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             fio=validated_data.get('fio', None),
             departmant=validated_data.get('departmant', None),
             room=validated_data.get('room', None),
+            position=validated_data.get('position', None),
         )
         user.save()
         return user
