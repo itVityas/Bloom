@@ -67,3 +67,33 @@ class Products(models.Model):
     class Meta:
         managed = False
         db_table = 'products'
+
+
+class Modules(models.Model):
+    number = models.IntegerField(db_column='number')
+    digit = models.IntegerField(db_column='digit')
+
+    class Meta:
+        managed = False
+        db_table = 'modules'
+
+
+class Production_codes(models.Model):
+    code = models.IntegerField(db_column='code', primary_key=True)
+    name = models.CharField(max_length=70, db_column='name')
+    nameplate = models.BooleanField(db_column='nameplate')
+
+    class Meta:
+        managed = False
+        db_table = 'production_codes'
+
+
+class Colors(models.Model):
+    color_code = models.CharField(
+        max_length=4, db_column='color_code', blank=True, null=True)
+    russian_title = models.CharField(
+        max_length=50, db_column='russian_title', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'colors'
