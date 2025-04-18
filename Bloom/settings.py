@@ -266,3 +266,9 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+
+
+# API
+
+API_USERNAME = env.str("API_USERNAME")
+API_PASSWORD = env.str("API_PASSWORD")
