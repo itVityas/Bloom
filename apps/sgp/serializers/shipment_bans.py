@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from apps.sgp.models import ShipmentBans
-from apps.shtrih.models import Models, Modules, Production_codes, Colors
+from apps.shtrih.models import ModelNames, Modules, Production_codes, Colors
 
 
 class ShipmentBansGetSerializer(serializers.ModelSerializer):
@@ -47,10 +47,10 @@ class ShipmentBansGetSerializer(serializers.ModelSerializer):
         return ''
 
     def get_model(self, obj) -> str:
-        model_id = obj.model_id
+        model_id = obj.model_name_id
         if model_id:
             try:
-                return Models.objects.filter(id=model_id).first().name.short_name
+                return ModelNames.objects.filter(id=model_id).first().short_name
             except Exception:
                 return ''
         return ''
@@ -59,7 +59,7 @@ class ShipmentBansGetSerializer(serializers.ModelSerializer):
         color_id = obj.color_id
         if color_id:
             try:
-                return Colors.objects.filter(id=color_id).first().russian_title
+                return Colors.objects.filter(id=color_id).first().color_code
             except Exception:
                 return ''
         return ''

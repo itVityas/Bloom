@@ -8,15 +8,27 @@ class ModelNames(models.Model):
     class Meta:
         managed = False
         db_table = 'model_names'
+        ordering = ['-id']
 
     def __str__(self):
         return self.shshtrih_consignmentsort_name
 
 
+class Production_codes(models.Model):
+    code = models.IntegerField(db_column='code', primary_key=True)
+    name = models.CharField(max_length=70, db_column='name')
+    nameplate = models.BooleanField(db_column='nameplate')
+
+    class Meta:
+        managed = False
+        db_table = 'production_codes'
+        ordering = ['-code']
+
+
 class Models(models.Model):
     omega_model_id = models.IntegerField()
     omega_variant_id = models.IntegerField()
-    # production_code = models.ForeignKey()
+    production_code = models.ForeignKey(Production_codes, on_delete=models.CASCADE, db_column='production_code')
     code = models.IntegerField()
     name = models.ForeignKey(ModelNames, on_delete=models.CASCADE, db_column='name_id')
     diagonal = models.FloatField()
@@ -35,6 +47,7 @@ class Models(models.Model):
     class Meta:
         managed = False
         db_table = 'models'
+        ordering = ['-id']
 
 
 class Consignments(models.Model):
@@ -47,6 +60,7 @@ class Consignments(models.Model):
     class Meta:
         managed = False
         db_table = 'consignments'
+        ordering = ['id']
 
 
 class Products(models.Model):
@@ -67,6 +81,7 @@ class Products(models.Model):
     class Meta:
         managed = False
         db_table = 'products'
+        ordering = ['-id']
 
 
 class Modules(models.Model):
@@ -76,16 +91,7 @@ class Modules(models.Model):
     class Meta:
         managed = False
         db_table = 'modules'
-
-
-class Production_codes(models.Model):
-    code = models.IntegerField(db_column='code', primary_key=True)
-    name = models.CharField(max_length=70, db_column='name')
-    nameplate = models.BooleanField(db_column='nameplate')
-
-    class Meta:
-        managed = False
-        db_table = 'production_codes'
+        ordering = ['-id']
 
 
 class Colors(models.Model):
@@ -97,3 +103,4 @@ class Colors(models.Model):
     class Meta:
         managed = False
         db_table = 'colors'
+        ordering = ['id']

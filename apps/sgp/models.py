@@ -23,7 +23,7 @@ class ShipmentBans(models.Model):
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     production_code_id = models.IntegerField(blank=True, null=True)
-    model_id = models.IntegerField(blank=True, null=True)
+    model_name_id = models.IntegerField(blank=True, null=True)
     barcode = models.CharField(max_length=18, blank=True, null=True)
     color_id = models.CharField(max_length=4, blank=True, null=True)
     module_id = models.IntegerField(blank=True, null=True)
