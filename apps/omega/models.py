@@ -1,6 +1,60 @@
 from django.db import models
 
 
+class Stockobj(models.Model):
+    code = models.BigIntegerField(primary_key=True, db_comment='Код ТМЦ')
+    basecode = models.BigIntegerField(db_comment='Код базовой таблицы')
+    basetype = models.BigIntegerField(db_comment='Тип базовой таблицы')
+    drmet = models.BigIntegerField(blank=True, null=True, db_comment='Признак драгметалла')
+    # subcontocode = models.ForeignKey('Subconto', models.DO_NOTHING, db_column='subcontocode', blank=True, null=True, db_comment='Код субконто')
+    description = models.CharField(max_length=1024, blank=True, null=True, db_comment='Описание ТМЦ')
+    desc_date = models.DateField(blank=True, null=True, db_comment='Дата форм. описания')
+    desc_fmt = models.CharField(max_length=30, blank=True, null=True, db_comment='Формат описания')
+    # dobj_code = models.ForeignKey(Divisionobj, models.DO_NOTHING, db_column='dobj_code', blank=True, null=True, db_comment='Код подразделения')
+    # group_code = models.ForeignKey(GroupsInClassify, models.DO_NOTHING, db_column='group_code', blank=True, null=True, db_comment='Код класификатора')
+    # subconto_usercode = models.ForeignKey('UserList', models.DO_NOTHING, db_column='subconto_usercode', blank=True, null=True, db_comment='Пользователь манявший субконто')
+    subconto_userdate = models.DateField(blank=True, null=True, db_comment='Дата изменения субконто')
+    # fk_bo_production = models.ForeignKey(BoProduction, models.DO_NOTHING, db_column='fk_bo_production', blank=True, null=True, db_comment='FK_BO_PRODUCTION')
+    subtype = models.BigIntegerField(blank=True, null=True, db_comment='Подтип')
+    # meascode = models.ForeignKey(Measures, models.DO_NOTHING, db_column='meascode', blank=True, null=True, db_comment='Ед. изм.')
+    # owner = models.ForeignKey(OwnerName, models.DO_NOTHING, db_column='owner', blank=True, null=True, db_comment='Владелец')
+    notice = models.CharField(max_length=100, blank=True, null=True, db_comment='Примечание')
+    recdate = models.DateField(blank=True, null=True, db_comment='Дата записи')
+    # fk_materials = models.ForeignKey(Materials, models.DO_NOTHING, db_column='fk_materials', blank=True, null=True, db_comment='FK_MATERIALS')
+    # fk_stockother = models.ForeignKey(StockOther, models.DO_NOTHING, db_column='fk_stockother', blank=True, null=True, db_comment='FK_STOCKOTHER')
+    # fk_tare = models.ForeignKey('Tare', models.DO_NOTHING, db_column='fk_tare', blank=True, null=True, db_comment='FK_TARE')
+    # fk_kompspc = models.ForeignKey(Complspc, models.DO_NOTHING, db_column='fk_kompspc', blank=True, null=True, db_comment='FK_KOMPSPC')
+    desc_update_check = models.BigIntegerField()
+    sign = models.CharField(max_length=200, blank=True, null=True, db_comment='Обозначение')
+    name = models.CharField(max_length=255, blank=True, null=True, db_comment='Наименование')
+    unvcode = models.BigIntegerField(blank=True, null=True)
+    attr = models.BigIntegerField(blank=True, null=True, db_comment='Признак типа КЭ')
+    is_annul = models.BigIntegerField(blank=True, null=True, db_comment='Аннулировано')
+    # min_leave_meas = models.ForeignKey(Measures, models.DO_NOTHING, db_column='min_leave_meas', related_name='stockobj_min_leave_meas_set', blank=True, null=True, db_comment='Минимальный отпуск(ед.изм.)')
+    min_leave_value = models.FloatField(blank=True, null=True, db_comment='Минимальный отпуск')
+    is_num = models.BigIntegerField(blank=True, null=True, db_comment='Номерной объект')
+    mat_state = models.BigIntegerField(blank=True, null=True)
+    # add_meas = models.ForeignKey(Measures, models.DO_NOTHING, db_column='add_meas', related_name='stockobj_add_meas_set', blank=True, null=True)
+    nomsign = models.CharField(max_length=200, blank=True, null=True)
+    # ch_code = models.ForeignKey(CustomsHouse, models.DO_NOTHING, db_column='ch_code', blank=True, null=True)
+    params = models.BigIntegerField(blank=True, null=True)
+    # socode = models.ForeignKey(OmpObjects, models.DO_NOTHING, db_column='socode', blank=True, null=True, db_comment='Код СО')
+    min_leave_value_deviation = models.FloatField(blank=True, null=True, db_comment='Процент отклонения минимального отпуска')
+    tnved_code = models.CharField(max_length=255, blank=True, null=True, db_comment='Код ТНВЭД')
+    storage_period = models.BigIntegerField(blank=True, null=True, db_comment='Срок хранения (в днях)')
+    expl_term = models.BigIntegerField(blank=True, null=True, db_comment='Срок эксплуатации')
+    expl_term_change_date = models.DateField(blank=True, null=True, db_comment='Дата последнего изменения срока эксплуатации')
+    # purchase_status = models.ForeignKey(PurchaseStatus, models.DO_NOTHING, db_column='purchase_status', blank=True, null=True, db_comment='Статус закупки')
+    # serialobjs_docscheme = models.ForeignKey(SerialobjDocSchemes, models.DO_NOTHING, db_column='serialobjs_docscheme', blank=True, null=True, db_comment='Шаблон документов (для Серийных объектов)')
+    gtin = models.CharField(unique=True, max_length=14, blank=True, null=True, db_comment='GTIN')
+
+    class Meta:
+        managed = False
+        db_table = 'stockobj'
+        unique_together = (('basetype', 'basecode'),)
+        db_table_comment = 'Товарно-материальные ценности складского учета'
+
+
 class Konstrobj(models.Model):
     unvcode = models.BigIntegerField(primary_key=True, db_comment='Уникальный код')
     itemcode = models.BigIntegerField(db_comment='Код элемента')
