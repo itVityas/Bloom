@@ -18,6 +18,8 @@ class Invoice(models.Model):
     terms = models.CharField(max_length=50)  # Payment or delivery terms
     country = models.CharField(max_length=50)  # Country of origin or destination
     station = models.CharField(max_length=50)  # Station or location
+    pto = models.CharField(max_length=150, null=True, blank=True)  # Port of Transit (optional)
+    currency = models.CharField(max_length=3, default='USD')  # Currency code (e.g., USD, EUR)
     container = models.ForeignKey(
         Container, on_delete=models.CASCADE, null=True, blank=True
     )  # Associated container (optional)
@@ -39,5 +41,4 @@ class InvoiceItem(models.Model):
     gross_weight = models.DecimalField(max_digits=10, decimal_places=2)  # Gross weight of the item
     price_pcs = models.DecimalField(max_digits=10, decimal_places=2)  # Price per unit
     price_amount = models.DecimalField(max_digits=15, decimal_places=2)  # Total price for the item
-    currency = models.CharField(max_length=3)  # Currency code (e.g., USD, EUR)
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)  # Associated invoice
