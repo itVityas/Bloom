@@ -12,7 +12,7 @@ class ClearanceInvoiceItemsSerializer(serializers.ModelSerializer):
     Serializer for the ClearanceInvoiceItems model.
     """
     def validate(self, attrs):
-        if not attrs['model_id'] and not attrs['declared_item']:
+        if not attrs.get('model_id', None) and not attrs.get('declared_item', None):
             raise serializers.ValidationError('Either model_id or declared_item must be provided')
         return super().validate(attrs)
 
