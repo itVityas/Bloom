@@ -86,8 +86,8 @@ def fetch_vznab_stock_flat_tree(
     recursively expanding only items whose item_sign starts with 'СКЖИ'.
 
     Args:
-        root_scp_unv (int): UNV code of the root specification.
-        max_depth (Optional[int]): Maximum recursion depth. None means unlimited.
+        root_scp_unv (int): UNV code of the root specification
+        max_depth (Optional[int]): Maximum recursion depth. None means unlimited
 
     Returns:
         List[Dict]: Flat list of dicts with keys:
@@ -139,3 +139,12 @@ def fetch_vznab_stock_flat_tree(
 
     recurse(root_scp_unv, parent_qty=1.0, depth=max_depth)
     return flat_list
+
+
+"""
+from apps.omega.services.vznab_stock_service import fetch_vznab_stock_flat_tree
+
+results = fetch_vznab_stock_flat_tree(931938)
+for result in results:
+    print(result)
+"""
