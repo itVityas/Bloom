@@ -27,7 +27,7 @@ class ClearanceInvoiceItems(models.Model):
         on_delete=models.CASCADE,
         related_name='clearance_invoice_items',
     )
-    model_id = models.IntegerField(null=True, blank=True)
+    model_id = models.IntegerField()
     declared_item = models.ForeignKey(
         'declaration.DeclaredItem',
         null=True,

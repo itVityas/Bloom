@@ -11,11 +11,6 @@ class ClearanceInvoiceItemsSerializer(serializers.ModelSerializer):
     """
     Serializer for the ClearanceInvoiceItems model.
     """
-    def validate(self, attrs):
-        if not attrs.get('model_id', None) and not attrs.get('declared_item', None):
-            raise serializers.ValidationError('Either model_id or declared_item must be provided')
-        return super().validate(attrs)
-
     class Meta:
         model = ClearanceInvoiceItems
         fields = '__all__'
@@ -46,14 +41,16 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
 
     def get_model_name(self, obj) -> str:
         model_id = obj.model_id
-        if model_id:
-            return Models.objects.filter(id=model_id).first().name.short_name
         if obj.declared_item:
             return obj.declared_item.name
+        if model_id:
+            return Models.objects.filter(id=model_id).first().name.short_name
         return ''
 
     def get_model_code(self, obj) -> str:
         model_id = obj.model_id
+        if obj.declared_item:
+            return None
         if model_id:
             return Models.objects.filter(id=model_id).first().code
         return None
