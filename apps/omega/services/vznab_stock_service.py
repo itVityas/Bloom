@@ -36,7 +36,6 @@ def fetch_vznab_stock_details(scp_unv: int) -> List[Dict[str, Optional[object]]]
             - nomsign: str (Stockobj.nomsign or None)
 
     Raises:
-        VzNabNotFoundError: If no VzNab rows found for given scp_unv.
         OracleDBError: On database errors.
     """
     try:
@@ -59,23 +58,18 @@ def fetch_vznab_stock_details(scp_unv: int) -> List[Dict[str, Optional[object]]]
             )
         )
 
-        if not qs.exists():
-            logger.info(f"No VzNab entries found for spec_unv={scp_unv}.")
-            raise VzNabNotFoundError(f"No entries for specification {scp_unv}.")
-
-        results: List[Dict[str, Optional[object]]] = []
-        for row in qs.values(
-            'spc_unv_id', 'item_sign', 'item_unv_id', 'quantity', 'name', 'nomsign'
-        ):
-            results.append({
-                'scp_unv': row['spc_unv_id'],
-                'item_sign': row['item_sign'],
-                'item_unv': row['item_unv_id'],
-                'quantity': row['quantity'],
-                'name': row['name'],
-                'nomsign': row['nomsign'],
-            })
-
+        raw = list(qs.values('spc_unv_id', 'item_sign', 'item_unv_id', 'quantity', 'name', 'nomsign'))
+        results = [
+            {
+                'scp_unv': r['spc_unv_id'],
+                'item_sign': r['item_sign'],
+                'item_unv': r['item_unv_id'],
+                'quantity': r['quantity'],
+                'name': r['name'],
+                'nomsign': r.get('nomsign'),
+            }
+            for r in raw
+        ]
         return results
 
     except DatabaseError as exc:
@@ -83,3 +77,65 @@ def fetch_vznab_stock_details(scp_unv: int) -> List[Dict[str, Optional[object]]]
         raise OracleDBError(f"Database error: {exc}")
 
 
+def fetch_vznab_stock_flat_tree(
+    root_scp_unv: int,
+    max_depth: Optional[int] = None,
+) -> List[Dict[str, Optional[object]]]:
+    """
+    Fetch a flat list of all components for a given specification (root_scp_unv),
+    recursively expanding only items whose item_sign starts with 'СКЖИ'.
+
+    Args:
+        root_scp_unv (int): UNV code of the root specification.
+        max_depth (Optional[int]): Maximum recursion depth. None means unlimited.
+
+    Returns:
+        List[Dict]: Flat list of dicts with keys:
+            - scp_unv
+            - item_sign
+            - item_unv
+            - quantity
+            - name
+            - nomsign
+            - absolute_quantity: float
+
+    Raises:
+        OracleDBError
+    """
+    flat_list: List[Dict[str, Optional[object]]] = []
+    visited: Set[int] = set()
+
+    def recurse(scp_unv: int, parent_qty: float, depth: Optional[int]) -> None:
+        if scp_unv in visited:
+            logger.warning(f"Cycle detected at {scp_unv}, skipping this node.")
+            return
+        visited.add(scp_unv)
+
+        if depth is not None and depth < 0:
+            logger.debug(f"Max depth reached at {scp_unv}, stopping recursion.")
+            return
+
+        try:
+            items = fetch_vznab_stock_details(scp_unv)
+        except VzNabNotFoundError:
+            # No entries for this spec, skip recursion
+            return
+
+        for item in items:
+            abs_qty = item['quantity'] * parent_qty
+            node = {
+                **item,
+                'absolute_quantity': abs_qty,
+            }
+            flat_list.append(node)
+
+            # recurse only for items with СКЖИ prefix
+            if isinstance(item.get('item_sign'), str) and item['item_sign'].startswith('СКЖИ'):
+                recurse(
+                    item['item_unv'],
+                    abs_qty,
+                    (depth - 1) if depth is not None else None,
+                )
+
+    recurse(root_scp_unv, parent_qty=1.0, depth=max_depth)
+    return flat_list
