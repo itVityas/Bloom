@@ -63,9 +63,21 @@ class Consignments(models.Model):
         ordering = ['id']
 
 
+class Colors(models.Model):
+    color_code = models.CharField(
+        max_length=4, db_column='color_code', blank=True, null=True)
+    russian_title = models.CharField(
+        max_length=50, db_column='russian_title', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'colors'
+        ordering = ['id']
+
+
 class Products(models.Model):
     barcode = models.CharField(max_length=18)
-    color_id = models.IntegerField(blank=True, null=True)
+    color_id = models.ForeignKey(Colors, on_delete=models.CASCADE, db_column='color_id')
     model = models.ForeignKey(Models, on_delete=models.CASCADE, db_column='model_id')
     consignment = models.ForeignKey(
         Consignments,
@@ -92,15 +104,3 @@ class Modules(models.Model):
         managed = False
         db_table = 'modules'
         ordering = ['-id']
-
-
-class Colors(models.Model):
-    color_code = models.CharField(
-        max_length=4, db_column='color_code', blank=True, null=True)
-    russian_title = models.CharField(
-        max_length=50, db_column='russian_title', blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'colors'
-        ordering = ['id']
