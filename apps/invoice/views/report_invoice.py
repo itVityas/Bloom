@@ -1,4 +1,5 @@
-from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiResponse
+from drf_spectacular.utils import (
+    extend_schema, extend_schema_view, OpenApiResponse, OpenApiParameter)
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django.http import HttpResponse
@@ -17,6 +18,15 @@ from django.db.models import Sum
     get=extend_schema(
         summary='Generate report invoice pdf ',
         description='Permission: admin, invoice_reader, invoice',
+        parameters=[
+            OpenApiParameter(
+                name='invoice_id',
+                location=OpenApiParameter.QUERY,
+                description='invoice.id',
+                required=True,
+                type=int,
+            ),
+        ],
         responses={
             200: OpenApiResponse(description="PDF file"),
             400: OpenApiResponse(description="Missing required parameters"),
