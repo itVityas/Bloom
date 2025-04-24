@@ -162,7 +162,7 @@
         {% for items in invoice_items%}
         <tr>
             <td>
-
+                {{forloop.counter}}
             </td>
             <td>
                 {{items.code}}

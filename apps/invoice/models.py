@@ -21,7 +21,7 @@ class Invoice(models.Model):
     pto = models.CharField(max_length=150, null=True, blank=True)  # Port of Transit (optional)
     currency = models.CharField(max_length=3, default='USD')  # Currency code (e.g., USD, EUR)
     packages = models.IntegerField()  # Number of packages
-    freight_cost = models.DecimalField(max_digits=15, decimal_places=2) # freight cost
+    freight_cost = models.DecimalField(max_digits=15, decimal_places=2)  # freight cost
     container = models.ForeignKey(
         Container, on_delete=models.CASCADE, null=True, blank=True
     )  # Associated container (optional)

@@ -30,14 +30,13 @@ class ReportPDFInvoice(APIView):
         invoice_id = request.query_params.get('invoice_id', None)
         if not invoice_id:
             return HttpResponse('Missing required params', status=status.HTTP_400_BAD_REQUEST)
-        invoice = Invoice.objects.filter(id=invoice_id)
-        if not invoice.exists():
+        invoice = Invoice.objects.filter(id=invoice_id).first()
+        if not invoice:
             return HttpResponse('Invoice not found', status=status.HTTP_400_BAD_REQUEST)
-        invoice = invoice.first()
-        items = InvoiceItem.objects.filter(invoice=invoice.first())
+        items = InvoiceItem.objects.filter(invoice=invoice)
         q_sum = items.aggregate(q_sum=Sum('quantity'))['q_sum']
-        n_sum = items.aggregate(n_sum=Sum('net_price'))['n_sum']
-        g_sum = items.aggregate(g_sum=Sum('gross_price'))['g_sum']
+        n_sum = items.aggregate(n_sum=Sum('net_weight'))['n_sum']
+        g_sum = items.aggregate(g_sum=Sum('gross_weight'))['g_sum']
         amount = items.aggregate(amount=Sum('price_amount'))['amount']
         total_sum = amount + invoice.freight_cost
 
