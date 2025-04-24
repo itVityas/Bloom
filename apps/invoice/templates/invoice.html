@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="widtd=device-widtd, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        @page {
+            size: A4 landscape; /* Указываем размер и ориентацию */
+            margin: 1cm; /* Отступы */
+        }
+        body {
+            font-family: Arial, sans-serif;
+        }
+        td{
+            font-weight: normal;
+        }
+        td, td {
+            border: 2px solid black; /* Границы ячеек */
+            padding: 7px; /* Отступы внутри ячеек */
+            text-align: center; /* Выравнивание текста по центру */
+        }
+        .wide-column6 {
+            width: 60%;
+        }
+    </style>
+</head>
+<body>
+    <br>
+    <div style="width=100%">
+    <table border="2" bordercolor="black" cols="6" cellpadding="1" style="border-collapse: collapse;width: 100%;font-size: 10pt;">
+        <tr><td colspan=6>
+            <b>INVOICE-SPECIFICATION / Счет-СПЕЦИФИКАЦИЯ </b>
+        </td></tr>
+        <tr>
+            <td style="width:10%">
+                Договор №:
+            </td>
+            <td style="width:60%">
+                {{test}} dd {{test}}
+            </td>
+            <td style="width:10%">
+                {{test}}
+            </td>
+            <td style="width:10%">
+                Date / Дата
+            </td>
+            <td style="width:10%">
+                {{test}}
+            </td>
+        </tr>
+
+    </table>
+    <br>
+    <br>
+    <table border="2" bordercolor="black" cols="4" cellpadding="1" style="border-collapse: collapse;width: 100%;font-size: 10pt;">    
+        <tr>
+            <td>
+                Получатель по ст.
+            </td>
+            <td colspan=3>
+                ОАО Витязь, ул. П.Бровки 13.а, 210605, г.Витебск, Республика Беларусь УНА 300031652/ JSC VITYAS, P.BROVKI STR. 13 A 210605, BELARUS UNP 300031652
+            </td>
+        </tr>
+        <tr>
+            <td style="width:5%">
+                Shipper/Отправитель
+            </td>
+            <td style="width:60%">
+                {{test}}
+            </td>
+            <td style="width:5%" rowspan=2>
+                Покупатель
+                Buyer
+            </td>
+            <td style="width:30%" rowspan=2>
+                ОАО Витязь, ул. П.Бровки 13.а, 210605, г.Витебск, Республика Беларусь УНА 300031652/ JSC VITYAS, P.BROVKI STR. 13 A 210605, BELARUS UNP 300031652
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Seller/Продавец
+            </td>
+            <td>
+                {{test}}
+            </td>
+        </tr>
+    </table>
+    <br>
+    <table cols="3" cellpadding="1" style="width: 100%;font-size: 10pt; text-align:left; border: 0px;">
+        <tr>
+            <td style="width:70%; text-align:left;border: 0px;" >
+                Terms of delivery / Условия поставки: {{test}}
+            </td>
+            <td style="width:15%; text-align:left; border: 0px;">
+                Страна назначения
+            </td>
+            <td style="width:15%; text-align:left; border: 0px;">
+                Республика Беларусь
+            </td>
+        </tr>
+        <tr>
+            <td style="width:70%; text-align:left; border: 0px;">
+                Container / Контейнер: {{test}}
+            </td>
+            <td style="width:15%; text-align:left; border: 0px;">
+                Станция назначения
+            </td>
+            <td style="width:15%; text-align:left; border: 0px;">
+                {{test}}
+            </td>
+        </tr>
+    </table>
+    <br>
+    <table border="2" bordercolor="black" cols="12" cellpadding="1" style="border-collapse: collapse;width: 100%;font-size: 10pt;"> 
+        <tr>
+            <td>
+                №
+            </td>
+            <td>
+                 HS Code / Код ТН ВЭД ТС
+            </td>
+            <td>
+                Страна происхождения товара
+            </td>
+            <td>
+                Описание товара
+            </td>
+            <td>
+                Description of goods
+            </td>
+            <td>
+                Ед измер/measurements
+            </td>
+            <td>
+                Quanty/Общее кол-во
+            </td>
+            <td>
+                Qty of packages/Кол-во мест, коробов
+            </td>
+            <td>
+                Net weight kg / Вес нетто кг
+            </td>
+            <td>
+                Gross weight kg / Вес брутто кг
+            </td>
+            <td>
+                Price per 1 PCS(CNY)/Цена за 1 шт
+            </td>
+            <td>
+                Amount(CNY)/Сумма
+            </td>
+        </tr>
+        <tr>
+            <td colspan=12>
+                parts for / комплектующие для {{test}}
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+
+            </td>
+            <td colspan=9>
+
+            </td>
+            <td>
+                
+            </td>
+            <td>
+                {{test}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+
+            </td>
+            <td colspan=9>
+                <b>Freight cost / Стоимость доставки</b>
+            </td>
+            <td>
+                
+            </td>
+            <td>
+                {{test}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+
+            </td>
+            <td colspan=2>
+
+            </td>
+            <td colspan=2>
+                Total/ИТОГО
+            </td>
+            <td>
+
+            </td>
+            <td>
+                {{test}}
+            </td>
+            <td>
+                {{test}}
+            </td>
+            <td>
+                {{test}}
+            </td>
+            <td>
+                {{test}}
+            </td>
+            <td>
+
+            </td>
+            <td>
+                {{test}}
+            </td>
+        </tr>
+    </table>
+</div>
+<div style="text-align:right;">
+    <br>
+    <br>
+    <br>
+    CEO/Генеральный Директор    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                         
+    <br>
+    <br>
+    <br>
+    ПЕЧАТЬ/stamp &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</div>
+</body>
+</html>
