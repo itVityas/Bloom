@@ -2,11 +2,15 @@ from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiResp
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django.http import HttpResponse
+from rest_framework import status
 from django.template.loader import render_to_string
 from weasyprint import HTML
 from weasyprint.fonts import FontConfiguration
 
 from apps.invoice.permissions import InvoicePermission
+from apps.invoice.models import Invoice, InvoiceItem
+from django.db.models import Sum
+
 
 @extend_schema(tags=['Invoice'])
 @extend_schema_view(
@@ -23,8 +27,28 @@ class ReportPDFInvoice(APIView):
     permission_classes = (IsAuthenticated, InvoicePermission)
 
     def get(self, request):
+        invoice_id = request.query_params.get('invoice_id', None)
+        if not invoice_id:
+            return HttpResponse('Missing required params', status=status.HTTP_400_BAD_REQUEST)
+        invoice = Invoice.objects.filter(id=invoice_id)
+        if not invoice.exists():
+            return HttpResponse('Invoice not found', status=status.HTTP_400_BAD_REQUEST)
+        invoice = invoice.first()
+        items = InvoiceItem.objects.filter(invoice=invoice.first())
+        q_sum = items.aggregate(q_sum=Sum('quantity'))['q_sum']
+        n_sum = items.aggregate(n_sum=Sum('net_price'))['n_sum']
+        g_sum = items.aggregate(g_sum=Sum('gross_price'))['g_sum']
+        amount = items.aggregate(amount=Sum('price_amount'))['amount']
+        total_sum = amount + invoice.freight_cost
+
         context = {
-            'test': 'test'
+            'invoice': invoice,
+            'invoice_items': items,
+            'q_sum': q_sum,
+            'n_sum': n_sum,
+            'g_sum': g_sum,
+            'amount': amount,
+            'total_sum': total_sum
             }
         html_message = render_to_string(
                 "invoice.html",
@@ -32,7 +56,7 @@ class ReportPDFInvoice(APIView):
             )
         font_config = FontConfiguration()
 
-        file_path = 'tmp/' + f'invoice.pdf'
+        file_path = 'tmp/' + f'invoice{invoice_id}.pdf'
         HTML(string=html_message).write_pdf(file_path, font_config=font_config)
 
         document = open(file_path, 'rb')

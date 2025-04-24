@@ -39,16 +39,16 @@
                 Договор №:
             </td>
             <td style="width:60%">
-                {{test}} dd {{test}}
+                {{invoice.contract}}
             </td>
             <td style="width:10%">
-                {{test}}
+                {{invoice.number}}
             </td>
             <td style="width:10%">
                 Date / Дата
             </td>
             <td style="width:10%">
-                {{test}}
+                {{invoice.date}}
             </td>
         </tr>
 
@@ -61,7 +61,7 @@
                 Получатель по ст.
             </td>
             <td colspan=3>
-                ОАО Витязь, ул. П.Бровки 13.а, 210605, г.Витебск, Республика Беларусь УНА 300031652/ JSC VITYAS, P.BROVKI STR. 13 A 210605, BELARUS UNP 300031652
+                {{invoice.buyer}}
             </td>
         </tr>
         <tr>
@@ -69,14 +69,14 @@
                 Shipper/Отправитель
             </td>
             <td style="width:60%">
-                {{test}}
+                {{invoice.shipper}}
             </td>
             <td style="width:5%" rowspan=2>
                 Покупатель
                 Buyer
             </td>
             <td style="width:30%" rowspan=2>
-                ОАО Витязь, ул. П.Бровки 13.а, 210605, г.Витебск, Республика Беларусь УНА 300031652/ JSC VITYAS, P.BROVKI STR. 13 A 210605, BELARUS UNP 300031652
+                {{invoice.buyer}}
             </td>
         </tr>
         <tr>
@@ -84,7 +84,7 @@
                 Seller/Продавец
             </td>
             <td>
-                {{test}}
+                {{invoice.seller}}
             </td>
         </tr>
     </table>
@@ -92,7 +92,7 @@
     <table cols="3" cellpadding="1" style="width: 100%;font-size: 10pt; text-align:left; border: 0px;">
         <tr>
             <td style="width:70%; text-align:left;border: 0px;" >
-                Terms of delivery / Условия поставки: {{test}}
+                Terms of delivery / Условия поставки: {{invoice.terms}}
             </td>
             <td style="width:15%; text-align:left; border: 0px;">
                 Страна назначения
@@ -103,13 +103,13 @@
         </tr>
         <tr>
             <td style="width:70%; text-align:left; border: 0px;">
-                Container / Контейнер: {{test}}
+                Container / Контейнер: {{invoice.container.name}}
             </td>
             <td style="width:15%; text-align:left; border: 0px;">
                 Станция назначения
             </td>
             <td style="width:15%; text-align:left; border: 0px;">
-                {{test}}
+                {{invoice.station}}
             </td>
         </tr>
     </table>
@@ -159,44 +159,46 @@
             </td>
         </tr>
 
+        {% for items in invoice_items%}
         <tr>
             <td>
 
             </td>
             <td>
-
+                {{items.code}}
             </td>
             <td>
-
+                {{items.country}}
             </td>
             <td>
-
+                {{items.description_ru}}
             </td>
             <td>
-
+                {{items.description_en}}
             </td>
             <td>
-
+                {{items.measurements}}
             </td>
             <td>
-
+                {{items.quantity}}
             </td>
             <td>
-
+                {{invoice.packages}}
             </td>
             <td>
-
+                {{items.net_weight}}
             </td>
             <td>
-
+                {{items.gross_weight}}
             </td>
             <td>
-
+                {{items.price_pcs}}
             </td>
             <td>
-
+                {{items.price_amount}}
             </td>
         </tr>
+        {% endfor %}
 
         <tr>
             <td>
@@ -209,7 +211,7 @@
                 
             </td>
             <td>
-                {{test}}
+                {{amount}}
             </td>
         </tr>
         <tr>
@@ -223,7 +225,7 @@
                 
             </td>
             <td>
-                {{test}}
+                {{invoice.freight_cost}}
             </td>
         </tr>
         <tr>
@@ -240,22 +242,21 @@
 
             </td>
             <td>
-                {{test}}
+                {{q_sum}}
             </td>
             <td>
-                {{test}}
+                {{invoice.packages}}
             </td>
             <td>
-                {{test}}
+                {{n_sum}}
             </td>
             <td>
-                {{test}}
+                {{g_sum}}
             </td>
             <td>
-
             </td>
             <td>
-                {{test}}
+                {{total_sum}}
             </td>
         </tr>
     </table>

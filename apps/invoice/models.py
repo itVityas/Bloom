@@ -20,6 +20,8 @@ class Invoice(models.Model):
     station = models.CharField(max_length=50)  # Station or location
     pto = models.CharField(max_length=150, null=True, blank=True)  # Port of Transit (optional)
     currency = models.CharField(max_length=3, default='USD')  # Currency code (e.g., USD, EUR)
+    packages = models.IntegerField()  # Number of packages
+    freight_cost = models.DecimalField(max_digits=15, decimal_places=2) # freight cost
     container = models.ForeignKey(
         Container, on_delete=models.CASCADE, null=True, blank=True
     )  # Associated container (optional)
@@ -36,7 +38,6 @@ class InvoiceItem(models.Model):
     description_ru = models.CharField(max_length=200)  # Description in Russian
     measurements = models.CharField(max_length=20)  # Unit of measurement (e.g., kg, liters)
     quantity = models.IntegerField()  # Quantity of the item
-    packages = models.IntegerField()  # Number of packages
     net_weight = models.DecimalField(max_digits=10, decimal_places=2)  # Net weight of the item
     gross_weight = models.DecimalField(max_digits=10, decimal_places=2)  # Gross weight of the item
     price_pcs = models.DecimalField(max_digits=10, decimal_places=2)  # Price per unit
