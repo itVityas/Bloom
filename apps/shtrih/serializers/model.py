@@ -1,14 +1,16 @@
 from rest_framework import serializers
 
 from apps.shtrih.models import Models
+from apps.shtrih.serializers.model_name import ModelNamesSerializer
+from apps.shtrih.serializers.production_code import ProductionCodeSerializer
 
 
 class ModelsSerializer(serializers.ModelSerializer):
     omega_model_id = serializers.IntegerField()
     omega_variant_id = serializers.IntegerField()
-    production_code = serializers.SerializerMethodField()
+    production_code = ProductionCodeSerializer(read_only=True)
     code = serializers.IntegerField()
-    name = serializers.SerializerMethodField()
+    name = ModelNamesSerializer(read_only=True)
     diagonal = serializers.DecimalField(max_digits=10, decimal_places=2)
     weight = serializers.IntegerField()
     quantity = serializers.IntegerField()
@@ -44,16 +46,3 @@ class ModelsSerializer(serializers.ModelSerializer):
             'create_at',
             'update_at',
         ]
-
-    def get_production_code(self, obj) -> str:
-        try:
-            return obj.production_code.name
-        except Exception:
-            return ''
-
-    def get_name(self, obj) -> str:
-        short_name = obj.name.short_name
-        if short_name:
-            return short_name
-        else:
-            return obj.name.name
