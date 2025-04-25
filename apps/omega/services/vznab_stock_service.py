@@ -1,10 +1,12 @@
 import logging
-from typing import List, Dict, Optional, Set
+from typing import List, Dict, Optional, Set, Any
 
 from django.db import DatabaseError
 from django.db.models import F, FloatField, ExpressionWrapper, Subquery, OuterRef
+from weasyprint.css.validation.properties import continue_
 
 from apps.omega.models import VzNab, Stockobj
+from apps.omega.services.api_1c_service import fetch_declarations_from_1c, Api1CError
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +18,11 @@ class VzNabNotFoundError(Exception):
 
 class OracleDBError(Exception):
     """Raised on Oracle DB errors."""
+    pass
+
+
+class PanelError(Exception):
+    """Raised if Panel declarations not have panel."""
     pass
 
 
@@ -141,10 +148,83 @@ def fetch_vznab_stock_flat_tree(
     return flat_list
 
 
+def fetch_stock_tree_with_row_numbers(
+    order_id: int,
+    root_scp_unv: int,
+    max_depth: Optional[int] = None,
+) -> List[Dict[str, Any]]:
+    """
+    Build a flat component list and enrich each item with 'row_number' and 'nom_reg'
+    from 1C API by matching 'nomsign' to 'НоменклатураЗаводскойКод'.
+
+    Args:
+        order_id (int): ID of the Order for which to fetch declarations.
+        root_scp_unv (int): Root UNV code of specification.
+        max_depth (Optional[int]): Recursion depth for component expansion.
+
+    Returns:
+        List[Dict]: Each dict includes all fields from flat tree plus:
+            - 'row_number': Optional[int]
+            - 'nom_reg': Optional[str]
+
+    Raises:
+        Api1CError: If API call fails.
+    """
+    components = fetch_vznab_stock_flat_tree(root_scp_unv, max_depth)
+    panel = False
+
+    try:
+        api_data = fetch_declarations_from_1c(order_id)
+    except Api1CError as exc:
+        logger.error(f"Failed to fetch declarations for order {order_id}: {exc}")
+        raise
+
+    lookup_row: Dict[str, int] = {}
+    lookup_nomreg: Dict[str, Any] = {}
+    for rec in api_data:
+        code = rec.get('НоменклатураЗаводскойКод')
+        row = rec.get('НомерСтроки')
+        nomreg = rec.get('НомерГТДКод')
+        if code is not None:
+            key = str(code)
+            if row is not None and key not in lookup_row:
+                lookup_row[key] = row
+            if nomreg is not None and key not in lookup_nomreg:
+                lookup_nomreg[key] = nomreg
+
+    enriched: List[Dict[str, Any]] = []
+    for item in components:
+        nomsign = item.get('nomsign')
+        if nomsign.startswith('638111111861'):
+            panel = True
+        key = str(nomsign) if nomsign is not None else None
+        row_number = lookup_row.get(key) if key is not None else None
+        nom_reg = lookup_nomreg.get(key) if key is not None else None
+        if row_number is None and nom_reg is None:
+            continue
+        enriched_item = {**item, 'row_number': row_number, 'nom_reg': nom_reg}
+        enriched.append(enriched_item)
+
+    enriched = sorted(enriched, key=lambda item: item['row_number'])
+
+    if not panel:
+        logger.warning(f"No row numbers found for order {order_id} and TV model {root_scp_unv}")
+        raise PanelError
+    return enriched
+
+
 """
 from apps.omega.services.vznab_stock_service import fetch_vznab_stock_flat_tree
 
 results = fetch_vznab_stock_flat_tree(931938)
+for result in results:
+    print(result)
+"""
+
+"""
+from apps.omega.services.vznab_stock_service import fetch_stock_tree_with_row_numbers
+
+results = fetch_stock_tree_with_row_numbers(10, 931938)
 for result in results:
     print(result)
 """
