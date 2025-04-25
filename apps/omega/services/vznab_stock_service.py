@@ -3,7 +3,6 @@ from typing import List, Dict, Optional, Set, Any
 
 from django.db import DatabaseError
 from django.db.models import F, FloatField, ExpressionWrapper, Subquery, OuterRef
-from weasyprint.css.validation.properties import continue_
 
 from apps.omega.models import VzNab, Stockobj
 from apps.omega.services.api_1c_service import fetch_declarations_from_1c, Api1CError
@@ -114,7 +113,7 @@ def fetch_vznab_stock_flat_tree(
 
     def recurse(scp_unv: int, parent_qty: float, depth: Optional[int]) -> None:
         if scp_unv in visited:
-            logger.warning(f"Cycle detected at {scp_unv}, skipping this node.")
+            logger.debug(f"Cycle detected at {scp_unv}, skipping this node.")
             return
         visited.add(scp_unv)
 
@@ -152,18 +151,20 @@ def fetch_stock_tree_with_row_numbers(
     order_id: int,
     root_scp_unv: int,
     max_depth: Optional[int] = None,
+    tv: Optional[bool] = False,
 ) -> List[Dict[str, Any]]:
     """
     Build a flat component list and enrich each item with 'row_number' and 'nom_reg'
     from 1C API by matching 'nomsign' to 'НоменклатураЗаводскойКод'.
 
     Args:
-        order_id (int): ID of the Order for which to fetch declarations.
-        root_scp_unv (int): Root UNV code of specification.
-        max_depth (Optional[int]): Recursion depth for component expansion.
+        order_id (int): ID of the Order for which to fetch declarations
+        root_scp_unv (int): Root UNV code of specification
+        max_depth (Optional[int]): Recursion depth for component expansion
+        tv (Optional[bool]): If True, check panel availability in the declaration.
 
     Returns:
-        List[Dict]: Each dict includes all fields from flat tree plus:
+        List[Dict]: Each dict includes all fields from a flat tree plus:
             - 'row_number': Optional[int]
             - 'nom_reg': Optional[str]
 
@@ -195,7 +196,7 @@ def fetch_stock_tree_with_row_numbers(
     enriched: List[Dict[str, Any]] = []
     for item in components:
         nomsign = item.get('nomsign')
-        if nomsign.startswith('638111111861'):
+        if tv and isinstance(nomsign, str) and nomsign.startswith('638111111'):
             panel = True
         key = str(nomsign) if nomsign is not None else None
         row_number = lookup_row.get(key) if key is not None else None
@@ -205,9 +206,7 @@ def fetch_stock_tree_with_row_numbers(
         enriched_item = {**item, 'row_number': row_number, 'nom_reg': nom_reg}
         enriched.append(enriched_item)
 
-    enriched = sorted(enriched, key=lambda item: item['row_number'])
-
-    if not panel:
+    if tv and not panel:
         logger.warning(f"No row numbers found for order {order_id} and TV model {root_scp_unv}")
         raise PanelError
     return enriched
