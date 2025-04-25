@@ -104,3 +104,13 @@ class Modules(models.Model):
         managed = False
         db_table = 'modules'
         ordering = ['-id']
+
+
+class ModelColors(models.Model):
+    model_id = models.ForeignKey(Models, on_delete=models.CASCADE, db_column='model_id')
+    color_id = models.ForeignKey(Colors, on_delete=models.CASCADE, db_column='color_id')
+
+    class Meta:
+        managed = False
+        db_table = 'model_colors'
+        ordering = ['-id']
