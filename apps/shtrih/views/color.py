@@ -1,6 +1,6 @@
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
 from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.shtrih.models import Colors
@@ -31,7 +31,16 @@ class ColorsListView(ListAPIView):
 @extend_schema_view(
     get=extend_schema(
         summary='Get colors by model_name.id',
-        description="description='Permission: admin, strih"
+        description='Permission: admin, strih',
+        parameters=[
+            OpenApiParameter(
+                name='model_name_id',
+                location=OpenApiParameter.QUERY,
+                description='model_name.id',
+                required=True,
+                type=int,
+            ),
+        ],
     )
 )
 class ColorsByModelNameListView(ListAPIView):

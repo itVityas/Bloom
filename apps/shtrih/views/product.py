@@ -6,6 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from apps.shtrih.models import Products
 from apps.shtrih.serializers.products import ProductGetSerializer
 from apps.shtrih.permission import StrihPermission
+from apps.shtrih.filterset import ProductFilter
 
 
 @extend_schema(tags=['Shtrih'])
@@ -20,11 +21,4 @@ class ProductListView(ListAPIView):
     serializer_class = ProductGetSerializer
     permission_classes = (IsAuthenticated, StrihPermission)
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = [
-        'id',
-        'barcode',
-        'state',
-        'nameplate',
-        'quantity',
-        'cleared'
-        ]
+    filterset_class = ProductFilter
