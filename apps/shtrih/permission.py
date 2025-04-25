@@ -8,4 +8,6 @@ class StrihPermission(RoleBasedPermission):
     - Other methods: Allowed only for 'admin' and 'sgp'.
     """
     allowed_roles_get = {'admin', 'strih_reader'}
-    allowed_roles_other = {'admin', 'strih'}
+    allowed_roles_post = {'admin', 'strih'}
+    allowed_roles_update = {'admin', 'strih'}
+    allowed_roles_delete = {'admin', 'strih'}
