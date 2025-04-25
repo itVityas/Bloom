@@ -59,5 +59,6 @@ class ModelNameByProductCodeListView(ListAPIView):
                 data={'error': 'product_code not fount'}
             )
         queryset = ModelNames.objects.filter(models__production_code=production_code_id)
-        serializer = ModelNamesSerializer(queryset, many=True)
-        return Response(serializer.data)
+        page = self.paginate_queryset(queryset)
+        serializer = ModelNamesSerializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
