@@ -86,6 +86,7 @@ def fetch_vznab_stock_details(scp_unv: int) -> List[Dict[str, Optional[object]]]
 def fetch_vznab_stock_flat_tree(
     root_scp_unv: int,
     max_depth: Optional[int] = None,
+    count: int = 1,
 ) -> List[Dict[str, Optional[object]]]:
     """
     Fetch a flat list of all components for a given specification (root_scp_unv),
@@ -94,6 +95,7 @@ def fetch_vznab_stock_flat_tree(
     Args:
         root_scp_unv (int): UNV code of the root specification
         max_depth (Optional[int]): Maximum recursion depth. None means unlimited
+        count (int): Number of items for calculation total count
 
     Returns:
         List[Dict]: Flat list of dicts with keys:
@@ -124,7 +126,6 @@ def fetch_vznab_stock_flat_tree(
         try:
             items = fetch_vznab_stock_details(scp_unv)
         except VzNabNotFoundError:
-            # No entries for this spec, skip recursion
             return
 
         for item in items:
@@ -135,7 +136,6 @@ def fetch_vznab_stock_flat_tree(
             }
             flat_list.append(node)
 
-            # recurse only for items with СКЖИ prefix
             if isinstance(item.get('item_sign'), str) and item['item_sign'].startswith('СКЖИ'):
                 recurse(
                     item['item_unv'],
@@ -143,13 +143,14 @@ def fetch_vznab_stock_flat_tree(
                     (depth - 1) if depth is not None else None,
                 )
 
-    recurse(root_scp_unv, parent_qty=1.0, depth=max_depth)
+    recurse(root_scp_unv, parent_qty=count, depth=max_depth)
     return flat_list
 
 
 def fetch_stock_tree_with_row_numbers(
     order_id: int,
     root_scp_unv: int,
+    count: int = 1,
     max_depth: Optional[int] = None,
     tv: Optional[bool] = False,
 ) -> List[Dict[str, Any]]:
@@ -161,7 +162,8 @@ def fetch_stock_tree_with_row_numbers(
         order_id (int): ID of the Order for which to fetch declarations
         root_scp_unv (int): Root UNV code of specification
         max_depth (Optional[int]): Recursion depth for component expansion
-        tv (Optional[bool]): If True, check panel availability in the declaration.
+        tv (Optional[bool]): If True, check panel availability in the declaration
+        count (int): Number of items for calculation total count
 
     Returns:
         List[Dict]: Each dict includes all fields from a flat tree plus:
@@ -171,7 +173,7 @@ def fetch_stock_tree_with_row_numbers(
     Raises:
         Api1CError: If API call fails.
     """
-    components = fetch_vznab_stock_flat_tree(root_scp_unv, max_depth)
+    components = fetch_vznab_stock_flat_tree(root_scp_unv, max_depth, count=count)
     panel = False
 
     try:
@@ -223,7 +225,7 @@ for result in results:
 """
 from apps.omega.services.vznab_stock_service import fetch_stock_tree_with_row_numbers
 
-results = fetch_stock_tree_with_row_numbers(10, 931938)
+results = fetch_stock_tree_with_row_numbers(10, 931938, 100)
 for result in results:
     print(result)
 """
