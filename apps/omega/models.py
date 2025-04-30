@@ -1,6 +1,50 @@
 from django.db import models
 
 
+class Materials(models.Model):
+    code = models.FloatField(primary_key=True, db_comment='Код')
+    plcode = models.CharField(unique=True, max_length=30, blank=True, null=True, db_comment='Заводской код')
+    okpcode = models.CharField(max_length=20, blank=True, null=True, db_comment='Код ОКП')
+    tnvedcode = models.CharField(max_length=10, blank=True, null=True, db_comment='Код ТНВЭД')
+    name = models.CharField(max_length=255, blank=True, null=True, db_comment='Наименование')
+    matname = models.CharField(max_length=100, blank=True, null=True, db_comment='Марка')
+    namestd = models.CharField(max_length=150, blank=True, null=True, db_comment='Стандарт на марку')
+    profile = models.CharField(max_length=80, blank=True, null=True, db_comment='Профиль')
+    profstd = models.CharField(max_length=50, blank=True, null=True, db_comment='Стандарт на профиль')
+    tu = models.CharField(max_length=50, blank=True, null=True, db_comment='Технические условия')
+    recdate = models.DateField(blank=True, null=True, db_comment='Дата записи')
+    notice = models.CharField(max_length=255, blank=True, null=True, db_comment='Примечание')
+    # meascode = models.ForeignKey('Measures', models.DO_NOTHING, db_column='meascode', blank=True, null=True, db_comment='Код первой единицы измерения')
+    ivccode = models.CharField(max_length=10, blank=True, null=True, db_comment='Код ИВЦ')
+    ivcgroupcode = models.BigIntegerField(blank=True, null=True, db_comment='Код калькуляционной группы ИВЦ')
+    ivcname = models.CharField(max_length=75, blank=True, null=True, db_comment='Наименование ИВЦ')
+    # meascode2 = models.ForeignKey('Measures', models.DO_NOTHING, db_column='meascode2', related_name='materials_meascode2_set', blank=True, null=True, db_comment='Код второй единицы измерения')
+    # owner = models.ForeignKey('OwnerName', models.DO_NOTHING, db_column='owner', db_comment='Владелец материала')
+    profname = models.CharField(max_length=80, blank=True, null=True, db_comment='Наименование профиля')
+    gabarit = models.CharField(max_length=50, blank=True, null=True, db_comment='Габариты')
+    updatedate = models.DateField(blank=True, null=True, db_comment='Дата изменения')
+    # updateuser = models.ForeignKey('UserList', models.DO_NOTHING, db_column='updateuser', blank=True, null=True, db_comment='Пользователь')
+    # meascode3 = models.ForeignKey('Measures', models.DO_NOTHING, db_column='meascode3', related_name='materials_meascode3_set', blank=True, null=True, db_comment='Код балансовой единицы измерения')
+    # matmark_code = models.ForeignKey(MaterialMarks, models.DO_NOTHING, db_column='matmark_code', blank=True, null=True, db_comment='Код марки')
+    # matname_code = models.ForeignKey(MaterialNames, models.DO_NOTHING, db_column='matname_code', blank=True, null=True, db_comment='Код наименования')
+    # namestd_code = models.ForeignKey(MaretialGosts, models.DO_NOTHING, db_column='namestd_code', blank=True, null=True, db_comment='Код стандарта на марку')
+    # profstd_code = models.ForeignKey(MaretialGosts, models.DO_NOTHING, db_column='profstd_code', related_name='materials_profstd_code_set', blank=True, null=True, db_comment='Код стандарта на профиль')
+    # tu_code = models.ForeignKey(MaretialGosts, models.DO_NOTHING, db_column='tu_code', related_name='materials_tu_code_set', blank=True, null=True, db_comment='Код технических условий')
+    # profile_code = models.ForeignKey(MaterialShapes, models.DO_NOTHING, db_column='profile_code', blank=True, null=True, db_comment='Код профиля')
+    # profname_code = models.ForeignKey(MaterialShapeNames, models.DO_NOTHING, db_column='profname_code', blank=True, null=True, db_comment='Код наименования профиля')
+    density = models.DecimalField(max_digits=14, decimal_places=6, blank=True, null=True, db_comment='Плотность')
+    # socode = models.OneToOneField('OmpObjects', models.DO_NOTHING, db_column='socode', db_comment='Код объекта системы')
+    state = models.BigIntegerField(db_comment='Статус материала')
+    is_product = models.BigIntegerField(db_comment='Признак продукта')
+    mattype = models.BigIntegerField(db_comment='Тип материала')
+    # dobjcode = models.ForeignKey(Divisionobj, models.DO_NOTHING, db_column='dobjcode', blank=True, null=True, db_comment='Подразделение')
+
+    class Meta:
+        managed = False
+        db_table = 'materials'
+        db_table_comment = 'Справочник материалов'
+
+
 class Stockobj(models.Model):
     code = models.BigIntegerField(primary_key=True, db_comment='Код ТМЦ')
     basecode = models.BigIntegerField(db_comment='Код базовой таблицы')
@@ -88,7 +132,7 @@ class Konstrobj(models.Model):
 
 class VzNorm(models.Model):
     code = models.BigIntegerField(primary_key=True)
-    # mat_code = models.ForeignKey(Materials, models.DO_NOTHING, db_column='mat_code')
+    mat_code = models.ForeignKey(Materials, models.DO_NOTHING, db_column='mat_code')
     plcode = models.CharField(max_length=30)
     ko_sign = models.CharField(max_length=100)
     old_ko_sign = models.CharField(max_length=100)

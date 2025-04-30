@@ -4,7 +4,7 @@ from typing import List, Dict, Optional, Set, Any
 from django.db import DatabaseError
 from django.db.models import F, FloatField, ExpressionWrapper, Subquery, OuterRef
 
-from apps.omega.models import VzNab, Stockobj
+from apps.omega.models import VzNab, Stockobj, VzNorm
 from apps.omega.services.api_1c_service import fetch_declarations_from_1c, Api1CError
 
 logger = logging.getLogger(__name__)
@@ -86,11 +86,12 @@ def fetch_vznab_stock_details(scp_unv: int) -> List[Dict[str, Optional[object]]]
 def fetch_vznab_stock_flat_tree(
     root_scp_unv: int,
     max_depth: Optional[int] = None,
-    count: int = 1,
+    count: float = 1.0,
 ) -> List[Dict[str, Optional[object]]]:
     """
     Fetch a flat list of all components for a given specification (root_scp_unv),
     recursively expanding only items whose item_sign starts with 'СКЖИ'.
+    Also for each 'СКЖИ' node adds related VzNorm entries.
 
     Args:
         root_scp_unv (int): UNV code of the root specification
@@ -98,20 +99,23 @@ def fetch_vznab_stock_flat_tree(
         count (int): Number of items for calculation total count
 
     Returns:
-        List[Dict]: Flat list of dicts with keys:
-            - scp_unv
-            - item_sign
-            - item_unv
-            - quantity
-            - name
-            - nomsign
+        List[Dict]: Each dict has keys:
+            - scp_unv: int
+            - item_sign: str
+            - item_unv: int
+            - quantity: float
+            - name: str
+            - nomsign: str | None
             - absolute_quantity: float
-
-    Raises:
-        OracleDBError
     """
     flat_list: List[Dict[str, Optional[object]]] = []
     visited: Set[int] = set()
+
+    norm_nomsign_sq = Subquery(
+        Stockobj.objects.using('oracle_db')
+        .filter(basecode=OuterRef('mat_code_id'))
+        .values('nomsign')[:1]
+    )
 
     def recurse(scp_unv: int, parent_qty: float, depth: Optional[int]) -> None:
         if scp_unv in visited:
@@ -130,13 +134,33 @@ def fetch_vznab_stock_flat_tree(
 
         for item in items:
             abs_qty = item['quantity'] * parent_qty
-            node = {
+            flat_list.append({
                 **item,
                 'absolute_quantity': abs_qty,
-            }
-            flat_list.append(node)
+            })
 
-            if isinstance(item.get('item_sign'), str) and item['item_sign'].startswith('СКЖИ'):
+            if isinstance(item['item_sign'], str) and item['item_sign'].startswith('СКЖИ'):
+                norms_qs = (
+                    VzNorm.objects.using('oracle_db')
+                    .filter(unvcode_id=item['item_unv'])
+                    .select_related('mat_code')
+                    .annotate(stock_nomsign=norm_nomsign_sq)
+                )
+                for norm in norms_qs:
+                    norm_qty = float(norm.norm or 0.0)
+                    norm_abs = norm_qty * parent_qty
+
+                    flat_list.append({
+                        'scp_unv': item['item_unv'],         # родительский unv
+                        'item_sign': norm.plcode,            # vz_norm.plcode
+                        'item_unv': norm.mat_code_id,        # vz_norm.mat_code
+                        'quantity': norm_qty,                # vz_norm.norm
+                        'name': norm.mat_code.name,          # materials.name
+                        'nomsign': norm.stock_nomsign,       # stockobj.nomsign
+                        'absolute_quantity': norm_abs,
+                    })
+
+                # 3) Рекурсивно спускаемся дальше по СКЖИ
                 recurse(
                     item['item_unv'],
                     abs_qty,
@@ -150,9 +174,9 @@ def fetch_vznab_stock_flat_tree(
 def fetch_stock_tree_with_row_numbers(
     order_id: int,
     root_scp_unv: int,
-    count: int = 1,
+    count: float = 1.0,
     max_depth: Optional[int] = None,
-    tv: Optional[bool] = False,
+    tv: bool = False,
 ) -> List[Dict[str, Any]]:
     """
     Build a flat component list and enrich each item with 'row_number' and 'nom_reg'
@@ -173,44 +197,53 @@ def fetch_stock_tree_with_row_numbers(
     Raises:
         Api1CError: If API call fails.
     """
-    components = fetch_vznab_stock_flat_tree(root_scp_unv, max_depth, count=count)
-    panel = False
+    components = fetch_vznab_stock_flat_tree(root_scp_unv, max_depth, count)
 
     try:
         api_data = fetch_declarations_from_1c(order_id)
     except Api1CError as exc:
-        logger.error(f"Failed to fetch declarations for order {order_id}: {exc}")
+        logger.error(f"1С API failed for order {order_id}: {exc}")
         raise
 
-    lookup_row: Dict[str, int] = {}
-    lookup_nomreg: Dict[str, Any] = {}
+    lookup_row:    Dict[str, int] = {}
+    lookup_nomreg: Dict[str, str] = {}
     for rec in api_data:
-        code = rec.get('НоменклатураЗаводскойКод')
-        row = rec.get('НомерСтроки')
-        nomreg = rec.get('НомерГТДКод')
-        if code is not None:
-            key = str(code)
-            if row is not None and key not in lookup_row:
-                lookup_row[key] = row
-            if nomreg is not None and key not in lookup_nomreg:
-                lookup_nomreg[key] = nomreg
+        code  = rec.get("НоменклатураЗаводскойКод")
+        row   = rec.get("НомерСтроки")
+        nom   = rec.get("НомерГТДКод")
+        if code is None:
+            continue
+        key = str(code)
+        if row  is not None and key not in lookup_row:
+            lookup_row[key] = row
+        if nom  is not None and key not in lookup_nomreg:
+            lookup_nomreg[key] = nom
 
     enriched: List[Dict[str, Any]] = []
+    panel_found = False
+
     for item in components:
-        nomsign = item.get('nomsign')
-        if tv and isinstance(nomsign, str) and nomsign.startswith('638111111'):
-            panel = True
+        nomsign = item.get("nomsign")
+        if tv and isinstance(nomsign, str) and nomsign.startswith("638111111"):
+            panel_found = True
+
         key = str(nomsign) if nomsign is not None else None
-        row_number = lookup_row.get(key) if key is not None else None
-        nom_reg = lookup_nomreg.get(key) if key is not None else None
+        row_number = lookup_row.get(key)
+        nom_reg    = lookup_nomreg.get(key)
+
         if row_number is None and nom_reg is None:
             continue
-        enriched_item = {**item, 'row_number': row_number, 'nom_reg': nom_reg}
-        enriched.append(enriched_item)
 
-    if tv and not panel:
-        logger.warning(f"No row numbers found for order {order_id} and TV model {root_scp_unv}")
-        raise PanelError
+        enriched.append({
+            **item,
+            "row_number": row_number,
+            "nom_reg":    nom_reg,
+        })
+
+    if tv and not panel_found:
+        logger.warning(f"No panel items in declarations for order {order_id}")
+        raise PanelError(f"Panel components not found for TV model {root_scp_unv}")
+
     return enriched
 
 
@@ -225,7 +258,7 @@ for result in results:
 """
 from apps.omega.services.vznab_stock_service import fetch_stock_tree_with_row_numbers
 
-results = fetch_stock_tree_with_row_numbers(10, 931938, 100)
+results = fetch_stock_tree_with_row_numbers(26, 931938, 100)
 for result in results:
     print(result)
 """
