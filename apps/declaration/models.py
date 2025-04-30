@@ -133,14 +133,16 @@ class DeclaredItem(models.Model):
     g373 = models.CharField(max_length=3)
     # G45 / Customs cost in local currency
     customs_cost = models.DecimalField(max_digits=19, decimal_places=4)
-    # G31STZ / Additional field (meaning unclear)
-    g31stz = models.CharField(max_length=50)
-    # G311STZ / Additional field (meaning unclear)
-    g311stz = models.CharField(max_length=3)
-    # G312STZ / Additional field (meaning unclear)
-    g312STZ = models.CharField(max_length=13)
+    # G31STZ / Additional field (meaning unclear). UPD: items_quantity (not sure)
+    items_quantity = models.FloatField(max_length=50)
+    # G311STZ / Additional field (meaning unclear). UPD: Code for measurement unit
+    measurement_code = models.CharField(max_length=3)
+    # G312STZ / Additional field (meaning unclear) UPD: Measurement unit
+    measurement = models.CharField(max_length=13)
     # G43 / Valuation method code for customs cost determination
     valuation_method = models.CharField(max_length=2)
+    # Additional field for quantity available for write-off
+    available_quantity = models.FloatField(null=False, blank=False, default=0.0)
 
     class Meta:
         ordering = ['-id']
