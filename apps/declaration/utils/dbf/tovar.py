@@ -50,10 +50,11 @@ def dbf_to_dict(record):
         'previous_customs_regime_code': clean_str(record.G372),
         'g373': clean_str(record.G373),
         'customs_cost': record.G45,
-        'g31stz': clean_str(record.G31STZ),
-        'g311stz': clean_str(record.G311STZ),
-        'g312STZ': clean_str(record.G312STZ),
+        'items_quantity': float(clean_str(record.G31STZ)),
+        'measurement_code': clean_str(record.G311STZ),
+        'measurement': clean_str(record.G312STZ),
         'valuation_method': clean_str(record.G43),
+        'available_quantity': float(clean_str(record.G31STZ)),
     }
     return data
 
