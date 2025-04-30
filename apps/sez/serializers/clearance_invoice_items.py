@@ -3,7 +3,8 @@ from django.db.models import Sum, IntegerField, OuterRef, F, Subquery
 from django.db.models.functions import Coalesce
 
 from apps.sez.models import ClearanceInvoiceItems, ClearedItem
-from apps.shtrih.models import Models
+from apps.shtrih.serializers.model_name import ModelNamesSerializer
+from apps.shtrih.models import Models, ModelNames
 from apps.declaration.models import DeclaredItem
 
 
@@ -20,6 +21,7 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
     """
     Serializer for the ClearanceInvoiceItems model + full fields
     """
+    model_name_id = serializers.SerializerMethodField()
     model_name = serializers.SerializerMethodField()
     model_code = serializers.SerializerMethodField()
     unit_name = serializers.SerializerMethodField()
@@ -29,30 +31,33 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
         model = ClearanceInvoiceItems
         fields = [
             'id',
-            'model_id',
             'quantity',
             'clearance_invoice',
             'declared_item',
+            'model_name_id',
             'model_name',
             'model_code',
             'unit_name',
             'real_amount',
         ]
 
+    def get_model_name_id(self, obj):
+        model_name = ModelNames.objects.filter(id=obj.model_name_id).first()
+        return ModelNamesSerializer(model_name).data
+
     def get_model_name(self, obj) -> str:
-        model_id = obj.model_id
-        if obj.declared_item:
-            return obj.declared_item.name
-        if model_id:
-            return Models.objects.filter(id=model_id).first().name.short_name
-        return ''
+        model_name_id = obj.model_name_id
+        model_name = ModelNames.objects.filter(id=model_name_id).first()
+        if model_name.short_name:
+            return model_name.short_name
+        return model_name.name
 
     def get_model_code(self, obj) -> str:
-        model_id = obj.model_id
+        model_name_id = obj.model_name_id
         if obj.declared_item:
             return None
-        if model_id:
-            return Models.objects.filter(id=model_id).first().code
+        if model_name_id:
+            return Models.objects.filter(name=model_name_id).first().code
         return None
 
     def get_unit_name(self, obj) -> str:

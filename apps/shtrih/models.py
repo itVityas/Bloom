@@ -11,7 +11,7 @@ class ModelNames(models.Model):
         ordering = ['-id']
 
     def __str__(self):
-        return self.shshtrih_consignmentsort_name
+        return self.name
 
 
 class Production_codes(models.Model):
