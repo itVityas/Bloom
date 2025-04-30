@@ -40,14 +40,13 @@ class ClearItemsView(APIView):
                 })
                 continue
 
-            available_qty = declared_item.quantity or 0
-            to_clear = min(abs_qty, available_qty)
+            available = declared_item.available_quantity or 0.0
+            to_clear = min(abs_qty, available)
 
-            # уменьшаем количество в DeclaredItem
-            declared_item.quantity = available_qty - to_clear
-            declared_item.save()
+            declared_item.available_quantity = available - to_clear
+            declared_item.save(update_fields=['available_quantity'])
 
-            # записываем в ClearedItem только поддерживаемые поля
+            # Сохраняем списание, как ранее
             if to_clear > 0:
                 ClearedItem.objects.create(
                     product_id=int(model),
@@ -59,7 +58,7 @@ class ClearItemsView(APIView):
                 "item": item_name,
                 "expected": abs_qty,
                 "actual": to_clear,
-                "missing": max(0, abs_qty - to_clear)
+                "missing": max(0.0, abs_qty - to_clear)
             })
 
         return Response(result, status=status.HTTP_200_OK)
