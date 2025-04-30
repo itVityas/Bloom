@@ -7,14 +7,15 @@ from apps.account.views.user_roles import (
 from apps.account.views.user import (
     UserListView, UserDetailedView, UserRetrieveView, UserRoleDeleteView)
 from apps.account.views.register import RegistrationView
-from apps.account.views.change_password import ChangePasswordView
+from apps.account.views.change_password import ChangePasswordView, ChangeUserPasswordView
 from apps.account.serializers.autorization import CustomTokenObtainPairSerializer
 
 
 urlpatterns = [
-    # jwt
+    # user
     path('login/', TokenObtainPairView.as_view(serializer_class=CustomTokenObtainPairSerializer)),
     path('change_password/', ChangePasswordView.as_view()),
+    path('change_user_password/', ChangeUserPasswordView.as_view()),
     path('register/', RegistrationView.as_view()),
     path('users/', UserListView.as_view()),
     path('user/<int:pk>/', UserDetailedView.as_view()),

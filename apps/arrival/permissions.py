@@ -8,7 +8,9 @@ class ArrivalPermission(RoleBasedPermission):
     - Other methods: Allowed only for 'admin'.
     """
     allowed_roles_get = {'admin', 'arrival_reader'}
-    allowed_roles_other = {'admin'}
+    allowed_roles_post = {'admin'}
+    allowed_roles_update = {'admin'}
+    allowed_roles_delete = {'admin'}
 
 
 class OrderPermission(RoleBasedPermission):
@@ -18,7 +20,9 @@ class OrderPermission(RoleBasedPermission):
     - Other methods: Allowed for 'admin' and 'order_writer'.
     """
     allowed_roles_get = {'admin', 'arrival_reader', 'order_writer'}
-    allowed_roles_other = {'admin', 'order_writer'}
+    allowed_roles_post = {'admin', 'order_writer'}
+    allowed_roles_update = {'admin', 'order_writer'}
+    allowed_roles_delete = {'admin', 'order_writer'}
 
 
 class ContainerPermission(RoleBasedPermission):
@@ -28,7 +32,9 @@ class ContainerPermission(RoleBasedPermission):
     - Other methods: Allowed for 'admin' and 'container_writer'.
     """
     allowed_roles_get = {'admin', 'arrival_reader', 'container_writer'}
-    allowed_roles_other = {'admin', 'container_writer'}
+    allowed_roles_post = {'admin', 'container_writer'}
+    allowed_roles_update = {'admin', 'container_writer'}
+    allowed_roles_delete = {'admin', 'container_writer'}
 
 
 class ContentPermission(RoleBasedPermission):
@@ -38,4 +44,6 @@ class ContentPermission(RoleBasedPermission):
     - Other methods: Allowed for 'admin' and 'content_writer'.
     """
     allowed_roles_get = {'admin', 'arrival_reader', 'content_writer'}
-    allowed_roles_other = {'admin', 'content_writer'}
+    allowed_roles_post = {'admin', 'content_writer'}
+    allowed_roles_update = {'admin', 'content_writer'}
+    allowed_roles_delete = {'admin', 'content_writer'}

@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from drf_spectacular.utils import (
-    extend_schema, extend_schema_view, OpenApiParameter, OpenApiResponse)
+    extend_schema, extend_schema_view, OpenApiResponse)
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django.http import HttpResponse
@@ -11,29 +11,15 @@ from weasyprint.fonts import FontConfiguration
 
 from apps.declaration.models import DeclaredItem
 from apps.sez.permissions import STZPermission
+from apps.sez.serializers.report_stz1 import DocumentRequestSerializer
 
 
 @extend_schema(tags=['ReportPDF'])
 @extend_schema_view(
-    get=extend_schema(
+    post=extend_schema(
         summary='Generate report STZ1 pdf ',
         description='Permission: admin, stz_reader',
-        parameters=[
-            OpenApiParameter(
-                name='ttn',
-                location=OpenApiParameter.QUERY,
-                description='TTN number',
-                required=True,
-                type=str,
-            ),
-            OpenApiParameter(
-                name='document',
-                location=OpenApiParameter.QUERY,
-                description='Document number',
-                required=True,
-                type=str,
-            ),
-        ],
+        request=DocumentRequestSerializer,
         responses={
             200: OpenApiResponse(description="PDF file"),
             400: OpenApiResponse(description="Missing required parameters"),
@@ -42,10 +28,11 @@ from apps.sez.permissions import STZPermission
 )
 class ReportSTZ1View(APIView):
     permission_classes = (IsAuthenticated, STZPermission)
+    seriaziler_class = DocumentRequestSerializer
 
-    def get(self, request):
-        ttn = request.query_params.get('ttn', None)
-        document = request.query_params.get('document', None)
+    def post(self, request):
+        ttn = request.data.get('ttn', None)
+        document = request.data.get('document', None)
         if not ttn or not document:
             return HttpResponse("Missing required parameters", status=400)
 

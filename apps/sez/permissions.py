@@ -8,7 +8,9 @@ class STZPermission(RoleBasedPermission):
     - Other methods: Allowed only for 'admin'.
     """
     allowed_roles_get = {'admin', 'stz_reader'}
-    allowed_roles_other = {'admin', 'stz'}
+    allowed_roles_post = {'admin', 'stz'}
+    allowed_roles_update = {'admin', 'stz'}
+    allowed_roles_delete = {'admin', 'stz'}
 
 
 class ClearanceInvoicePermission(RoleBasedPermission):
@@ -18,7 +20,9 @@ class ClearanceInvoicePermission(RoleBasedPermission):
     - Other methods: Allowed for 'admin' and 'clearance_invoice_writer'.
     """
     allowed_roles_get = {'admin', 'arrival_reader', 'clearance_invoice_writer'}
-    allowed_roles_other = {'admin', 'content_writer'}
+    allowed_roles_post = {'admin', 'content_writer'}
+    allowed_roles_update = {'admin', 'content_writer'}
+    allowed_roles_delete = {'admin', 'content_writer'}
 
 
 class ClearanceInvoiceItemsPermission(RoleBasedPermission):
@@ -28,7 +32,9 @@ class ClearanceInvoiceItemsPermission(RoleBasedPermission):
     - Other methods: Allowed for 'admin' and 'clearance_invoice_items_writer'.
     """
     allowed_roles_get = {'admin', 'arrival_reader', 'clearance_invoice_items_writer'}
-    allowed_roles_other = {'admin', 'clearance_invoice_items_writer'}
+    allowed_roles_post = {'admin', 'clearance_invoice_items_writer'}
+    allowed_roles_update = {'admin', 'clearance_invoice_items_writer'}
+    allowed_roles_delete = {'admin', 'clearance_invoice_items_writer'}
 
 
 class ClearedItemPermission(RoleBasedPermission):
@@ -38,4 +44,6 @@ class ClearedItemPermission(RoleBasedPermission):
     - Other methods: Allowed for 'admin' and 'cleared_item_writer'.
     """
     allowed_roles_get = {'admin', 'arrival_reader', 'cleared_item_writer'}
-    allowed_roles_other = {'admin', 'cleared_item_writer'}
+    allowed_roles_post = {'admin', 'cleared_item_writer'}
+    allowed_roles_update = {'admin', 'cleared_item_writer'}
+    allowed_roles_delete = {'admin', 'cleared_item_writer'}

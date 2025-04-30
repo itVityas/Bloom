@@ -7,7 +7,7 @@ from apps.account.serializers.register import UserRegisterSerializer
 from apps.account.permissions import AccountPermissions
 
 
-@extend_schema(tags=['jwt'])
+@extend_schema(tags=['user'])
 @extend_schema_view(
     post=extend_schema(
         summary='Регистрация пользователя',

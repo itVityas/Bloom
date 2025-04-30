@@ -54,5 +54,5 @@ class ShipmentBansListView(ListAPIView):
 )
 class ShipmentBansRUDView(RetrieveUpdateDestroyAPIView):
     queryset = ShipmentBans.objects.all()
-    serializer_class = ShipmentBansGetSerializer
+    serializer_class = ShipmentBansPostSerializer
     permission_classes = (IsAuthenticated, SGPPermission)

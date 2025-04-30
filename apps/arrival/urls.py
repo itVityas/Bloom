@@ -7,6 +7,7 @@ from apps.arrival.views.order import (
 from apps.arrival.views.content import ContentListView, ContentDetailView
 from apps.arrival.views.container import (
     ContainerListView,
+    ContainerDetailView,
     ContainerCreateView,
     ContainerUpdateView,
     ContainerAndDeclarationView,
@@ -24,16 +25,17 @@ urlpatterns = [
     path('order_and_container/<int:pk>/', OrderAndContainerDetailView.as_view(), name='order-and-container-detail'),
 
     # Container endpoints
-    path('container/', ContainerListView.as_view(), name='container-list'),
-    path('container/create/', ContainerCreateView.as_view(), name='container-create'),
-    path('container/detailed/<int:pk>/', ContainerUpdateView.as_view(), name='container-update'),
-    path('container_and_declaration/', ContainerAndDeclarationView.as_view(), name='container-and-declaration-list'),
+    path('container/', ContainerListView.as_view()),
+    path('container/create/', ContainerCreateView.as_view()),
+    path('container/<int:pk>/', ContainerDetailView.as_view()),
+    path('container/detailed/<int:pk>/', ContainerUpdateView.as_view()),
+    path('container_and_declaration/', ContainerAndDeclarationView.as_view()),
     path('container_and_declaration/<int:pk>/', ContainerAndDeclarationDetailView.as_view(),
          name='container-and-declaration-detail'),
-    path('container/assign/', BindContainersToOrderAPIView.as_view(), name='bind-containers'),
+    path('container/assign/', BindContainersToOrderAPIView.as_view()),
     path('container_and_content/create/', ContainerAndContentCreateView.as_view()),
 
     # Content endpoints
-    path('content/', ContentListView.as_view(), name='content-list'),
-    path('content/detailed/<int:pk>/', ContentDetailView.as_view(), name='content-detail'),
+    path('content/', ContentListView.as_view()),
+    path('content/detailed/<int:pk>/', ContentDetailView.as_view()),
 ]
