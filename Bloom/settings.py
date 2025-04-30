@@ -253,16 +253,51 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+
+    'formatters': {
+        'standard': {
+            'format': '[%(asctime)s] %(levelname)-8s %(name)s: %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+    },
+
     'handlers': {
         'rotating_file': {
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'logs/django.log',
-            'maxBytes': 1024 * 1024 * 10,  # 100 MB
+            'filename': BASE_DIR / 'logs' / 'django.log',
+            'maxBytes': 10 * 1024 * 1024, # 10 mb
             'backupCount': 10,
+            'formatter': 'standard',
+        },
+        'omega_file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR / 'logs' / 'omega.log',
+            'maxBytes': 1 * 1024 * 1024, # 1 mb
+            'backupCount': 5,
+            'formatter': 'standard',
+        },
+        'omega_console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
         },
     },
+
+    'loggers': {
+        'apps.omega': {
+            'handlers': ['omega_file', 'omega_console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+
     'root': {
         'handlers': ['rotating_file'],
         'level': 'INFO',
     },
 }
+
+
+# API
+
+API_USERNAME = env.str("API_USERNAME")
+API_PASSWORD = env.str("API_PASSWORD")
