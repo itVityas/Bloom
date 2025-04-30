@@ -1,15 +1,29 @@
+from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
+from apps.omega.permissions import OmegaPermission
 from apps.omega.services.vznab_stock_service import fetch_stock_tree_with_row_numbers
 from apps.declaration.models import DeclaredItem, Declaration
 from apps.sez.models import ClearedItem
 from apps.omega.serializers.clear_items import ClearItemsRequestSerializer
 
 
+@extend_schema(tags=['Declarations'])
+@extend_schema_view(
+    post=extend_schema(
+        summary='Create cleared items',
+        description='Permission: admin, omega_writter',
+    ),
+)
 class ClearItemsView(APIView):
+    permission_classes = (IsAuthenticated, OmegaPermission)
+    serializer_class = ClearItemsRequestSerializer
+
     def post(self, request):
-        serializer = ClearItemsRequestSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         order_number = serializer.validated_data["order_number"]
         model = serializer.validated_data["model"]
