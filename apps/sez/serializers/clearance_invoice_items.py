@@ -47,10 +47,12 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
 
     def get_model_name(self, obj) -> str:
         model_name_id = obj.model_name_id
+        if obj.declared_item:
+            return obj.declared_item.name
         model_name = ModelNames.objects.filter(id=model_name_id).first()
         if model_name.short_name:
             return model_name.short_name
-        return model_name.name
+        return ''
 
     def get_model_code(self, obj) -> str:
         model_name_id = obj.model_name_id
