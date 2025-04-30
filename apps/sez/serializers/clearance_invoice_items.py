@@ -21,7 +21,7 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
     """
     Serializer for the ClearanceInvoiceItems model + full fields
     """
-    model_name_id = serializers.SerializerMethodField()
+    model_name_object = serializers.SerializerMethodField()
     model_name = serializers.SerializerMethodField()
     model_code = serializers.SerializerMethodField()
     unit_name = serializers.SerializerMethodField()
@@ -34,14 +34,14 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
             'quantity',
             'clearance_invoice',
             'declared_item',
-            'model_name_id',
+            'model_name_object',
             'model_name',
             'model_code',
             'unit_name',
             'real_amount',
         ]
 
-    def get_model_name_id(self, obj):
+    def get_model_name_object(self, obj):
         model_name = ModelNames.objects.filter(id=obj.model_name_id).first()
         return ModelNamesSerializer(model_name).data
 
