@@ -3,6 +3,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import get_user_model
 
 from apps.account.exceptions import EmptyUserException
+from apps.account.serializers.user import UserSerializer
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -16,11 +17,10 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         if user:
             user.last_login = timezone.now()
             user.save()
+        data['user'] = UserSerializer(user).data
         return data
 
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-        roles = list([userroles.role.name for userroles in user.userroles_set.all()])
-        token['roles'] = roles
         return token

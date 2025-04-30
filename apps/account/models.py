@@ -6,7 +6,7 @@ from .account_manager import AccountManager
 
 # Create your models here.
 class Role(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, unique=True)
     description = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
@@ -23,6 +23,7 @@ class User(AbstractBaseUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     departmant = models.CharField(max_length=30, blank=True, null=True)
+    position = models.CharField(max_length=50, blank=True, null=True)
     room = models.CharField(max_length=30, blank=True, null=True)
 
     USERNAME_FIELD = 'username'

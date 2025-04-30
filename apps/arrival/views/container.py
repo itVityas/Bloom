@@ -70,6 +70,20 @@ class ContainerUpdateView(UpdateAPIView, DestroyAPIView):
 @extend_schema(tags=['Containers'])
 @extend_schema_view(
     get=extend_schema(
+        summary='Retrieve detailed container',
+        description='Permission: admin, arrival_reader, container_writer',
+    ),
+
+)
+class ContainerDetailView(RetrieveAPIView):
+    permission_classes = (IsAuthenticated, ContainerPermission)
+    serializer_class = ContainerFullSerializer
+    queryset = Container.objects.all()
+
+
+@extend_schema(tags=['Containers'])
+@extend_schema_view(
+    get=extend_schema(
         summary='List all containers with declarations',
         description='Permission: admin, arrival_reader, container_writer',
     ),

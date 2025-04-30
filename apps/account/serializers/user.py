@@ -16,6 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
             'is_active',
             'departmant',
             'room',
+            'position',
             'created_at',
             'updated_at',
             'roles',
@@ -36,4 +37,5 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             'is_active',
             'departmant',
             'room',
+            'position',
             ]
