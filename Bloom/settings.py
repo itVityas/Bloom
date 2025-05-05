@@ -58,7 +58,8 @@ INSTALLED_APPS = [
     'apps.invoice',
     'apps.sez',
     'apps.shtrih',
-    'apps.omega'
+    'apps.omega',
+    'apps.general',
 ]
 
 MIDDLEWARE = [

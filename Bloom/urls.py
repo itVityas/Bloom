@@ -47,4 +47,5 @@ urlpatterns = [
     path('api/v1/', include('apps.sez.urls')),
     path('api/v1/', include('apps.omega.urls')),
     path('api/v1/', include('apps.shtrih.urls')),
+    path('api/v1/', include('apps.general.urls')),
 ]
