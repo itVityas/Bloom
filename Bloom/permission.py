@@ -18,12 +18,20 @@ class RoleBasedPermission(BasePermission):
         user_roles = {user_role.role.name for user_role in user.userroles_set.all()}
 
         if request.method == 'GET':
+            if not self.allowed_roles_get:
+                return True
             allowed_roles = self.allowed_roles_get
         elif request.method == 'POST':
+            if not self.allowed_roles_post:
+                return True
             allowed_roles = self.allowed_roles_post
         elif request.method == 'PUT' or request.method == 'PATCH':
+            if not self.allowed_roles_update:
+                return True
             allowed_roles = self.allowed_roles_update
         else:
+            if not self.allowed_roles_delete:
+                return True
             allowed_roles = self.allowed_roles_delete
 
         # Return True if there is any intersection between user roles and allowed roles.
