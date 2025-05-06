@@ -8,11 +8,20 @@ class Visits(models.Model):
     label = models.CharField(max_length=50)  # russian name
     url = models.CharField(max_length=250)   # visit url
 
+    class Meta:
+        ordering = ['-id']
+
 
 class AddTitle(models.Model):
     name = models.CharField(max_length=50)
+
+    class Meta:
+        ordering = ['id']
 
 
 class AddBody(models.Model):
     body = models.TextField()
     title = models.ForeignKey(AddTitle, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['id']
