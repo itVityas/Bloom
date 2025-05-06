@@ -64,14 +64,14 @@ class ShipmentBansGetSerializer(serializers.ModelSerializer):
                 return ''
         return ''
 
-    def get_module(self, obj) -> str:
+    def get_module(self, obj) -> int:
         modules_id = obj.module_id
         if modules_id:
             try:
                 return Modules.objects.filter(id=modules_id).first().number
             except Exception:
-                return ''
-        return ''
+                return 0
+        return 0
 
 
 class ShipmentBansPostSerializer(serializers.ModelSerializer):
