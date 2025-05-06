@@ -1,5 +1,6 @@
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import (
+    CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView)
 from rest_framework.permissions import IsAuthenticated
 
 from apps.sgp.models import ShipmentBans
@@ -55,4 +56,17 @@ class ShipmentBansListView(ListAPIView):
 class ShipmentBansRUDView(RetrieveUpdateDestroyAPIView):
     queryset = ShipmentBans.objects.all()
     serializer_class = ShipmentBansPostSerializer
+    permission_classes = (IsAuthenticated, SGPPermission)
+
+
+@extend_schema(tags=['ShipmentBans'])
+@extend_schema_view(
+    get=extend_schema(
+        summary='Retrieve a full shipment ban',
+        description='Permission: admin, sgp, sgp_reader',
+    ),
+)
+class ShipmentBansGetView(RetrieveAPIView):
+    queryset = ShipmentBans.objects.all()
+    serializer_class = ShipmentBansGetSerializer
     permission_classes = (IsAuthenticated, SGPPermission)
