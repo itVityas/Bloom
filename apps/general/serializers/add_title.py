@@ -19,5 +19,5 @@ class AddTitleGetSerializer(serializers.ModelSerializer):
         model = AddTitle
         fields = '__all__'
 
-    def get_bodies(self, obj):
+    def get_bodies(self, obj) -> dict:
         return AddBodySerializer(AddBody.objects.filter(title=obj), many=True).data
