@@ -12,6 +12,11 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = '__all__'
 
+    def validate(self, attrs):
+        if Order.objects.filter(name=attrs['name']).exists():
+            raise serializers.ValidationError('Order with this name already exists')
+        return attrs
+
 
 class OrderListSerializer(serializers.ModelSerializer):
     """
