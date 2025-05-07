@@ -34,8 +34,7 @@ def clear_model_items(
         List[Dict[str, Any]]: A list of results per component, each dictionary containing:
             - name (str): DeclaredItem.name of the cleared product.
             - requested (float): Total quantity requested to clear for this component.
-            - plan (List[Dict[str, float]]): Breakdown of cleared quantities by declaration, e.g.:
-                [{"declaration_number": str, "cleared": float}, ...]
+            - plan (List[Dict[str, float]]): Breakdown of cleared quantities by declaration.
             - not_cleared (float): Quantity that could not be cleared due to insufficient stock.
 
     Raises:
@@ -112,6 +111,10 @@ def clear_model_items(
                 remaining -= to_clear
                 if remaining <= 0:
                     break
+
+            # Skip if nothing was cleared for this component
+            if not plan:
+                continue
 
             # Fallback product name
             if not product_name:
