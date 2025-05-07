@@ -57,7 +57,7 @@ class ZipFileUploadAPIView(APIView):
         except DuplicateDeclarationException as de:
             return Response({'error': str(de)}, status=409)
         except Exception as e:
-            return Response({'error': f'Error processing zip file: {str(e)}'}, status=500)
+            return Response({'error': f'Error processing zip file: {str(e)}'}, status=400)
         finally:
             if tmp_zip_path and os.path.exists(tmp_zip_path):
                 os.remove(tmp_zip_path)
