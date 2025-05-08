@@ -15,6 +15,7 @@ from apps.arrival.views.container import (
     BindContainersToOrderAPIView,
     ContainerAndContentCreateView
 )
+from apps.arrival.views.report import ReportCSVView
 
 urlpatterns = [
     # Order endpoints
@@ -23,6 +24,7 @@ urlpatterns = [
     path('order/detailed/<int:pk>/', OrderDetailedView.as_view(), name='order-detail'),
     path('order_and_container/', OrderAndContainerListView.as_view(), name='order-and-container-list'),
     path('order_and_container/<int:pk>/', OrderAndContainerDetailView.as_view(), name='order-and-container-detail'),
+    path('order/report/', ReportCSVView.as_view()),
 
     # Container endpoints
     path('container/', ContainerListView.as_view()),

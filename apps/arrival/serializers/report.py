@@ -2,10 +2,10 @@ from rest_framework import serializers
 
 
 class OrderItemSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=100)
+    id = serializers.IntegerField()
 
 
 class ListOrderSerializer(serializers.Serializer):
-    list = OrderItemSerializer(
+    orders_id = OrderItemSerializer(
         many=True,
         help_text="List of orders")
