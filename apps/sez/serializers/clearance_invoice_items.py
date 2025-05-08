@@ -50,7 +50,7 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
         if obj.declared_item:
             return obj.declared_item.name
         model_name = ModelNames.objects.filter(id=model_name_id).first()
-        if model_name.short_name:
+        if model_name:
             return model_name.short_name
         return ''
 
@@ -59,7 +59,9 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
         if obj.declared_item:
             return None
         if model_name_id:
-            return Models.objects.filter(name=model_name_id).first().code
+            model = Models.objects.filter(name=model_name_id).first()
+            if model:
+                return model.code
         return None
 
     def get_unit_name(self, obj) -> str:
