@@ -12,10 +12,6 @@ class ShipmentBansGetSerializer(serializers.ModelSerializer):
     """
     Serializer for get ShipmentBans model
     """
-    production_code = serializers.SerializerMethodField()
-    model = serializers.SerializerMethodField()
-    color = serializers.SerializerMethodField()
-    module = serializers.SerializerMethodField()
     production_code_obj = serializers.SerializerMethodField()
     model_obj = serializers.SerializerMethodField()
     color_obj = serializers.SerializerMethodField()
@@ -30,14 +26,10 @@ class ShipmentBansGetSerializer(serializers.ModelSerializer):
             'message',
             'start_date',
             'end_date',
-            'production_code',
             'production_code_obj',
-            'model',
             'model_obj',
             'barcode',
-            'color',
             'color_obj',
-            'module',
             'module_obj',
             'shift',
             'assembly_date_from',
