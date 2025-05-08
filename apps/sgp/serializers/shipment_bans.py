@@ -45,7 +45,8 @@ class ShipmentBansGetSerializer(serializers.ModelSerializer):
         if production_code_id:
             try:
                 productioin_code = Production_codes.objects.filter(code=production_code_id).first()
-                return ProductionCodeSerializer(productioin_code).data
+                if productioin_code:
+                    return ProductionCodeSerializer(productioin_code).data
             except Exception as ex:
                 print(ex)
                 return {}
@@ -56,7 +57,8 @@ class ShipmentBansGetSerializer(serializers.ModelSerializer):
         if model_id:
             try:
                 model_name = ModelNames.objects.filter(id=model_id).first()
-                return ModelNamesSerializer(model_name).data
+                if model_name:
+                    return ModelNamesSerializer(model_name).data
             except Exception:
                 return {}
         return {}
@@ -66,7 +68,8 @@ class ShipmentBansGetSerializer(serializers.ModelSerializer):
         if color_id:
             try:
                 color = Colors.objects.filter(id=color_id).first()
-                return ColorsSerializer(color).data
+                if color:
+                    return ColorsSerializer(color).data
             except Exception:
                 return {}
         return {}
@@ -76,51 +79,11 @@ class ShipmentBansGetSerializer(serializers.ModelSerializer):
         if modules_id:
             try:
                 module = Modules.objects.filter(id=modules_id).first()
-                return ModulesSerializer(module).data
+                if module:
+                    return ModulesSerializer(module).data
             except Exception:
                 return {}
         return {}
-
-    def get_production_code(self, obj) -> str:
-        production_code_id = obj.production_code_id
-        if production_code_id:
-            try:
-                return Production_codes.objects.filter(code=production_code_id).first().name
-
-            except Exception as ex:
-                print(ex)
-                return ''
-        return ''
-
-    def get_model(self, obj) -> str:
-        model_id = obj.model_name_id
-        if model_id:
-            try:
-                return ModelNames.objects.filter(id=model_id).first().short_name
-
-            except Exception:
-                return ''
-        return ''
-
-    def get_color(self, obj) -> str:
-        color_id = obj.color_id
-        if color_id:
-            try:
-                return Colors.objects.filter(id=color_id).first().color_code
-
-            except Exception:
-                return ''
-        return ''
-
-    def get_module(self, obj) -> int:
-        modules_id = obj.module_id
-        if modules_id:
-            try:
-                return Modules.objects.filter(id=modules_id).first().number
-
-            except Exception:
-                return 0
-        return 0
 
 
 class ShipmentBansPostSerializer(serializers.ModelSerializer):
