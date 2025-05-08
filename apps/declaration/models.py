@@ -146,7 +146,7 @@ class DeclaredItem(models.Model):
     # Additional field for quantity available for write-off
     available_quantity = models.FloatField(null=False, blank=False, default=0.0)
     # Field for item code
-    item_code_1c = models.IntegerField(null=True, blank=True)
+    item_code_1c = models.BigIntegerField(null=True, blank=True)
 
     class Meta:
         ordering = ['-id']

@@ -4,6 +4,7 @@ from typing import List, Dict, Optional, Set, Any
 from django.db import DatabaseError
 from django.db.models import F, FloatField, ExpressionWrapper, Subquery, OuterRef
 
+from apps.declaration.models import DeclaredItem
 from apps.omega.models import VzNab, Stockobj, VzNorm
 from apps.omega.services.api_1c_service import fetch_declarations_from_1c, Api1CError
 
@@ -179,45 +180,55 @@ def fetch_stock_tree_with_row_numbers(
     tv: bool = False,
 ) -> List[Dict[str, Any]]:
     """
-    Build a flat component list and enrich each item with 'row_number' and 'nom_reg'
-    from 1C API by matching 'nomsign' to 'НоменклатураЗаводскойКод'.
+    Build a flat list of all components for a given specification and enrich each item with
+    its `row_number` and `nom_reg` pulled directly from the database.
+
+    The enrichment uses the following mappings:
+      - `item_code_1c` → DeclaredItem.item_code_1c
+      - `ordinal_number` → DeclaredItem.ordinal_number
+      - `declaration_number` → Declaration.declaration_number
 
     Args:
-        order_id (int): ID of the Order for which to fetch declarations
-        root_scp_unv (int): Root UNV code of specification
-        max_depth (Optional[int]): Recursion depth for component expansion
-        tv (Optional[bool]): If True, check panel availability in the declaration
-        count (int): Number of items for calculation total count
+        order_id (int):
+            ID of the Order; follows the chain Order → Container → Declaration → DeclaredItem.
+        root_scp_unv (int):
+            Root UNV code of the specification to start building the component tree from.
+        count (float, optional):
+            Quantity multiplier for calculating absolute quantities. Defaults to 1.0.
+        max_depth (Optional[int], optional):
+            Maximum recursion depth. `None` means no limit. Defaults to `None`.
+        tv (bool, optional):
+            If `True`, verifies that at least one component with a `nomsign` starting
+            with `"638111111"` (i.e., a TV panel) is present. Defaults to `False`.
 
     Returns:
-        List[Dict]: Each dict includes all fields from a flat tree plus:
-            - 'row_number': Optional[int]
-            - 'nom_reg': Optional[str]
+        List[Dict[str, Any]]:
+            A list of dictionaries, each combining the fields from the flat component tree
+            with two additional keys:
+            - `row_number` (Optional[int]): The ordinal number from DeclaredItem.
+            - `nom_reg`    (Optional[str]): The customs registration number from Declaration.
 
     Raises:
-        Api1CError: If API call fails.
+        PanelError:
+            If `tv=True` and no TV panel components are found in the result.
     """
+    # 1) строим базовое дерево компонентов
     components = fetch_vznab_stock_flat_tree(root_scp_unv, max_depth, count)
 
-    try:
-        api_data = fetch_declarations_from_1c(order_id)
-    except Api1CError as exc:
-        logger.error(f"1С API failed for order {order_id}: {exc}")
-        raise
+    # 2) вытягиваем из БД все DeclaredItem для данного order_id
+    di_qs = DeclaredItem.objects.select_related('declaration', 'declaration__container') \
+        .filter(declaration__container__order_id=order_id)
 
     lookup_row:    Dict[str, int] = {}
     lookup_nomreg: Dict[str, str] = {}
-    for rec in api_data:
-        code  = rec.get("НоменклатураЗаводскойКод")
-        row   = rec.get("НомерСтроки")
-        nom   = rec.get("НомерГТДКод")
-        if code is None:
+    for di in di_qs:
+        if di.item_code_1c is None:
             continue
-        key = str(code)
-        if row  is not None and key not in lookup_row:
-            lookup_row[key] = row
-        if nom  is not None and key not in lookup_nomreg:
-            lookup_nomreg[key] = nom
+        key = str(di.item_code_1c)
+        # первый встретившийся ordinal_number
+        lookup_row.setdefault(key, di.ordinal_number)
+        # первый встретившийся declaration_number
+        lookup_nomreg.setdefault(key, di.declaration.declaration_number)
 
     enriched: List[Dict[str, Any]] = []
     panel_found = False
@@ -231,6 +242,7 @@ def fetch_stock_tree_with_row_numbers(
         row_number = lookup_row.get(key)
         nom_reg    = lookup_nomreg.get(key)
 
+        # отбрасываем, если нет ни позиции, ни номера ГТД
         if row_number is None and nom_reg is None:
             continue
 
@@ -241,7 +253,7 @@ def fetch_stock_tree_with_row_numbers(
         })
 
     if tv and not panel_found:
-        logger.warning(f"No panel items in declarations for order {order_id}")
+        logger.warning(f"No panel items for TV model {root_scp_unv}, order {order_id}")
         raise PanelError(f"Panel components not found for TV model {root_scp_unv}")
 
     return enriched
