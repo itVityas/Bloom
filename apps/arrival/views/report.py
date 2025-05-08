@@ -122,8 +122,9 @@ class ReportCSVView(APIView):
                     content.container.state,                # J
                     content.container.notice,               # K
                 ])
-            ws.merge_cells(f'A6:A{contents.count()+5}')
-            ws.merge_cells(f'B6:B{contents.count()+5}')
+            if contents.count() > 0:
+                ws.merge_cells(f'A6:A{contents.count()+5}')
+                ws.merge_cells(f'B6:B{contents.count()+5}')
 
         file_path = "tmp/orders.xlsx"
         wb.save(file_path)
