@@ -98,7 +98,7 @@ class DeclaredItem(models.Model):
     factory_code = models.CharField(max_length=20, null=True, blank=True)
     is_selected = models.BooleanField(default=False, null=True, blank=True)
     # G312 / Commercial or contract item name
-    name = models.CharField(max_length=250)
+    name = models.TextField()
     # G32 / Item ordinal number
     ordinal_number = models.IntegerField()
     # G34 / Country code of origin for the item
