@@ -2,16 +2,20 @@ from rest_framework import serializers
 
 from apps.sgp.models import ShipmentBans
 from apps.shtrih.models import ModelNames, Modules, Production_codes, Colors
+from apps.shtrih.serializers.color import ColorsSerializer
+from apps.shtrih.serializers.module import ModulesSerializer
+from apps.shtrih.serializers.production_code import ProductionCodeSerializer
+from apps.shtrih.serializers.model_name import ModelNamesSerializer
 
 
 class ShipmentBansGetSerializer(serializers.ModelSerializer):
     """
     Serializer for get ShipmentBans model
     """
-    production_code = serializers.SerializerMethodField()
-    model = serializers.SerializerMethodField()
-    color = serializers.SerializerMethodField()
-    module = serializers.SerializerMethodField()
+    production_code_obj = serializers.SerializerMethodField()
+    model_obj = serializers.SerializerMethodField()
+    color_obj = serializers.SerializerMethodField()
+    module_obj = serializers.SerializerMethodField()
 
     class Meta:
         model = ShipmentBans
@@ -22,11 +26,11 @@ class ShipmentBansGetSerializer(serializers.ModelSerializer):
             'message',
             'start_date',
             'end_date',
-            'production_code',
-            'model',
+            'production_code_obj',
+            'model_obj',
             'barcode',
-            'color',
-            'module',
+            'color_obj',
+            'module_obj',
             'shift',
             'assembly_date_from',
             'assembly_date_to',
@@ -36,42 +40,50 @@ class ShipmentBansGetSerializer(serializers.ModelSerializer):
             'apply_to_belarus',
         ]
 
-    def get_production_code(self, obj) -> str:
+    def get_production_code_obj(self, obj) -> dict:
         production_code_id = obj.production_code_id
         if production_code_id:
             try:
-                return Production_codes.objects.filter(code=production_code_id).first().name
+                productioin_code = Production_codes.objects.filter(code=production_code_id).first()
+                if productioin_code:
+                    return ProductionCodeSerializer(productioin_code).data
             except Exception as ex:
                 print(ex)
-                return ''
-        return ''
+                return {}
+        return {}
 
-    def get_model(self, obj) -> str:
+    def get_model_obj(self, obj) -> dict:
         model_id = obj.model_name_id
         if model_id:
             try:
-                return ModelNames.objects.filter(id=model_id).first().short_name
+                model_name = ModelNames.objects.filter(id=model_id).first()
+                if model_name:
+                    return ModelNamesSerializer(model_name).data
             except Exception:
-                return ''
-        return ''
+                return {}
+        return {}
 
-    def get_color(self, obj) -> str:
+    def get_color_obj(self, obj) -> dict:
         color_id = obj.color_id
         if color_id:
             try:
-                return Colors.objects.filter(id=color_id).first().color_code
+                color = Colors.objects.filter(id=color_id).first()
+                if color:
+                    return ColorsSerializer(color).data
             except Exception:
-                return ''
-        return ''
+                return {}
+        return {}
 
-    def get_module(self, obj) -> int:
+    def get_module_obj(self, obj) -> dict:
         modules_id = obj.module_id
         if modules_id:
             try:
-                return Modules.objects.filter(id=modules_id).first().number
+                module = Modules.objects.filter(id=modules_id).first()
+                if module:
+                    return ModulesSerializer(module).data
             except Exception:
-                return 0
-        return 0
+                return {}
+        return {}
 
 
 class ShipmentBansPostSerializer(serializers.ModelSerializer):
