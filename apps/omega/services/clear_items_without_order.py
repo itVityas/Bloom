@@ -7,7 +7,7 @@ from apps.omega.services.vznab_stock_service import (
     fetch_vznab_stock_flat_tree, PanelError
 )
 from apps.declaration.models import DeclaredItem
-from apps.sez.models import ClearedItem
+from apps.sez.models import ClearedItem, ClearanceInvoiceItems
 
 logger = logging.getLogger(__name__)
 
@@ -15,17 +15,21 @@ logger = logging.getLogger(__name__)
 def clear_model_items(
     model_code: int,
     quantity: float,
+    invoice_item: ClearanceInvoiceItems,
     is_tv: bool = False,
 ) -> List[Dict[str, Any]]:
     """
     Recursively fetch the component breakdown for a given model and clear items from
     available declared stock, writing ClearedItem records and updating available_quantity.
+    Binds created ClearedItem entries to the given invoice_item.clearance_invoice.
 
     Args:
         model_code (int):
             UNV code of the root specification to clear.
         quantity (float):
             Total quantity of the root model to clear (will be multiplied through component tree).
+        invoice_item (ClearanceInvoiceItems):
+            The invoice item triggering this clearance; used to set ClearedItem.clearance_invoice.
         is_tv (bool, optional):
             If True, verifies that at least one component represents a TV panel (nomsign starts
             with '638111111'); otherwise raises PanelError. Defaults to False.
@@ -45,11 +49,10 @@ def clear_model_items(
 
     # 2) Optional TV panel check
     if is_tv:
-        has_panel = any(
+        if not any(
             isinstance(item.get("nomsign"), str) and item["nomsign"].startswith("638111111")
             for item in components
-        )
-        if not has_panel:
+        ):
             logger.warning(f"No TV panel components found for model {model_code}")
             raise PanelError(f"Panel components not found for TV model {model_code}")
 
@@ -96,9 +99,10 @@ def clear_model_items(
                 di.available_quantity = available - to_clear
                 di.save(update_fields=["available_quantity"])
 
-                # Record clearance using foreign key ID
+                # Record clearance
                 ClearedItem.objects.create(
                     product_id=model_code,
+                    clearance_invoice=invoice_item.clearance_invoice,
                     declared_item_id=di,
                     quantity=to_clear,
                 )
@@ -130,11 +134,53 @@ def clear_model_items(
     return results
 
 
+def process_invoice_items(
+    invoice_id: int,
+    is_tv: bool = False,
+) -> List[Dict[str, Any]]:
+    """
+    Process a ClearanceInvoice by clearing items for each
+    ClearanceInvoiceItems without declared_item.
+
+    Args:
+        invoice_id (int):
+            ID of the ClearanceInvoice to process.
+        is_tv (bool, optional):
+            Passed through to clear_model_items for TV panel checks.
+
+    Returns:
+        List[Dict[str, Any]]: Aggregated results from clear_model_items calls.
+    """
+    items_qs = ClearanceInvoiceItems.objects.filter(
+        clearance_invoice_id=invoice_id,
+        declared_item__isnull=True
+    )
+    all_results: List[Dict[str, Any]] = []
+    for invoice_item in items_qs:
+        results = clear_model_items(
+            model_code=invoice_item.model_name_id,
+            quantity=invoice_item.quantity,
+            invoice_item=invoice_item,
+            is_tv=is_tv,
+        )
+        all_results.extend(results)
+    return all_results
+
+
+
 """
 from apps.omega.services.clear_items_without_order import clear_model_items
 
 results = clear_model_items(931938, 1)
 print(results)
+for result in results:
+    print(result)
+"""
+
+"""
+from apps.omega.services.clear_items_without_order import process_invoice_items
+
+results = process_invoice_items(95)
 for result in results:
     print(result)
 """
