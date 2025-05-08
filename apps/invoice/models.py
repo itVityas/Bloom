@@ -11,10 +11,10 @@ class Invoice(models.Model):
     contract = models.CharField(max_length=100)  # Contract number or identifier
     number = models.CharField(max_length=10)  # Invoice number
     date = models.DateField()  # Date of the invoice
-    recipient = models.CharField(max_length=200)  # Recipient of the invoice
-    shipper = models.CharField(max_length=200, blank=True, null=True)  # Shipper (optional)
-    seller = models.CharField(max_length=200, blank=True, null=True)  # Seller (optional)
-    buyer = models.CharField(max_length=200)  # Buyer of the goods
+    recipient = models.TextField()  # Recipient of the invoice
+    shipper = models.TextField(blank=True, null=True)  # Shipper (optional)
+    seller = models.TextField(blank=True, null=True)  # Seller (optional)
+    buyer = models.TextField()  # Buyer of the goods
     terms = models.CharField(max_length=50)  # Payment or delivery terms
     country = models.CharField(max_length=50)  # Country of origin or destination
     station = models.CharField(max_length=50)  # Station or location
