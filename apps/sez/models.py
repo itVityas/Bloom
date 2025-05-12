@@ -27,7 +27,14 @@ class ClearanceInvoiceItems(models.Model):
         on_delete=models.CASCADE,
         related_name='clearance_invoice_items',
     )
-    model_name_id = models.IntegerField()
+    model_name = models.ForeignKey(
+        'shtrih.ModelNames',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='clearance_invoice_items',
+        db_column='model_name_id',
+    )
     declared_item = models.ForeignKey(
         'declaration.DeclaredItem',
         null=True,
