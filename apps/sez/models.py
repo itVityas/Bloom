@@ -36,6 +36,7 @@ class ClearanceInvoiceItems(models.Model):
         related_name='clearance_invoice_items',
     )
     quantity = models.FloatField()
+    model_unv = models.BigIntegerField(null=True, blank=True)
 
     def __str__(self):
         return f"InvoiceItem #{self.pk} (Invoice #{self.clearance_invoice_id})"
