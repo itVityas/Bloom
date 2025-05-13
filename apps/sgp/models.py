@@ -1,5 +1,7 @@
 from django.db import models
 
+from apps.shtrih.models import Production_codes, Colors, Modules, ModelNames
+
 
 class StorageLimits(models.Model):
     """
@@ -22,11 +24,27 @@ class ShipmentBans(models.Model):
     message = models.CharField(max_length=50, blank=True, null=True)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
-    production_code_id = models.IntegerField(blank=True, null=True)
-    model_name_id = models.IntegerField(blank=True, null=True)
+    production_code_id = models.ForeignKey(
+        Production_codes,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        db_constraint=False)
+    model_name_id = models.ForeignKey(
+        ModelNames,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        db_constraint=False)
     barcode = models.CharField(max_length=18, blank=True, null=True)
-    color_id = models.IntegerField(blank=True, null=True)
-    module_id = models.IntegerField(blank=True, null=True)
+    color_id = models.ForeignKey(
+        Colors,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        db_constraint=False)
+    module_id = models.ForeignKey(
+        Modules,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        db_constraint=False)
     shift = models.CharField(max_length=3, blank=True, null=True)
     assembly_date_from = models.DateField(blank=True, null=True)
     assembly_date_to = models.DateField(blank=True, null=True)

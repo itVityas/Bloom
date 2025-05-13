@@ -41,48 +41,27 @@ class ShipmentBansGetSerializer(serializers.ModelSerializer):
         ]
 
     def get_production_code_obj(self, obj) -> dict:
-        production_code_id = obj.production_code_id
-        if production_code_id:
-            try:
-                productioin_code = Production_codes.objects.filter(code=production_code_id).first()
-                if productioin_code:
-                    return ProductionCodeSerializer(productioin_code).data
-            except Exception as ex:
-                print(ex)
-                return {}
+        production_code = obj.production_code_id
+        if production_code:
+            return ProductionCodeSerializer(production_code).data
         return {}
 
     def get_model_obj(self, obj) -> dict:
-        model_id = obj.model_name_id
-        if model_id:
-            try:
-                model_name = ModelNames.objects.filter(id=model_id).first()
-                if model_name:
-                    return ModelNamesSerializer(model_name).data
-            except Exception:
-                return {}
+        model_name = obj.model_name_id
+        if model_name:
+            return ModelNamesSerializer(model_name).data
         return {}
 
     def get_color_obj(self, obj) -> dict:
-        color_id = obj.color_id
-        if color_id:
-            try:
-                color = Colors.objects.filter(id=color_id).first()
-                if color:
-                    return ColorsSerializer(color).data
-            except Exception:
-                return {}
+        color = obj.color_id
+        if color:
+            return ColorsSerializer(color).data
         return {}
 
     def get_module_obj(self, obj) -> dict:
-        modules_id = obj.module_id
-        if modules_id:
-            try:
-                module = Modules.objects.filter(id=modules_id).first()
-                if module:
-                    return ModulesSerializer(module).data
-            except Exception:
-                return {}
+        module = obj.module_id
+        if module:
+            return ModulesSerializer(module).data
         return {}
 
 
