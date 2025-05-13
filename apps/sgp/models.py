@@ -55,3 +55,7 @@ class ShipmentBans(models.Model):
 
     class Meta:
         ordering = ['-id']
+
+    def __str__(self):
+        """Return the string representation of the Content."""
+        return str(self.id)
