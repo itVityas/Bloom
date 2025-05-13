@@ -14,7 +14,7 @@ class VisitsSerializers(serializers.ModelSerializer):
             raise serializers.ValidationError('user is required')
         visits = Visits.objects.filter(user=user).order_by('id')
         if visits.count() > 4:
-            this_visit = visits.filter(label=attrs.get('label')).first()
+            this_visit = visits.filter(label=attrs.get('label'))
             if this_visit:
                 this_visit.delete()
                 return attrs
