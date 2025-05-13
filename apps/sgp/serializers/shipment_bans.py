@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
 from apps.sgp.models import ShipmentBans
-from apps.shtrih.models import ModelNames, Modules, Production_codes, Colors
 from apps.shtrih.serializers.color import ColorsSerializer
 from apps.shtrih.serializers.module import ModulesSerializer
 from apps.shtrih.serializers.production_code import ProductionCodeSerializer
