@@ -31,7 +31,7 @@ class ClearanceInvoiceItemModels(models.Model):
         'shtrih.Models',
         on_delete=models.CASCADE,
         related_name='invoice_item_links',
-        db_constraint = False
+        db_constraint=False
     )
 
     class Meta:
@@ -67,7 +67,6 @@ class ClearanceInvoiceItems(models.Model):
         related_name='clearance_invoice_items'
     )
 
-
     def __str__(self):
         return f"InvoiceItem #{self.pk} (Invoice #{self.clearance_invoice_id})"
 
@@ -98,3 +97,32 @@ class ClearedItem(models.Model):
 
     def __str__(self):
         return f"ClearedItem #{self.pk} (Invoice #{self.clearance_invoice_id})"
+
+
+class InnerTTN(models.Model):
+    shipper_unp = models.CharField(max_length=20)  # УНП грузоотправителя
+    consignee_unp = models.CharField(max_length=20)  # УНП грузополучателя
+    customer_unp = models.CharField(max_length=20)  # УНП плательщика
+    customer = models.CharField(max_length=200)  # Плательщик
+    shipper = models.CharField(max_length=200)  # грузоотправитель
+    consignee = models.CharField(max_length=200)  # грузополучатель
+    document = models.CharField(max_length=200)  # Документ, основание отпуска
+    load = models.CharField(max_length=200)  # Пункт погрузки
+    unload = models.CharField(max_length=200)  # Пункт выгрузки
+    date = models.DateField()  # Дата документа
+    notice = models.CharField(max_length=200)  # Примечание
+
+    def __str__(self):
+        return f"InnerTTN #{self.pk}"
+
+
+class InnerTTNItems(models.Model):
+    inner_ttn = models.ForeignKey(InnerTTN, on_delete=models.CASCADE)
+    item_name = models.CharField(max_length=200)  # Название товара
+    measure = models.CharField(max_length=10)  # Единица измерения
+    quantity = models.IntegerField()  # Количество
+    price_pcs = models.IntegerField()  # цена за единицу
+    weight = models.IntegerField()  # Вес
+
+    def __str__(self):
+        return f"InnerTTNItem #{self.pk} (InnerTTN #{self.inner_ttn_id})"

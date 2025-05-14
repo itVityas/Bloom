@@ -21,6 +21,8 @@ from apps.sez.views.barcode_table import BarcodeTable
 from apps.sez.views.report_delete import ReportDeleteView
 from apps.sez.views.available_declarations import GetAvailableDeclarationsView
 from apps.sez.views.name_amount import NameAmountView
+from apps.sez.views.inner_ttn import (
+    InnerTTNListView)
 
 urlpatterns = [
     # Reports
@@ -53,4 +55,7 @@ urlpatterns = [
     path('document_sez/', DocumentSezView.as_view()),
     path('custom_clearance/', CustomClearanceView.as_view()),
     path('barcode_table/', BarcodeTable.as_view()),
+
+    #
+    path('innerttn/', InnerTTNListView.as_view()),
 ]
