@@ -21,6 +21,24 @@ class ClearanceInvoice(models.Model):
         ordering = ['id']
 
 
+class ClearanceInvoiceItemModels(models.Model):
+    clearance_invoice_item = models.ForeignKey(
+        'ClearanceInvoiceItems',
+        on_delete=models.CASCADE,
+        related_name='model_links'
+    )
+    model = models.ForeignKey(
+        'shtrih.Models',
+        on_delete=models.CASCADE,
+        related_name='invoice_item_links',
+        db_constraint = False
+    )
+
+    class Meta:
+        db_table = 'clearance_invoice_item_models'
+        unique_together = ('clearance_invoice_item', 'model')
+
+
 class ClearanceInvoiceItems(models.Model):
     clearance_invoice = models.ForeignKey(
         ClearanceInvoice,
@@ -43,7 +61,12 @@ class ClearanceInvoiceItems(models.Model):
         related_name='clearance_invoice_items',
     )
     quantity = models.FloatField()
-    model_unv = models.BigIntegerField(null=True, blank=True)
+    models_unv = models.ManyToManyField(
+        'shtrih.Models',
+        through='ClearanceInvoiceItemModels',
+        related_name='clearance_invoice_items'
+    )
+
 
     def __str__(self):
         return f"InvoiceItem #{self.pk} (Invoice #{self.clearance_invoice_id})"
