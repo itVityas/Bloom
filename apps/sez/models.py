@@ -98,6 +98,9 @@ class ClearedItem(models.Model):
     def __str__(self):
         return f"ClearedItem #{self.pk} (Invoice #{self.clearance_invoice_id})"
 
+    class Meta:
+        ordering = ['id']
+
 
 class InnerTTN(models.Model):
     shipper_unp = models.CharField(max_length=20)  # УНП грузоотправителя
@@ -115,6 +118,9 @@ class InnerTTN(models.Model):
     def __str__(self):
         return f"InnerTTN #{self.pk}"
 
+    class Meta:
+        ordering = ['-id']
+
 
 class InnerTTNItems(models.Model):
     inner_ttn = models.ForeignKey(InnerTTN, on_delete=models.CASCADE)
@@ -126,3 +132,6 @@ class InnerTTNItems(models.Model):
 
     def __str__(self):
         return f"InnerTTNItem #{self.pk} (InnerTTN #{self.inner_ttn_id})"
+
+    class Meta:
+        ordering = ['id']
