@@ -1,12 +1,11 @@
 import logging
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import F
 from django.db import transaction
 
 from apps.sez.models import ClearanceInvoiceItems
-from apps.shtrih.models import Models, Products
+from apps.shtrih.models import Products
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +17,7 @@ class NotEnoughProductsError(Exception):
 
 def process_products_for_invoice_item(
     invoice_item_id: int,
-) -> List[Dict[str, Any]]:
+) -> Tuple[List[Dict[str, Any]], List[Products]] or None:
     """
     1) Given the PK of a ClearanceInvoiceItems, load its related Models via the
        M2M `models_unv` (through ClearanceInvoiceItemModels).
@@ -104,4 +103,42 @@ def process_products_for_invoice_item(
             "count": cnt,
         })
 
-    return results
+    return results, products_list
+
+
+def mark_products_cleared(
+    products: List[Products],
+    cleared_value: int = 1,
+) -> None:
+    """
+    Mark a list of Products as cleared by updating their `cleared` field.
+
+    This function:
+      1. Accepts a list of Products instances to be marked.
+      2. Sets each instance’s `cleared` attribute to the provided value.
+      3. Persists the change to the database using a bulk update within a transaction.
+
+    Args:
+        products (List[Products]):
+            The Products instances to mark as cleared.
+        cleared_value (int, optional):
+            The value to assign to each Product’s `cleared` field.
+            Defaults to 1.
+
+    Returns:
+        None
+
+    Raises:
+        Exception:
+            Any exception during the database update will roll back all changes.
+    """
+    if not products:
+        return
+
+    with transaction.atomic():
+
+        for prod in products:
+            prod.cleared = cleared_value
+
+        Products.objects.bulk_update(products, ['cleared'])
+        logger.debug(f"Marked {len(products)} products as cleared={cleared_value}.")
