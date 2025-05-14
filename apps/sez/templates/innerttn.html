@@ -125,9 +125,9 @@
         <p class="flex-underline">Автомобиль:<span class="field-wrapper"> <span class="underline-field"></span><span class="field-hint">(марка, государственный номер)</span></span>  Прицеп: <span class="field-wrapper"> <span class="underline-field"></span><span class="field-hint">(марка, государственный номер)</span></span> К путевому листу: <span class="line"></span></p>
         <p class="flex-underline">Водитель:<span class="line"> </span></p>
         <p class="flex-underline">Заказчик автомобильной перевозки (плательщик): <span class="textline">{{ttn.customer}}</span></p>
-        <p class="flex-underline">Грузоотправитель: <span class="textline">{{ttn.shipper}}}</span></p>
+        <p class="flex-underline">Грузоотправитель: <span class="textline">{{ttn.shipper}}</span></p>
         <p class="flex-underline">Грузополучатель: <span class="textline">{{ttn.consignee}}</span></p>
-        <p class="flex-underline">Основание отпуска: <span class="underline-field-text">{{ttn.document}}</span>  Пункт погрузки: <span class="underline-field-text">{{ttn.load}}</span> К путевому листу: <span class="textline">{{ttn.unload}}</span></p>
+        <p class="flex-underline">Основание отпуска: <span class="underline-field-text">{{ttn.document}}</span>  Пункт погрузки: <span class="underline-field-text">{{ttn.load}}</span> Пункт разгрузки: <span class="textline">{{ttn.unload}}</span></p>
         <p class="flex-underline">Переадресовка: <span class="line"></span></p>
         <p class="flex-underline">Примечание: <span class="textline">Внутреннее перемещение. Товарный знак {{ttn.notice}}</span></p>
     </div>
@@ -171,42 +171,79 @@
                 Примечание
             </td>
         </tr>
-
         <tr>
             <td>
-                {{ttn.id}}
+                1
             </td>
             <td>
-                {{ttn.id}}
+                2
             </td>
             <td>
-                {{ttn.id}}
+                3
             </td>
             <td>
-                {{ttn.id}}
+                4
             </td>
             <td>
-                {{ttn.id}}
+                5
             </td>
             <td>
-                {{ttn.id}}
+                6
+            </td>
+            <td>
+                7
+            </td>
+            <td>
+                8
+            </td>
+            <td>
+                9
+            </td>
+            <td>
+                10
+            </td>
+            <td>
+                11
+            </td>
+        </tr>
+
+        {% for item in items %}
+        <tr>
+            <td>
+                {{item.item_name}}
+            </td>
+            <td>
+                {{item.measure}}
+            </td>
+            <td>
+                {{item.quantity}}
+            </td>
+            <td>
+                {{item.price_pcs}}
+            </td>
+            <td>
+                {{item.price}}
+            </td>
+            <td>
+                Без НДС
             </td>
             <td>
                 
             </td>
             <td>
-                {{ttn.id}}
+                {{item.price}}
             </td>
             <td>
                 
             </td>
             <td>
-                {{ttn.id}}
+                {{item.weight}}
             </td>
             <td>
                 
             </td> 
         </tr>
+        {% endfor %}
 
         <tr>
             <td>
@@ -216,28 +253,28 @@
                 <b>х</b>
             </td>
             <td>
-                <b>{{ttn.id}}</b>
+                <b>{{quantity}}</b>
             </td>
             <td>
                 <b>x</b>
             </td>
             <td>
-                <b>{{ttn.id}}</b>
+                <b>{{price}}</b>
             </td>
             <td>
-                <b>{{ttn.id}}</b>
-            </td>
-            <td>
-                
-            </td>
-            <td>
-                <b>{{ttn.id}}</b>
+                <b>x</b>
             </td>
             <td>
                 
             </td>
             <td>
-                <b>{{ttn.id}}</b>
+                <b>{{price}}</b>
+            </td>
+            <td>
+                
+            </td>
+            <td>
+                <b>{{weight}}</b>
             </td>
             <td>
                 

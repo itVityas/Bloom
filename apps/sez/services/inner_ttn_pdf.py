@@ -11,9 +11,21 @@ def get_ttn_pdf(id: int) -> str:
         return None
     items = InnerTTNItems.objects.filter(inner_ttn=ttn)
 
+    quantity = 0
+    price = 0
+    weight = 0
+    for item in items:
+        quantity += item.quantity
+        item.price = item.price_pcs * item.quantity
+        price += item.price
+        weight += item.weight
+
     context = {
         "ttn": ttn,
-        "items": items
+        "items": items,
+        "quantity": quantity,
+        "price": price,
+        "weight": weight
     }
 
     html_message = render_to_string(

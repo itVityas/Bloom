@@ -121,8 +121,8 @@ class InnerTTNItems(models.Model):
     item_name = models.CharField(max_length=200)  # Название товара
     measure = models.CharField(max_length=10)  # Единица измерения
     quantity = models.IntegerField()  # Количество
-    price_pcs = models.IntegerField()  # цена за единицу
-    weight = models.IntegerField()  # Вес
+    price_pcs = models.DecimalField(max_digits=19, decimal_places=2)  # цена за единицу
+    weight = models.DecimalField(max_digits=19, decimal_places=3)  # Вес
 
     def __str__(self):
         return f"InnerTTNItem #{self.pk} (InnerTTN #{self.inner_ttn_id})"
