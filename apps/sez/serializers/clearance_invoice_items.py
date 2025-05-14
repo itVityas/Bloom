@@ -4,7 +4,7 @@ from django.db.models.functions import Coalesce
 
 from apps.sez.models import ClearanceInvoiceItems, ClearedItem
 from apps.shtrih.serializers.model_name import ModelNamesSerializer
-from apps.shtrih.models import Models, ModelNames
+from apps.shtrih.models import Models
 from apps.declaration.models import DeclaredItem
 
 
@@ -42,14 +42,12 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
         ]
 
     def get_model_name_object(self, obj):
-        model_name = ModelNames.objects.filter(id=obj.model_name_id).first()
-        return ModelNamesSerializer(model_name).data
+        return ModelNamesSerializer(obj.model_name_id).data
 
     def get_model_name(self, obj) -> str:
-        model_name_id = obj.model_name_id
+        model_name = obj.model_name_id
         if obj.declared_item:
             return obj.declared_item.name
-        model_name = ModelNames.objects.filter(id=model_name_id).first()
         if model_name:
             return model_name.short_name
         return ''
