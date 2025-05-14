@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+        }
+        th{
+            font-weight: normal;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 2px; 
+            text-align: center; 
+        }
+
+        .field-wrapper {
+            display: inline-block;
+            vertical-align: bottom;
+        }
+        .underline-field {
+            display: inline-block;
+            width: 200px; /* длина линии */
+            border-bottom: 1px solid #000;
+            font-size: 16px;
+            line-height: 1.2;
+            vertical-align: bottom;
+            text-align: left;
+            position: relative;
+            padding-bottom: 2px;
+            margin-left: 10px;
+            margin-right: 5px;
+            margin-bottom: -10px;
+          }
+        .underline-field-text {
+            display: inline-block;
+            width: 200px; /* Длина линии */
+            border-bottom: 1px solid #000;
+            font-size: 10px;
+            line-height: 1.2;
+            vertical-align: bottom;
+            text-align: left;
+            margin-left: 10px;
+            margin-right: 5px;
+            margin-bottom: 4px;
+        }
+        .underline-field-text-long {
+            display: inline-block;
+            width: 400px; /* Длина линии */
+            border-bottom: 1px solid #000;
+            font-size: 10px;
+            line-height: 1.2;
+            vertical-align: bottom;
+            text-align: left;
+            margin-left: 10px;
+            margin-right: 5px;
+            margin-bottom: 4px;
+        }
+        .underline-field::after {
+            content: attr(data-placeholder);
+            visibility: hidden;
+        }
+        .field-hint {
+            display: block;
+            font-size: 8px;
+            color: #000;
+            text-align: left;
+            margin-top: 12px;
+            margin-left: 10px;
+            line-height: 1;
+        }
+
+        .flex-underline {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+          
+        .flex-underline .line {
+            flex-grow: 1;
+            border-bottom: 1px solid black;
+            margin-left: 10px;
+            margin-bottom: -10px;
+        }
+        .flex-underline .textline {
+            flex-grow: 1;
+            border-bottom: 1px solid black;
+            margin-left: 10px;
+            margin-bottom: 4px;
+        }where
+    </style>
+</head>
+<body>
+    <div style="text-align: center;">
+        <div style="display: inline-block;">
+        <b>УНП</b>
+        </div>
+        <div style="display: inline-block;">
+        <table border="1" bordercolor="black" cols="3" cellpadding="1" style="border-collapse: collapse;width: 100%;font-size: 10pt;">
+            <tr>
+                <td>Грузоотправитель</td>
+                <td>Грузополучатель</td>
+                <td>Заказчик автомобильной перевозки (плательщик)</td>
+            </tr>
+            <tr>
+                <td><b>{{UNP}}</b></td>
+                <td><b>{{UNP}}</b></td>
+                <td><b>{{UNP}}</b>  </td>
+            </tr>
+        </table>
+        </div>
+        <br>
+        <br>
+        <div style="font-size:24px;">Товарно-транспортная накладная №{{id}}</div>
+    </div>
+
+    <div>
+        <p><u>{{date}}</u></p>
+        <p class="flex-underline">Автомобиль:<span class="field-wrapper"> <span class="underline-field"></span><span class="field-hint">(марка, государственный номер)</span></span>  Прицеп: <span class="field-wrapper"> <span class="underline-field"></span><span class="field-hint">(марка, государственный номер)</span></span> К путевому листу: <span class="line"></span></p>
+        <p class="flex-underline">Водитель:<span class="line"> </span></p>
+        <p class="flex-underline">Заказчик автомобильной перевозки (плательщик): <span class="textline">{{where}}</span></p>
+        <p class="flex-underline">Грузоотправитель: <span class="textline">{{shipper}}}</span></p>
+        <p class="flex-underline">Грузополучатель: <span class="textline">{{consignee}}</span></p>
+        <p class="flex-underline">Основание отпуска: <span class="underline-field-text">{{document}}</span>  Пункт погрузки: <span class="underline-field-text">{{load}}</span> К путевому листу: <span class="textline">{{unload}}</span></p>
+        <p class="flex-underline">Переадресовка: <span class="line"></span></p>
+        <p class="flex-underline">Примечание: <span class="textline">Внутреннее перемещение. Товарный знак {{notice}}</span></p>
+    </div>
+    
+    <table class="mainTable" border="1" bordercolor="black" cols="11" cellpadding="1" style="border-collapse: collapse;width: 100%;font-size: 10px;">
+        <tr>
+            <td colspan="11">I. ТОВАРНЫЙ РАЗДЕЛ</td>
+        </tr>
+        <tr>
+            <td>
+                Наименование товара
+            </td>
+            <td>
+                Един. изм.
+            </td>
+            <td>
+                Количество
+            </td>
+            <td>
+                Цена, руб. коп.
+            </td>
+            <td>
+                Стоимость, руб. коп.
+            </td>
+            <td>
+                Ставка НДС, %
+            </td>
+            <td>
+                Сумма НДС, руб. коп.
+            </td>
+            <td>
+                Стоимость с НДС, руб. коп.
+            </td>
+            <td>
+                Кол г.м.
+            </td>
+            <td>
+                Масса груза
+            </td>
+            <td>
+                Примечание
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                {{}}
+            </td>
+            <td>
+                {{}}
+            </td>
+            <td>
+                {{}}
+            </td>
+            <td>
+                {{}}
+            </td>
+            <td>
+                {{}}
+            </td>
+            <td>
+                {{}}
+            </td>
+            <td>
+                
+            </td>
+            <td>
+                {{}}
+            </td>
+            <td>
+                
+            </td>
+            <td>
+                {{}}
+            </td>
+            <td>
+                
+            </td> 
+        </tr>
+
+        <tr>
+            <td>
+                <b>Итого</b>
+            </td>
+            <td>
+                <b>х</b>
+            </td>
+            <td>
+                <b>{{}}</b>
+            </td>
+            <td>
+                <b>x</b>
+            </td>
+            <td>
+                <b>{{}}</b>
+            </td>
+            <td>
+                <b>{{}}</b>
+            </td>
+            <td>
+                
+            </td>
+            <td>
+                <b>{{}}</b>
+            </td>
+            <td>
+                
+            </td>
+            <td>
+                <b>{{}}</b>
+            </td>
+            <td>
+                
+            </td> 
+        </tr>
+    </table>
+
+    <div>
+        <p class="flex-underline">Всего сумма НДС: <span class="underline-field-text-long">{{}}</span>  руб: <span class="underline-field-text">{{}}</span> коп.</p>
+        <p class="flex-underline">Всего сумма НДС: <span class="underline-field-text-long">{{}}</span>  руб: <span class="underline-field-text">{{}}</span> коп.</p>
+        <p class="flex-underline">Всего масса груза: <span class="textline">{{}}</span></p>
+        <p class="flex-underline">Всего количество грузовых мест: <span class="line"></span></p>
+    </div>
+
+
+</body>
+</html>

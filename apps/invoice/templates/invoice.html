@@ -18,10 +18,14 @@
             font-weight: normal;
         }
         td, td {
-            border: 2px solid black; /* Границы ячеек */
+            font-size: 14px;
+            border: 1px solid black; /* Границы ячеек */
             padding: 7px; /* Отступы внутри ячеек */
             text-align: center; /* Выравнивание текста по центру */
         }
+         .mainTable td{
+            font-size: 8px;
+         }
         .wide-column6 {
             width: 60%;
         }
@@ -30,7 +34,7 @@
 <body>
     <br>
     <div style="width=100%">
-    <table border="2" bordercolor="black" cols="6" cellpadding="1" style="border-collapse: collapse;width: 100%;font-size: 10pt;">
+    <table border="1" bordercolor="black" cols="6" cellpadding="1" style="border-collapse: collapse;width: 100%;font-size: 10pt;">
         <tr><td colspan=6>
             <b>INVOICE-SPECIFICATION / Счет-СПЕЦИФИКАЦИЯ </b>
         </td></tr>
@@ -38,7 +42,7 @@
             <td style="width:10%">
                 Договор №:
             </td>
-            <td style="width:60%">
+            <td style="width:60%;text-align: left;">
                 {{invoice.contract}}
             </td>
             <td style="width:10%">
@@ -55,7 +59,7 @@
     </table>
     <br>
     <br>
-    <table border="2" bordercolor="black" cols="4" cellpadding="1" style="border-collapse: collapse;width: 100%;font-size: 10pt;">    
+    <table class="mainTable" border="1" bordercolor="black" cols="4" cellpadding="1" style="border-collapse: collapse;width: 100%;font-size: 10pt;">    
         <tr>
             <td>
                 Получатель по ст.
@@ -89,7 +93,7 @@
         </tr>
     </table>
     <br>
-    <table cols="3" cellpadding="1" style="width: 100%;font-size: 10pt; text-align:left; border: 0px;">
+    <table class="mainTable" cols="3" cellpadding="1" style="width: 100%;font-size: 10pt; text-align:left; border: 0px;">
         <tr>
             <td style="width:70%; text-align:left;border: 0px;" >
                 Terms of delivery / Условия поставки: {{invoice.terms}}
@@ -114,7 +118,7 @@
         </tr>
     </table>
     <br>
-    <table border="2" bordercolor="black" cols="12" cellpadding="1" style="border-collapse: collapse;width: 100%;font-size: 10pt;"> 
+    <table class="mainTable" border="1" bordercolor="black" cols="12" cellpadding="1" style="border-collapse: collapse;width: 100%;font-size: 10px;"> 
         <tr>
             <td>
                 №
