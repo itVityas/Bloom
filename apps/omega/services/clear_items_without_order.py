@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 def clear_model_items(
     model_code: int,
     quantity: float,
-    invoice_item: ClearanceInvoiceItems,
+    invoice_item_id: int,
     is_tv: bool = False,
 ) -> List[Dict[str, Any]]:
     """
@@ -28,8 +28,8 @@ def clear_model_items(
             UNV code of the root specification to clear.
         quantity (float):
             Total quantity of the root model to clear (will be multiplied through component tree).
-        invoice_item (ClearanceInvoiceItems):
-            The invoice item triggering this clearance; used to set ClearedItem.clearance_invoice.
+        invoice_item_id (int):
+            ID of the ClearanceInvoiceItems triggering this clearance; used to set ClearedItem.clearance_invoice.
         is_tv (bool, optional):
             If True, verifies that at least one component represents a TV panel (nomsign starts
             with '638111111'); otherwise raises PanelError. Defaults to False.
@@ -44,6 +44,9 @@ def clear_model_items(
     Raises:
         PanelError: If is_tv=True and no TV panel component is found in the breakdown.
     """
+    # Retrieve the invoice item instance
+    invoice_item = ClearanceInvoiceItems.objects.get(pk=invoice_item_id)
+
     # 1) Fetch flat component tree with absolute quantities
     components = fetch_vznab_stock_flat_tree(model_code, None, quantity)
 
@@ -160,18 +163,23 @@ def process_invoice_items(
         results = clear_model_items(
             model_code=invoice_item.model_name_id,
             quantity=invoice_item.quantity,
-            invoice_item=invoice_item,
+            invoice_item_id=invoice_item.id,
             is_tv=is_tv,
         )
         all_results.extend(results)
     return all_results
 
 
+"""
+from apps.declaration.utils.update_item_codes_1c import update_item_codes_1c
+
+update_item_codes_1c()
+"""
 
 """
 from apps.omega.services.clear_items_without_order import clear_model_items
 
-results = clear_model_items(931938, 1)
+results = clear_model_items(931938, 1, 167)
 print(results)
 for result in results:
     print(result)
