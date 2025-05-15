@@ -3,13 +3,14 @@ from tempfile import NamedTemporaryFile
 
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework import status
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
     RetrieveAPIView,
     ListAPIView,
     CreateAPIView,
-    get_object_or_404)
+    get_object_or_404, GenericAPIView)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -24,7 +25,7 @@ from apps.declaration.serializers.declaration import (
     DeclarationFileUploadSerializer,
     DeclarationAndItemSerializer,
     DeclarationAndItemFileUploadSerializer,
-    DeclarationBindSerializer
+    DeclarationBindSerializer, DeclarationBulkDeleteSerializer
 )
 from apps.declaration.utils.dbf.decl import process_decl_dbf_file
 from apps.declaration.utils.dbf.tovar import process_tovar_dbf_file
@@ -246,3 +247,26 @@ class BindDeclarationsToContainerAPIView(APIView):
             'container_id': container_id,
             'declaration_ids': declaration_ids
         })
+
+
+@extend_schema(tags=['Declarations'])
+@extend_schema_view(
+    delete=extend_schema(
+        summary='Delete all declaration.',
+        description='Permission: admin, declaration_writer',
+    ),
+)
+class DeclarationBulkDeleteAPIView(GenericAPIView):
+    """
+    DELETE: Remove all Declaration records from the database.
+    """
+    permission_classes = (IsAuthenticated, DeclarationPermission)  # или свой Permission-класс
+    serializer_class = DeclarationBulkDeleteSerializer
+    queryset = Declaration.objects.all()
+
+    def delete(self, request, *args, **kwargs):
+        count, _ = Declaration.objects.all().delete()
+        return Response(
+            {"deleted_declarations": count},
+            status=status.HTTP_200_OK
+        )

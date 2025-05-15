@@ -93,3 +93,11 @@ class OrderSmallSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ('id', 'name')
+
+
+class DeclarationBulkDeleteSerializer(serializers.Serializer):
+    """
+    Serializer for bulk deletion of Declaration objects.
+    No input fields required.
+    """
+    pass
