@@ -29,6 +29,8 @@ from apps.declaration.serializers.declaration import (
 from apps.declaration.utils.dbf.decl import process_decl_dbf_file
 from apps.declaration.utils.dbf.tovar import process_tovar_dbf_file
 
+from Bloom.paginator import StandartResultPaginator
+
 
 @extend_schema(tags=['Declarations'])
 @extend_schema_view(
@@ -48,6 +50,7 @@ class DeclarationListCreateAPIView(ListCreateAPIView):
     queryset = Declaration.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DeclarationFilter
+    pagination_class = StandartResultPaginator
 
     def get_serializer_class(self):
         """
