@@ -26,7 +26,7 @@
         }
         .underline-field {
             display: inline-block;
-            width: 200px; /* длина линии */
+            width: 130px; /* длина линии */
             border-bottom: 1px solid #000;
             font-size: 16px;
             line-height: 1.2;
@@ -40,7 +40,7 @@
           }
         .underline-field-text {
             display: inline-block;
-            width: 200px; /* Длина линии */
+            width: 130px; /* Длина линии */
             border-bottom: 1px solid #000;
             font-size: 10px;
             line-height: 1.2;
@@ -109,27 +109,27 @@
                 <td>Заказчик автомобильной перевозки (плательщик)</td>
             </tr>
             <tr>
-                <td><b>{{UNP}}</b></td>
-                <td><b>{{UNP}}</b></td>
-                <td><b>{{UNP}}</b>  </td>
+                <td><b>{{ttn.shipper_unp}}</b></td>
+                <td><b>{{ttn.consignee_unp}}</b></td>
+                <td><b>{{ttn.customer_unp}}</b></td>
             </tr>
         </table>
         </div>
         <br>
         <br>
-        <div style="font-size:24px;">Товарно-транспортная накладная №{{id}}</div>
+        <div style="font-size:24px;">Товарно-транспортная накладная №{{ttn.id}}</div>
     </div>
 
     <div>
         <p><u>{{date}}</u></p>
         <p class="flex-underline">Автомобиль:<span class="field-wrapper"> <span class="underline-field"></span><span class="field-hint">(марка, государственный номер)</span></span>  Прицеп: <span class="field-wrapper"> <span class="underline-field"></span><span class="field-hint">(марка, государственный номер)</span></span> К путевому листу: <span class="line"></span></p>
         <p class="flex-underline">Водитель:<span class="line"> </span></p>
-        <p class="flex-underline">Заказчик автомобильной перевозки (плательщик): <span class="textline">{{where}}</span></p>
-        <p class="flex-underline">Грузоотправитель: <span class="textline">{{shipper}}}</span></p>
-        <p class="flex-underline">Грузополучатель: <span class="textline">{{consignee}}</span></p>
-        <p class="flex-underline">Основание отпуска: <span class="underline-field-text">{{document}}</span>  Пункт погрузки: <span class="underline-field-text">{{load}}</span> К путевому листу: <span class="textline">{{unload}}</span></p>
+        <p class="flex-underline">Заказчик автомобильной перевозки (плательщик): <span class="textline">{{ttn.customer}}</span></p>
+        <p class="flex-underline">Грузоотправитель: <span class="textline">{{ttn.shipper}}</span></p>
+        <p class="flex-underline">Грузополучатель: <span class="textline">{{ttn.consignee}}</span></p>
+        <p class="flex-underline">Основание отпуска: <span class="underline-field-text">{{ttn.document}}</span>  Пункт погрузки: <span class="underline-field-text">{{ttn.load}}</span> Пункт разгрузки: <span class="textline">{{ttn.unload}}</span></p>
         <p class="flex-underline">Переадресовка: <span class="line"></span></p>
-        <p class="flex-underline">Примечание: <span class="textline">Внутреннее перемещение. Товарный знак {{notice}}</span></p>
+        <p class="flex-underline">Примечание: <span class="textline">Внутреннее перемещение. Товарный знак {{ttn.notice}}</span></p>
     </div>
     
     <table class="mainTable" border="1" bordercolor="black" cols="11" cellpadding="1" style="border-collapse: collapse;width: 100%;font-size: 10px;">
@@ -171,42 +171,79 @@
                 Примечание
             </td>
         </tr>
-
         <tr>
             <td>
-                {{}}
+                1
             </td>
             <td>
-                {{}}
+                2
             </td>
             <td>
-                {{}}
+                3
             </td>
             <td>
-                {{}}
+                4
             </td>
             <td>
-                {{}}
+                5
             </td>
             <td>
-                {{}}
+                6
+            </td>
+            <td>
+                7
+            </td>
+            <td>
+                8
+            </td>
+            <td>
+                9
+            </td>
+            <td>
+                10
+            </td>
+            <td>
+                11
+            </td>
+        </tr>
+
+        {% for item in items %}
+        <tr>
+            <td>
+                {{item.item_name}}
+            </td>
+            <td>
+                {{item.measure}}
+            </td>
+            <td>
+                {{item.quantity}}
+            </td>
+            <td>
+                {{item.price_pcs}}
+            </td>
+            <td>
+                {{item.price}}
+            </td>
+            <td>
+                Без НДС
             </td>
             <td>
                 
             </td>
             <td>
-                {{}}
+                {{item.price}}
             </td>
             <td>
                 
             </td>
             <td>
-                {{}}
+                {{item.weight}}
             </td>
             <td>
                 
             </td> 
         </tr>
+        {% endfor %}
 
         <tr>
             <td>
@@ -216,28 +253,28 @@
                 <b>х</b>
             </td>
             <td>
-                <b>{{}}</b>
+                <b>{{quantity}}</b>
             </td>
             <td>
                 <b>x</b>
             </td>
             <td>
-                <b>{{}}</b>
+                <b>{{price}}</b>
             </td>
             <td>
-                <b>{{}}</b>
-            </td>
-            <td>
-                
-            </td>
-            <td>
-                <b>{{}}</b>
+                <b>x</b>
             </td>
             <td>
                 
             </td>
             <td>
-                <b>{{}}</b>
+                <b>{{price}}</b>
+            </td>
+            <td>
+                
+            </td>
+            <td>
+                <b>{{weight}}</b>
             </td>
             <td>
                 
@@ -246,9 +283,9 @@
     </table>
 
     <div>
-        <p class="flex-underline">Всего сумма НДС: <span class="underline-field-text-long">{{}}</span>  руб: <span class="underline-field-text">{{}}</span> коп.</p>
-        <p class="flex-underline">Всего сумма НДС: <span class="underline-field-text-long">{{}}</span>  руб: <span class="underline-field-text">{{}}</span> коп.</p>
-        <p class="flex-underline">Всего масса груза: <span class="textline">{{}}</span></p>
+        <p class="flex-underline">Всего сумма НДС: <span class="underline-field-text-long">{{ttn.id}}</span>  руб: <span class="underline-field-text">{{ttn.id}}</span> коп.</p>
+        <p class="flex-underline">Всего сумма НДС: <span class="underline-field-text-long">{{ttn.id}}</span>  руб: <span class="underline-field-text">{{ttn.id}}</span> коп.</p>
+        <p class="flex-underline">Всего масса груза: <span class="textline">{{ttn.id}}</span></p>
         <p class="flex-underline">Всего количество грузовых мест: <span class="line"></span></p>
     </div>
 
