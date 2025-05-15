@@ -4,6 +4,7 @@ from rest_framework.generics import (
 from drf_spectacular.utils import (
     extend_schema, extend_schema_view, OpenApiResponse)
 from django.http import HttpResponse
+from rest_framework.response import Response
 
 from apps.sez.models import InnerTTN, InnerTTNItems
 from apps.sez.serializers.inner_ttn import InnerTTNSerializer
@@ -82,15 +83,7 @@ class InnerTTNCreateView(CreateAPIView):
         except Exception as ex:
             return HttpResponse(ex, status=400)
 
-        file_path = get_ttn_pdf(ttn.id)
-        if not file_path:
-            return HttpResponse('Не удалось сформировать PDF файл', status=400)
-
-        document = open(file_path, 'rb')
-        file_name = file_path.split('/')[1]
-        response = HttpResponse(document, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{file_name}"'
-        return response
+        return Response(InnerTTNSerializer(ttn).data, status=200)
 
 
 @extend_schema(tags=['InnerTTN'])
