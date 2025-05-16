@@ -2,12 +2,14 @@ from rest_framework.generics import (
     ListAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView)
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.invoice.models import Invoice
 from apps.invoice.serializers.invoice import (
     InvoiceFullSerializer, InvoiceSerializer)
 from apps.invoice.permissions import InvoicePermission
 from Bloom.paginator import StandartResultPaginator
+from apps.invoice.filters import InvoiceFilter
 
 
 @extend_schema(tags=['Invoice'])
@@ -25,6 +27,9 @@ class InvoiceListAPIView(ListAPIView):
     serializer_class = InvoiceFullSerializer
     permission_classes = (IsAuthenticated, InvoicePermission)
     pagination_class = StandartResultPaginator
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = InvoiceFilter
+    ordering = ['-id']
 
 
 @extend_schema(tags=['Invoice'])
