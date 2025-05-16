@@ -4,6 +4,7 @@ from typing import List, Dict, Any, Tuple
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 
+from apps.omega.models import Stockobj
 from apps.sez.models import ClearanceInvoiceItems
 from apps.shtrih.models import Products
 
@@ -28,11 +29,13 @@ def process_products_for_invoice_item(
          - Products.cleared IS NULL
        ordered by ascending PK (oldest first).
        If there are fewer than `request_quantity`, raise NotEnoughProductsError.
-    4) Count how many of the pulled Products belong to each Models ID.
-    5) Return a list of dicts, each with:
+    4) Batch-load Stockobj entries to get unvcode by sign
+    5) Count how many of the pulled Products belong to each Models ID.
+    6) Return a list of dicts, each with:
          - "model_id": int
          - "model_display": str
          - "count": int
+         - "unvcode": int
 
     Args:
         invoice_item_id (int): PK of the ClearanceInvoiceItems to process.
@@ -46,7 +49,7 @@ def process_products_for_invoice_item(
 
     Raises:
         ObjectDoesNotExist:
-            If no ClearanceInvoiceItems with given ID exists.
+            If no ClearanceInvoiceItems with given ID exist.
         NotEnoughProductsError:
             If available Products (cleared IS NULL) < request_quantity.
     """
@@ -94,13 +97,25 @@ def process_products_for_invoice_item(
         mid = prod.model_id
         counts[mid] = counts.get(mid, 0) + 1
 
-    # 4) Build result list
+    # 4) Batch-load Stockobj entries to get unvcode by sign
+    signs = list({model_display_map[mid] for mid in counts})
+    stockobjs = (
+        Stockobj.objects
+        .using('oracle_db')
+        .filter(sign__in=signs)
+        .values('sign', 'unvcode')
+    )
+    sign_to_unv = {s['sign']: s['unvcode'] for s in stockobjs}
+
+    # 5) Build result list
     results: List[Dict[str, Any]] = []
     for mid, cnt in counts.items():
+        disp = model_display_map[mid]
         results.append({
             "model_id": mid,
-            "model_display": model_display_map.get(mid, str(mid)),
-            "count": cnt,
+            "model_display": disp,
+            "count": float(cnt),
+            "unvcode": int(sign_to_unv.get(disp)),
         })
 
     return results, products_list
