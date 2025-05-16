@@ -65,6 +65,9 @@ class DeclarationFilter(filters.FilterSet):
         ]
 
     def filter_container(self, queryset, name, value):
+        val = value.strip().lower()
+        if val == 'null':
+            return queryset.filter(container__isnull=True)
         return queryset.filter(container__name__iexact=value).distinct()
 
     def filter_start_container(self, queryset, name, value):
