@@ -3,11 +3,14 @@ from typing import List, Dict, Any
 
 from django.db import transaction
 
+from apps.declaration.utils.update_item_codes_1c import update_item_codes_1c
 from apps.omega.services.vznab_stock_service import (
     fetch_vznab_stock_flat_tree, PanelError
 )
 from apps.declaration.models import DeclaredItem
 from apps.sez.models import ClearedItem, ClearanceInvoiceItems
+from apps.sez.services.invoice_item_product_service import process_products_for_invoice_item, mark_products_cleared
+from apps.shtrih.models import Products
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +49,9 @@ def clear_model_items(
     """
     # Retrieve the invoice item instance
     invoice_item = ClearanceInvoiceItems.objects.get(pk=invoice_item_id)
+
+    # Update all fields where item_code_1c is NULL in DeclaredItem
+    update_item_codes_1c()
 
     # 1) Fetch flat component tree with absolute quantities
     components = fetch_vznab_stock_flat_tree(model_code, None, quantity)
@@ -159,14 +165,21 @@ def process_invoice_items(
         declared_item__isnull=True
     )
     all_results: List[Dict[str, Any]] = []
+    products_for_cleared: List[Products] = []
+
     for invoice_item in items_qs:
-        results = clear_model_items(
-            model_code=invoice_item.model_name_id,
-            quantity=invoice_item.quantity,
-            invoice_item_id=invoice_item.id,
-            is_tv=is_tv,
-        )
-        all_results.extend(results)
+        used_models, product_list = process_products_for_invoice_item(invoice_item.id)
+        for m in used_models:
+            print(m.get('unvcode'))
+            results = clear_model_items(
+                model_code=m.get('unvcode'),
+                quantity=m.get('count'),
+                invoice_item_id=invoice_item.id,
+                is_tv=is_tv,
+            )
+            all_results.extend(results)
+        products_for_cleared.extend(product_list)
+    mark_products_cleared(products_for_cleared)
     return all_results
 
 
@@ -188,7 +201,12 @@ for result in results:
 """
 from apps.omega.services.clear_items_without_order import process_invoice_items
 
-results = process_invoice_items(95)
+results = process_invoice_items(105)
 for result in results:
     print(result)
+"""
+
+"""
+from apps.sez.services.invoice_item_product_service import process_products_for_invoice_item
+res, pr = process_products_for_invoice_item(167)
 """
