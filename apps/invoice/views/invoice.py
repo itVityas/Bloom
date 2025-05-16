@@ -7,6 +7,7 @@ from apps.invoice.models import Invoice
 from apps.invoice.serializers.invoice import (
     InvoiceFullSerializer, InvoiceSerializer)
 from apps.invoice.permissions import InvoicePermission
+from Bloom.paginator import StandartResultPaginator
 
 
 @extend_schema(tags=['Invoice'])
@@ -23,6 +24,7 @@ class InvoiceListAPIView(ListAPIView):
     queryset = Invoice.objects.all()
     serializer_class = InvoiceFullSerializer
     permission_classes = (IsAuthenticated, InvoicePermission)
+    pagination_class = StandartResultPaginator
 
 
 @extend_schema(tags=['Invoice'])
