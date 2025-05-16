@@ -256,20 +256,3 @@ def fetch_stock_tree_with_row_numbers(
         raise PanelError(f"Panel components not found for TV model {root_scp_unv}")
 
     return enriched
-
-
-"""
-from apps.omega.services.vznab_stock_service import fetch_vznab_stock_flat_tree
-
-results = fetch_vznab_stock_flat_tree(931938)
-for result in results:
-    print(result)
-"""
-
-"""
-from apps.omega.services.vznab_stock_service import fetch_stock_tree_with_row_numbers
-
-results = fetch_stock_tree_with_row_numbers(26, 931938, 100)
-for result in results:
-    print(result)
-"""
