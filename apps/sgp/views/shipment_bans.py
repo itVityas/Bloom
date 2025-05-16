@@ -2,10 +2,12 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.generics import (
     CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView)
 from rest_framework.permissions import IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.sgp.models import ShipmentBans
 from apps.sgp.serializers.shipment_bans import ShipmentBansGetSerializer, ShipmentBansPostSerializer
 from apps.sgp.permissions import SGPPermission
+from apps.sgp.filters import ShipmentBansFilter
 
 
 @extend_schema(tags=['ShipmentBans'])
@@ -32,6 +34,8 @@ class ShipmentBansListView(ListAPIView):
     queryset = ShipmentBans.objects.all()
     serializer_class = ShipmentBansGetSerializer
     permission_classes = (IsAuthenticated, SGPPermission)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = ShipmentBansFilter
 
 
 @extend_schema(tags=['ShipmentBans'])

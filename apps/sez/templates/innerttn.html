@@ -38,6 +38,20 @@
             margin-right: 5px;
             margin-bottom: -10px;
           }
+        .underline-field-middle {
+            display: inline-block;
+            width: 180px; /* длина линии */
+            border-bottom: 1px solid #000;
+            font-size: 16px;
+            line-height: 1.2;
+            vertical-align: bottom;
+            text-align: left;
+            position: relative;
+            padding-bottom: 2px;
+            margin-left: 10px;
+            margin-right: 5px;
+            margin-bottom: -10px;
+        }
         .underline-field-text {
             display: inline-block;
             width: 130px; /* Длина линии */
@@ -93,7 +107,23 @@
             border-bottom: 1px solid black;
             margin-left: 10px;
             margin-bottom: 4px;
-        }where
+        }
+        .pb-before { 
+            page-break-before: always; 
+        }
+        .bar-line {
+            display: flex;
+            padding: 10px;
+        }
+          
+        .bar-line__left {
+            flex: 1;
+        }
+          
+        .bar-line__right {
+            flex: 1;
+            margin-left: 10px;
+        }
     </style>
 </head>
 
@@ -291,5 +321,27 @@
     </div>
 
 
+    <div class="pb-before">
+        <div class="bar-line">
+            <div class="bar-line__left">
+                <p class="flex-underline">Отпуск разрешил: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="field-wrapper"> <span class="underline-field-middle"></span><span class="field-hint">(Должность, фамилия, инициалы, подпись)</span></span></p>
+                <p class="flex-underline">Гл. бухгалтер:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="field-wrapper"> <span class="underline-field-middle"></span><span class="field-hint">(Должность, фамилия, инициалы, подпись)</span></span></p>
+                <p class="flex-underline">Сдал грузоотправитель:<span class="field-wrapper"> <span class="underline-field-middle"></span><span class="field-hint">(Должность, фамилия, инициалы, подпись)</span></span></p>
+                <p class="flex-underline">№промбы:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="underline-field-middle"></span></p>
+                <p>Штамп (печать) грузоотправителя</p>
+                <br>
+                <br>
+            </div>
+            
+            <div class="bar-line__right">
+                <p class="flex-underline">Товар к перевозке принял:<span class="field-wrapper"> <span class="underline-field-middle"></span><span class="field-hint">(Должность, фамилия, инициалы, подпись)</span></span></p>
+                <p class="flex-underline">По доверенности№:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="field-wrapper"> <span class="underline-field-middle"></span><span class="field-hint">(Номер, дата)</span></span></p>
+                <p class="flex-underline">Выданной:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="field-wrapper"><span class="underline-field-middle"></span><span class="field-hint">(Наименование организации)</span></span></p>
+                <p class="flex-underline">Принял грузополучатель:&nbsp;<span class="field-wrapper"> <span class="underline-field-middle"></span><span class="field-hint">(Должность, фамилия, инициалы, подпись)</span></span></p>
+                <p class="flex-underline">№промбы:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="underline-field-middle"></span></p>
+                <p>Штамп (печать) грузополучателя</p>
+            </div>
+          </div>
+    </div>
 </body>
 </html>
