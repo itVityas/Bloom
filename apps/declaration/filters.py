@@ -1,47 +1,89 @@
-import django_filters
+import django_filters as filters
 from apps.declaration.models import Declaration
 
-class DeclarationFilter(django_filters.FilterSet):
-    """
-    Custom filter for the Declaration model.
 
-    This filter set allows filtering by the 'container' field using a custom method.
-    If the filter value for 'container' is the string "null" (case-insensitive),
-    the queryset is filtered to include only declarations with no associated container.
-    Otherwise, it attempts to convert the provided value into an integer (container ID)
-    and filters the declarations by that container. If the conversion fails, the original
-    queryset is returned unmodified.
+class DeclarationFilter(filters.FilterSet):
+    declaration_number = filters.CharFilter(field_name='declaration_number', lookup_expr='iexact')
+    start_declaration_number = filters.CharFilter(field_name='declaration_number', lookup_expr='istartswith')
+    end_declaration_number = filters.CharFilter(field_name='declaration_number', lookup_expr='iendswith')
+    cont_declaration_number = filters.CharFilter(field_name='declaration_number', lookup_expr='icontains')
+    item_count = filters.NumberFilter(field_name='items__count', lookup_expr='exact')
+    sender = filters.CharFilter(field_name='sender', lookup_expr='iexact')
+    start_sender = filters.CharFilter(field_name='sender', lookup_expr='istartswith')
+    end_sender = filters.CharFilter(field_name='sender', lookup_expr='iendswith')
+    cont_sender = filters.CharFilter(field_name='sender', lookup_expr='icontains')
+    outgoing_number = filters.CharFilter(field_name='outgoing_number', lookup_expr='iexact')
+    start_outgoing_number = filters.CharFilter(field_name='outgoing_number', lookup_expr='istartswith')
+    end_outgoing_number = filters.CharFilter(field_name='outgoing_number', lookup_expr='iendswith')
+    cont_outgoing_number = filters.CharFilter(field_name='outgoing_number', lookup_expr='icontains')
+    declaration_date = filters.DateFilter(field_name='declaration_date', lookup_expr='exact')
+    container = filters.CharFilter(method='filter_container')
+    start_container = filters.CharFilter(method='filter_start_container')
+    end_container = filters.CharFilter(method='filter_end_container')
+    cont_container = filters.CharFilter(method='filter_cont_container')
+    order = filters.CharFilter(method='filter_order')
+    start_order = filters.CharFilter(method='filter_start_order')
+    end_order = filters.CharFilter(method='filter_end_order')
+    cont_order = filters.CharFilter(method='filter_cont_order')
 
-    Attributes:
-        container (django_filters.CharFilter): A custom filter for the 'container' field.
-    """
-    container = django_filters.CharFilter(method='filter_container')
+    ordering = filters.OrderingFilter(
+        fields=(
+            ('id', 'id'),
+            ('declaration_number', 'declaration_number'),
+            ('sender', 'sender'),
+            ('outgoing_number', 'outgoing_number'),
+            ('declaration_date', 'declaration_date'),
+        ),
+    )
 
     class Meta:
         model = Declaration
-        fields = ['container', 'declaration_id']
+        fields = [
+            'container',
+            'declaration_number',
+            'start_declaration_number',
+            'end_declaration_number',
+            'cont_declaration_number',
+            'item_count',
+            'sender',
+            'start_sender',
+            'end_sender',
+            'cont_sender',
+            'outgoing_number',
+            'start_outgoing_number',
+            'end_outgoing_number',
+            'cont_outgoing_number',
+            'declaration_date',
+            'container',
+            'start_container',
+            'end_container',
+            'cont_container',
+            'order',
+            'start_order',
+            'end_order',
+            'cont_order',
+        ]
 
     def filter_container(self, queryset, name, value):
-        """
-        Filters the queryset based on the 'container' filter value.
+        return queryset.filter(container__name__iexact=value).distinct()
 
-        Args:
-            queryset (QuerySet): The initial queryset of Declaration objects.
-            name (str): The name of the filter field (expected to be "container").
-            value (str): The filter value passed in the request query parameter.
+    def filter_start_container(self, queryset, name, value):
+        return queryset.filter(container__name__istartswith=value).distinct()
 
-        Returns:
-            QuerySet: The filtered queryset. If 'value' is "null" (case-insensitive),
-            the queryset will include only declarations with no associated container.
-            Otherwise, if 'value' can be converted to an integer, it is treated as a container ID
-            and the queryset is filtered to include declarations with that container.
-            If the conversion fails, the original queryset is returned unmodified.
-        """
-        if value.lower() == 'null':
-            return queryset.filter(container__isnull=True)
-        else:
-            try:
-                container_id = int(value)
-                return queryset.filter(container=container_id)
-            except ValueError:
-                return queryset
+    def filter_end_container(self, queryset, name, value):
+        return queryset.filter(container__name__iendswith=value).distinct()
+
+    def filter_cont_container(self, queryset, name, value):
+        return queryset.filter(container__name__icontains=value).distinct()
+
+    def filter_order(self, queryset, name, value):
+        return queryset.filter(container__order__name__iexact=value).distinct()
+
+    def filter_start_order(self, queryset, name, value):
+        return queryset.filter(container__order__name__istartswith=value).distinct()
+
+    def filter_end_order(self, queryset, name, value):
+        return queryset.filter(container__order__name__iendswith=value).distinct()
+
+    def filter_cont_order(self, queryset, name, value):
+        return queryset.filter(container__order__name__icontains=value).distinct()

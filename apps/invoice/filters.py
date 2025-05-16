@@ -52,18 +52,6 @@ class InvoiceFilter(filters.FilterSet):
             ('terms', 'terms'),
             ('container', 'container'),
         ),
-        label={
-            "id": "ID",
-            "contract": "Contract",
-            "number": "Number",
-            "date": "Date",
-            "recipient": "Recipient",
-            "shipper": "Shipper",
-            "country": "Country",
-            "currency": "Currency",
-            "terms": "Terms",
-            "container": "Container",
-        }
     )
 
     class Meta:
