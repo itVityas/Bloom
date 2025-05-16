@@ -5,8 +5,8 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from apps.omega.permissions import OmegaPermission
-from apps.omega.services.vznab_stock_service import fetch_stock_tree_with_row_numbers
-from apps.declaration.models import DeclaredItem, Declaration
+from apps.sez.clearance_workflow.vznab_stock_service import fetch_stock_tree_with_row_numbers
+from apps.declaration.models import DeclaredItem
 from apps.sez.models import ClearedItem
 from apps.omega.serializers.clear_items import ClearItemsRequestSerializer
 

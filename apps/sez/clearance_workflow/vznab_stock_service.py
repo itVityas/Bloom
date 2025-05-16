@@ -6,7 +6,6 @@ from django.db.models import F, FloatField, ExpressionWrapper, Subquery, OuterRe
 
 from apps.declaration.models import DeclaredItem
 from apps.omega.models import VzNab, Stockobj, VzNorm
-from apps.omega.services.api_1c_service import fetch_declarations_from_1c, Api1CError
 
 logger = logging.getLogger(__name__)
 

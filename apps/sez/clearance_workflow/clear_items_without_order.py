@@ -3,13 +3,13 @@ from typing import List, Dict, Any
 
 from django.db import transaction
 
-from apps.declaration.utils.update_item_codes_1c import update_item_codes_1c
-from apps.omega.services.vznab_stock_service import (
+from apps.sez.clearance_workflow.update_item_codes_1c import update_item_codes_1c
+from apps.sez.clearance_workflow.vznab_stock_service import (
     fetch_vznab_stock_flat_tree, PanelError
 )
 from apps.declaration.models import DeclaredItem
 from apps.sez.models import ClearedItem, ClearanceInvoiceItems
-from apps.sez.services.invoice_item_product_service import process_products_for_invoice_item, mark_products_cleared
+from apps.sez.clearance_workflow.invoice_item_product_service import process_products_for_invoice_item, mark_products_cleared
 from apps.shtrih.models import Products
 
 logger = logging.getLogger(__name__)

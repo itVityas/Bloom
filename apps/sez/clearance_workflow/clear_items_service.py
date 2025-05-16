@@ -3,7 +3,7 @@ from typing import List, Dict, Any
 
 from django.db import transaction
 
-from apps.omega.services.vznab_stock_service import fetch_stock_tree_with_row_numbers
+from apps.sez.clearance_workflow.vznab_stock_service import fetch_stock_tree_with_row_numbers
 from apps.declaration.models import DeclaredItem
 from apps.sez.models import ClearedItem
 
