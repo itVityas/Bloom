@@ -50,9 +50,6 @@ def clear_model_items(
     # Retrieve the invoice item instance
     invoice_item = ClearanceInvoiceItems.objects.get(pk=invoice_item_id)
 
-    # Update all fields where item_code_1c is NULL in DeclaredItem
-    update_item_codes_1c()
-
     # 1) Fetch flat component tree with absolute quantities
     components = fetch_vznab_stock_flat_tree(model_code, None, quantity)
 
@@ -143,7 +140,7 @@ def clear_model_items(
     return results
 
 
-def process_invoice_items(
+def execute_full_clearance_workflow(
     invoice_id: int,
     is_tv: bool = False,
 ) -> List[Dict[str, Any]]:
@@ -160,6 +157,10 @@ def process_invoice_items(
     Returns:
         List[Dict[str, Any]]: Aggregated results from clear_model_items calls.
     """
+
+    # Update all fields where item_code_1c is NULL in DeclaredItem
+    update_item_codes_1c()
+
     items_qs = ClearanceInvoiceItems.objects.filter(
         clearance_invoice_id=invoice_id,
         declared_item__isnull=True
@@ -170,7 +171,6 @@ def process_invoice_items(
     for invoice_item in items_qs:
         used_models, product_list = process_products_for_invoice_item(invoice_item.id)
         for m in used_models:
-            print(m.get('unvcode'))
             results = clear_model_items(
                 model_code=m.get('unvcode'),
                 quantity=m.get('count'),
@@ -181,32 +181,3 @@ def process_invoice_items(
         products_for_cleared.extend(product_list)
     mark_products_cleared(products_for_cleared)
     return all_results
-
-
-"""
-from apps.declaration.utils.update_item_codes_1c import update_item_codes_1c
-
-update_item_codes_1c()
-"""
-
-"""
-from apps.omega.services.clear_items_without_order import clear_model_items
-
-results = clear_model_items(931938, 1, 167)
-print(results)
-for result in results:
-    print(result)
-"""
-
-"""
-from apps.omega.services.clear_items_without_order import process_invoice_items
-
-results = process_invoice_items(105)
-for result in results:
-    print(result)
-"""
-
-"""
-from apps.sez.services.invoice_item_product_service import process_products_for_invoice_item
-res, pr = process_products_for_invoice_item(167)
-"""
