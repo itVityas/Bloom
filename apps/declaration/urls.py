@@ -3,7 +3,7 @@ from django.urls import path
 from apps.declaration.views.declaration import (
     DeclarationListCreateAPIView, DeclarationDetailedView,
     DeclarationAndItemView, DeclarationAndItemDetailedView,
-    DeclarationAndItemCreateAPIView, BindDeclarationsToContainerAPIView
+    DeclarationAndItemCreateAPIView, BindDeclarationsToContainerAPIView, DeclarationBulkDeleteAPIView
 )
 from apps.declaration.views.declared_item import (
     DeclaredItemListCreateAPIView, DeclaredItemDetailedView
@@ -25,4 +25,5 @@ urlpatterns = [
     path('declared_item/', DeclaredItemListCreateAPIView.as_view(), name='declared-item-list'),
     path('declared_item/detailed/<int:pk>/', DeclaredItemDetailedView.as_view(), name='declared-item-detail'),
     path('declaration/upload_zip/', ZipFileUploadAPIView.as_view(), name='zip-upload'),
-    ]
+    path('declaration/delete_all_declaration/', DeclarationBulkDeleteAPIView.as_view(), name='delete-all'),
+]
