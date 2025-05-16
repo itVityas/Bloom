@@ -11,6 +11,7 @@ from apps.arrival.permissions import OrderPermission
 from apps.arrival.serializers.order import (
     OrderSerializer, OrderListSerializer, OrderWithContainerSerializer
 )
+from apps.arrival.filters import OrderFilter
 
 
 @extend_schema(tags=['Orders'])
@@ -79,7 +80,8 @@ class OrderAndContainerListView(ListAPIView):
     serializer_class = OrderWithContainerSerializer
     queryset = Order.objects.all()
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('name',)
+    filterset_class = OrderFilter
+    ordering = ['-id']
     pagination_class = StandartResultPaginator
 
 
