@@ -6,7 +6,7 @@ import logging
 from apps.sez.models import ClearanceInvoiceItems
 from apps.sez.permissions import ClearanceInvoiceItemsPermission
 from apps.sez.serializers.clearance_invoice_items import ClearanceInvoiceItemsSerializer
-from apps.sez.clearance_workflow.unv_models import attach_unv_models_to_invoice_item
+from apps.sez.clearance_workflow.independent.unv_models import attach_unv_models_to_invoice_item
 
 logger = logging.getLogger(__name__)
 
