@@ -7,7 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from apps.sez.permissions import ClearanceInvoiceItemsPermission
 from apps.sez.clearance_workflow.full_clearance_workflow import execute_full_clearance_workflow, \
-    undo_full_clearance_workflow
+    undo_full_clearance_workflow, AlreadyCalculatedError
 from apps.sez.serializers.full_clearance_workflow import (
     FullClearanceWorkflowInputSerializer,
     FullClearanceWorkflowResultSerializer,
@@ -76,7 +76,10 @@ class FullClearanceWorkflowAPIView(APIView):
             raise ObjectDoesNotExist(f"ClearanceInvoice #{invoice_id} not found")
 
         # 3) Run workflow
-        results = execute_full_clearance_workflow(invoice_id, is_tv)
+        try:
+            results = execute_full_clearance_workflow(invoice_id, is_tv)
+        except  AlreadyCalculatedError as expt:
+            return Response(str(expt), status=status.HTTP_400_BAD_REQUEST)
 
         # 4) Serialize and return output
         out_ser = FullClearanceWorkflowResultSerializer(results, many=True)
