@@ -22,7 +22,12 @@ from apps.sez.views.report_delete import ReportDeleteView
 from apps.sez.views.available_declarations import GetAvailableDeclarationsView
 from apps.sez.views.name_amount import NameAmountView
 from apps.sez.views.inner_ttn import (
-    InnerTTNListView, InnerTTNCreateView, InnerTTNPDFView)
+    InnerTTNListView,
+    InnerTTNCreateView,
+    InnerTTNPDFView,
+    InnerTTNDetailedView,
+    InnerTTNUpdateView,
+)
 
 urlpatterns = [
     # Reports
@@ -60,4 +65,6 @@ urlpatterns = [
     path('innerttn/', InnerTTNListView.as_view()),
     path('innerttn/create/', InnerTTNCreateView.as_view()),
     path('innerttn/pdf/<int:pk>/', InnerTTNPDFView.as_view()),
+    path('innerttn/detailed/<int:pk>/', InnerTTNDetailedView.as_view()),
+    path('innerttn/update/<int:pk>/', InnerTTNUpdateView.as_view()),
 ]
