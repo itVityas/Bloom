@@ -1,5 +1,6 @@
 from django.urls import path
 
+from apps.sez.views.full_clearance_workflow import FullClearanceWorkflowAPIView
 from apps.sez.views.report_stz1 import ReportSTZ1View
 from apps.sez.views.report_clearanceinvoice import ReportClearanceInvoicePDFView
 from apps.sez.views.clearance_invoice import (
@@ -60,4 +61,9 @@ urlpatterns = [
     path('innerttn/', InnerTTNListView.as_view()),
     path('innerttn/create/', InnerTTNCreateView.as_view()),
     path('innerttn/pdf/<int:pk>/', InnerTTNPDFView.as_view()),
+
+    #
+    path(
+        'clearance/calculate/', FullClearanceWorkflowAPIView.as_view(), name='full-clearance-workflow'
+    ),
 ]
