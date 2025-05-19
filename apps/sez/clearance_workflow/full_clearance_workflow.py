@@ -2,7 +2,7 @@ import logging
 from typing import List, Dict, Any
 
 from apps.sez.clearance_workflow.clear_items_without_order import clear_model_items
-from apps.sez.clearance_workflow.invoice_item_product_service import process_products_for_invoice_item, \
+from apps.sez.clearance_workflow.shtrih_service import process_products_for_invoice_item, \
     mark_products_cleared
 from apps.sez.clearance_workflow.independent.update_item_codes_1c import update_item_codes_1c
 from apps.sez.models import ClearanceInvoiceItems
