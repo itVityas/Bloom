@@ -103,6 +103,7 @@ class ClearedItem(models.Model):
 
 
 class InnerTTN(models.Model):
+    uuid = models.CharField(max_length=20, blank=True, null=True)
     shipper_unp = models.CharField(max_length=20)  # УНП грузоотправителя
     consignee_unp = models.CharField(max_length=20)  # УНП грузополучателя
     customer_unp = models.CharField(max_length=20)  # УНП плательщика
@@ -114,6 +115,15 @@ class InnerTTN(models.Model):
     unload = models.CharField(max_length=200)  # Пункт выгрузки
     date = models.DateField()  # Дата документа
     notice = models.CharField(max_length=200)  # Примечание
+    user = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            super().save(*args, **kwargs)
+            self.uuid = f"R{self.id}"
+            return self.save()
+
+        return super().save(*args, **kwargs)
 
     def __str__(self):
         return f"InnerTTN #{self.pk}"
