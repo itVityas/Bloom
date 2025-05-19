@@ -50,5 +50,5 @@ def execute_full_clearance_workflow(
             )
             all_results.extend(results)
         products_for_cleared.extend(product_list)
-    mark_products_cleared(products_for_cleared)
+    mark_products_cleared(products_for_cleared, invoice_id)
     return all_results

@@ -123,7 +123,7 @@ def process_products_for_invoice_item(
 
 def mark_products_cleared(
     products: List[Products],
-    cleared_value: int = 1,
+    cleared_value: int,
 ) -> None:
     """
     Mark a list of Products as cleared by updating their `cleared` field.
@@ -153,7 +153,7 @@ def mark_products_cleared(
     with transaction.atomic():
 
         for prod in products:
-            prod.cleared = cleared_value
+            prod.cleared_id = cleared_value
 
-        Products.objects.bulk_update(products, ['cleared'])
+        Products.objects.bulk_update(products, ['cleared_id'])
         logger.debug(f"Marked {len(products)} products as cleared={cleared_value}.")
