@@ -1,11 +1,13 @@
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 
 from apps.sez.permissions import ClearanceInvoiceItemsPermission
-from apps.sez.clearance_workflow.full_clearance_workflow import execute_full_clearance_workflow
+from apps.sez.clearance_workflow.full_clearance_workflow import execute_full_clearance_workflow, \
+    undo_full_clearance_workflow
 from apps.sez.serializers.full_clearance_workflow import (
     FullClearanceWorkflowInputSerializer,
     FullClearanceWorkflowResultSerializer,
@@ -79,3 +81,40 @@ class FullClearanceWorkflowAPIView(APIView):
         # 4) Serialize and return output
         out_ser = FullClearanceWorkflowResultSerializer(results, many=True)
         return Response(out_ser.data)
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Handle DELETE request to reverse the full clearance workflow.
+
+        1. Validates the input payload to obtain `invoice_id`.
+        2. Verifies that the ClearanceInvoice exists.
+        3. Calls `undo_full_clearance_workflow` to:
+           - Restore DeclaredItem.available_quantity.
+           - Remove all ClearedItem records for this invoice.
+           - Reset `cleared` to NULL on related Products.
+        4. Returns HTTP 204 No Content on success.
+
+        Request body:
+            {
+              "invoice_id": <int>,
+              "is_tv": <bool> # ignored for delete
+            }
+
+        Responses:
+            204 No Content: Workflow reversal completed successfully.
+            404 Not Found:  If the specified ClearanceInvoice does not exist.
+        """
+        # 1) Validate input
+        inp_ser = FullClearanceWorkflowInputSerializer(data=request.data)
+        inp_ser.is_valid(raise_exception=True)
+        invoice_id = inp_ser.validated_data['invoice_id']
+
+        # 2) Ensure the invoice exists
+        if not ClearanceInvoice.objects.filter(pk=invoice_id).exists():
+            raise ObjectDoesNotExist(f"ClearanceInvoice #{invoice_id} not found")
+
+        # 3) Perform the undo operation
+        undo_full_clearance_workflow(invoice_id)
+
+        # 4) Return No Content
+        return Response(status=status.HTTP_204_NO_CONTENT)

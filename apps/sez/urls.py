@@ -62,8 +62,8 @@ urlpatterns = [
     path('innerttn/create/', InnerTTNCreateView.as_view()),
     path('innerttn/pdf/<int:pk>/', InnerTTNPDFView.as_view()),
 
-    #
-    path(
-        'clearance/calculate/', FullClearanceWorkflowAPIView.as_view(), name='full-clearance-workflow'
-    ),
+    # Full clearance_workflow
+    path('clearance/calculate/', FullClearanceWorkflowAPIView.as_view(), name='full-clearance-workflow'),
+    path('clearance/calculate/', FullClearanceWorkflowAPIView.as_view(), name='full-clearance-workflow')
+
 ]
