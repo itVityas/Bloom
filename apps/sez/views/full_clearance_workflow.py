@@ -21,6 +21,10 @@ from apps.sez.models import ClearanceInvoice
         summary='Run full clearance workflow and create ClearedItem records',
         description='Permission: admin, cleared_item_writer',
     ),
+    delete=extend_schema(
+        summary='Undo full clearance workflow and remove ClearedItem records',
+        description='Permission: admin, cleared_item_writer',
+    )
 )
 class FullClearanceWorkflowAPIView(APIView):
     """
