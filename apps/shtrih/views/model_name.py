@@ -1,12 +1,13 @@
 from rest_framework.generics import ListAPIView
+from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.response import Response
 
-from apps.shtrih.models import ModelNames
-from apps.shtrih.serializers.model_name import ModelNamesSerializer
+from apps.shtrih.models import ModelNames, Models, Products
+from apps.shtrih.serializers.model_name import ModelNamesSerializer, CountSerializer
 from apps.shtrih.permission import StrihPermission
 from Bloom.paginator import StandartResultPaginator
 
@@ -62,3 +63,23 @@ class ModelNameByProductCodeListView(ListAPIView):
         page = self.paginate_queryset(queryset)
         serializer = ModelNamesSerializer(page, many=True)
         return self.get_paginated_response(serializer.data)
+
+
+@extend_schema(tags=['Shtrih'])
+@extend_schema_view(
+    get=extend_schema(
+        summary='count product by model_name.id',
+        description="description='Permission: admin, strih",
+    ),
+)
+class ProductCountByModelNameView(APIView):
+    permission_classes = (IsAuthenticated, StrihPermission)
+    serializer_class = CountSerializer
+
+    def get(self, request, pk):
+        count = Products.objects.filter(model__name_id=pk).count()
+        model = Models.objects.filter(name_id=pk).first()
+        model_code = 0
+        if model:
+            model_code = model.code
+        return Response({'count': count, 'code': model_code})
