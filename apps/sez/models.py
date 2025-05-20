@@ -1,6 +1,8 @@
 from django.db import models
 from datetime import datetime
 
+from apps.shtrih.models import ModelNames
+
 
 class ClearanceInvoice(models.Model):
     count = models.IntegerField()
@@ -134,7 +136,9 @@ class InnerTTN(models.Model):
 
 class InnerTTNItems(models.Model):
     inner_ttn = models.ForeignKey(InnerTTN, on_delete=models.CASCADE)
-    item_name = models.CharField(max_length=200)  # Название товара
+    model_name = models.ForeignKey(ModelNames,
+                                   on_delete=models.CASCADE,
+                                   db_constraint=False,)
     measure = models.CharField(max_length=10)  # Единица измерения
     quantity = models.IntegerField()  # Количество
     price_pcs = models.DecimalField(max_digits=19, decimal_places=2)  # цена за единицу

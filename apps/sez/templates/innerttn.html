@@ -148,7 +148,7 @@
         </div>
         <br>
         <br>
-        <div style="font-size:24px;">Товарно-транспортная накладная №{{ttn.id}}</div>
+        <div style="font-size:24px;">Товарно-транспортная накладная №{{ttn.uuid}}</div>
     </div>
 
     <div>
@@ -241,7 +241,7 @@
         {% for item in items %}
         <tr>
             <td>
-                {{item.item_name}}
+                {{item.model_name.name}}
             </td>
             <td>
                 {{item.measure}}

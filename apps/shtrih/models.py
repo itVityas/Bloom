@@ -2,6 +2,7 @@ from django.db import models
 
 
 class ModelNames(models.Model):
+    id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=100)
     short_name = models.CharField(max_length=50)
 

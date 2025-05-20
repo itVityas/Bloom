@@ -1,6 +1,6 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import (
-    ListAPIView, CreateAPIView, RetrieveAPIView, UpdateAPIView,
+    ListAPIView, CreateAPIView, RetrieveAPIView,
     RetrieveUpdateDestroyAPIView)
 from drf_spectacular.utils import (
     extend_schema, extend_schema_view, OpenApiResponse)
@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from rest_framework.response import Response
 
 from apps.sez.models import InnerTTN, InnerTTNItems
+from apps.shtrih.models import ModelNames
 from apps.sez.serializers.inner_ttn import InnerTTNSerializer, InnerTTNPostSerializer
 from apps.sez.permissions import InnerTTNPermission
 from apps.sez.services.inner_ttn_pdf import get_ttn_pdf
@@ -82,7 +83,10 @@ class InnerTTNCreateView(CreateAPIView):
             ttn = InnerTTN.objects.create(**request.data)
             if items:
                 for item in items:
-                    InnerTTNItems.objects.create(inner_ttn=ttn, **item)
+                    model_name_id = item.pop('model_name', None)
+                    model_name = ModelNames.objects.filter(id=model_name_id).first()
+                    if model_name:
+                        InnerTTNItems.objects.create(inner_ttn=ttn, model_name=model_name, **item)
         except Exception as ex:
             return HttpResponse(ex, status=400)
 
@@ -115,37 +119,6 @@ class InnerTTNPDFView(RetrieveAPIView):
         response = HttpResponse(document, content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="{file_name}"'
         return response
-
-
-@extend_schema(tags=["InnerTTN"])
-@extend_schema_view(
-    put=extend_schema(
-        summary='update inner ttn by id (only put)',
-        description='Permission: admin, stz_reader, stz, ttn',
-    )
-)
-class InnerTTNUpdateView(UpdateAPIView):
-    permission_classes = (IsAuthenticated, InnerTTNPermission)
-    serializer_class = InnerTTNSerializer
-    queryset = InnerTTN.objects.all()
-
-    def put(self, request, pk):
-        items = request.data.pop('items', None)
-
-        try:
-            ttn = InnerTTN.objects.filter(id=pk).first()
-            if not ttn:
-                return HttpResponse('no objects', status=400)
-            InnerTTN.objects.filter(id=pk).update(**request.data)
-            ttn = InnerTTN.objects.filter(id=pk).first()
-            old_items = InnerTTNItems.objects.filter(inner_ttn=ttn)
-            old_items.delete()
-            if items:
-                for item in items:
-                    InnerTTNItems.objects.create(inner_ttn=ttn, **item)
-        except Exception as ex:
-            return HttpResponse(ex, status=400)
-        return Response(InnerTTNSerializer(ttn).data, status=200)
 
 
 @extend_schema(tags=["InnerTTN"])

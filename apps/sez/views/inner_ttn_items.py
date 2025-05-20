@@ -1,9 +1,12 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import (
+    RetrieveUpdateDestroyAPIView,
+    ListAPIView,
+    CreateAPIView)
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
 from apps.sez.models import InnerTTNItems
-from apps.sez.serializers.inner_ttn_item import InnerTTNItemsSerializer
+from apps.sez.serializers.inner_ttn_item import InnerTTNItemsSerializer, InnerTTNItemsPostSerializer
 from apps.sez.permissions import InnerTTNPermission
 
 
@@ -13,14 +16,23 @@ from apps.sez.permissions import InnerTTNPermission
         summary='Get list of InnerTTNItems',
         description='Permission: admin, stz_reader, stz, ttn'
     ),
+)
+class InnerTTNItemsListView(ListAPIView):
+    queryset = InnerTTNItems.objects.all()
+    serializer_class = InnerTTNItemsSerializer
+    permission_classes = [IsAuthenticated, InnerTTNPermission]
+
+
+@extend_schema(tags=['InnerTTNItems'])
+@extend_schema_view(
     post=extend_schema(
         summary='Create a new InnerTTNItem',
         description='Permission: admin, stz, ttn'
     )
 )
-class InnerTTNItemsListCreateView(ListCreateAPIView):
+class InnerTTNItemsCreateView(CreateAPIView):
     queryset = InnerTTNItems.objects.all()
-    serializer_class = InnerTTNItemsSerializer
+    serializer_class = InnerTTNItemsPostSerializer
     permission_classes = [IsAuthenticated, InnerTTNPermission]
 
 
@@ -45,5 +57,5 @@ class InnerTTNItemsListCreateView(ListCreateAPIView):
 )
 class InnerTTNItemsRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = InnerTTNItems.objects.all()
-    serializer_class = InnerTTNItemsSerializer
+    serializer_class = InnerTTNItemsPostSerializer
     permission_classes = [IsAuthenticated, InnerTTNPermission]

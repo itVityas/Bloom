@@ -27,11 +27,11 @@ from apps.sez.views.inner_ttn import (
     InnerTTNCreateView,
     InnerTTNPDFView,
     InnerTTNDetailedView,
-    InnerTTNUpdateView,
     InnerTTNStandardUpdateView,
 )
 from apps.sez.views.inner_ttn_items import (
-    InnerTTNItemsListCreateView,
+    InnerTTNItemsListView,
+    InnerTTNItemsCreateView,
     InnerTTNItemsRetrieveUpdateDestroyAPIView,
 )
 
@@ -72,9 +72,9 @@ urlpatterns = [
     path('innerttn/create/', InnerTTNCreateView.as_view()),
     path('innerttn/pdf/<int:pk>/', InnerTTNPDFView.as_view()),
     path('innerttn/detailed/<int:pk>/', InnerTTNDetailedView.as_view()),
-    path('innerttn/update/<int:pk>/', InnerTTNUpdateView.as_view()),
     path('innerttn/standard_update/<int:pk>/', InnerTTNStandardUpdateView.as_view()),
-    path('innerttn_items/', InnerTTNItemsListCreateView.as_view()),
+    path('innerttn_items/', InnerTTNItemsListView.as_view()),
+    path('innerttn_items/create/', InnerTTNItemsCreateView.as_view()),
     path('innerttn_items/<int:pk>/', InnerTTNItemsRetrieveUpdateDestroyAPIView.as_view()),
 
     # Full clearance_workflow
