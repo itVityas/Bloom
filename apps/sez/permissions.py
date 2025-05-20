@@ -47,3 +47,15 @@ class ClearedItemPermission(RoleBasedPermission):
     allowed_roles_post = {'admin', 'cleared_item_writer'}
     allowed_roles_update = {'admin', 'cleared_item_writer'}
     allowed_roles_delete = {'admin', 'cleared_item_writer'}
+
+
+class InnerTTNPermission(RoleBasedPermission):
+    """
+    Permission for InnerTTn operations.
+    - GET: Allowed for 'admin', 'stz' and 'stz_reader', 'ttn'.
+    - Other methods: Allowed for 'admin' and 'stz', 'ttn'.
+    """
+    allowed_roles_get = {'admin', 'stz', 'stz_reader', 'ttn'}
+    allowed_roles_post = {'admin', 'stz', 'ttn'}
+    allowed_roles_update = {'admin', 'stz', 'ttn'}
+    allowed_roles_delete = {'admin', 'stz', 'ttn'}

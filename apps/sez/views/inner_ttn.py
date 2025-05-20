@@ -1,35 +1,38 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import (
-    ListAPIView, CreateAPIView, RetrieveAPIView, UpdateAPIView)
+    ListAPIView, CreateAPIView, RetrieveAPIView, UpdateAPIView,
+    RetrieveUpdateDestroyAPIView)
 from drf_spectacular.utils import (
     extend_schema, extend_schema_view, OpenApiResponse)
 from django.http import HttpResponse
 from rest_framework.response import Response
 
 from apps.sez.models import InnerTTN, InnerTTNItems
-from apps.sez.serializers.inner_ttn import InnerTTNSerializer
-from apps.sez.permissions import STZPermission
+from apps.sez.serializers.inner_ttn import InnerTTNSerializer, InnerTTNPostSerializer
+from apps.sez.permissions import InnerTTNPermission
 from apps.sez.services.inner_ttn_pdf import get_ttn_pdf
+from Bloom.paginator import StandartResultPaginator
 
 
 @extend_schema(tags=['InnerTTN'])
 @extend_schema_view(
     get=extend_schema(
         summary='get list Inner TTN',
-        description='Permission: admin, stz_reader, stz'
+        description='Permission: admin, stz_reader, stz, ttn'
     )
 )
 class InnerTTNListView(ListAPIView):
-    permission_classes = (IsAuthenticated, STZPermission)
+    permission_classes = (IsAuthenticated, InnerTTNPermission)
     serializer_class = InnerTTNSerializer
     queryset = InnerTTN.objects.all()
+    pagination_class = StandartResultPaginator
 
 
 @extend_schema(tags=['InnerTTN'])
 @extend_schema_view(
     post=extend_schema(
         summary='create Inner TTN',
-        description='Permission: admin, stz',
+        description='Permission: admin, stz, ttn',
         responses={
             200: OpenApiResponse(description="PDF file"),
             400: OpenApiResponse(description="Wrong request"),
@@ -68,7 +71,7 @@ class InnerTTNCreateView(CreateAPIView):
   ]
 }
     """
-    permission_classes = (IsAuthenticated, STZPermission)
+    permission_classes = (IsAuthenticated, InnerTTNPermission)
     serializer_class = InnerTTNSerializer
     queryset = InnerTTN.objects.all()
 
@@ -90,7 +93,7 @@ class InnerTTNCreateView(CreateAPIView):
 @extend_schema_view(
     get=extend_schema(
         summary='get inner ttn pdf by id',
-        description='Permission: admin, stz_reader, stz',
+        description='Permission: admin, stz_reader, stz, ttn',
         responses={
             200: OpenApiResponse(description="PDF file"),
             400: OpenApiResponse(description="Wrong request"),
@@ -98,7 +101,7 @@ class InnerTTNCreateView(CreateAPIView):
     ),
 )
 class InnerTTNPDFView(RetrieveAPIView):
-    permission_classes = (IsAuthenticated, STZPermission)
+    permission_classes = (IsAuthenticated, InnerTTNPermission)
     serializer_class = InnerTTNSerializer
     queryset = InnerTTN.objects.all()
 
@@ -118,11 +121,11 @@ class InnerTTNPDFView(RetrieveAPIView):
 @extend_schema_view(
     put=extend_schema(
         summary='update inner ttn by id (only put)',
-        description='Permission: admin, stz_reader, stz',
+        description='Permission: admin, stz_reader, stz, ttn',
     )
 )
 class InnerTTNUpdateView(UpdateAPIView):
-    permission_classes = (IsAuthenticated, STZPermission)
+    permission_classes = (IsAuthenticated, InnerTTNPermission)
     serializer_class = InnerTTNSerializer
     queryset = InnerTTN.objects.all()
 
@@ -149,10 +152,35 @@ class InnerTTNUpdateView(UpdateAPIView):
 @extend_schema_view(
     get=extend_schema(
         summary='get inner ttn by id',
-        description='Permission: admin, stz_reader, stz',
+        description='Permission: admin, stz_reader, stz, ttn',
     )
 )
 class InnerTTNDetailedView(RetrieveAPIView):
-    permission_classes = (IsAuthenticated, STZPermission)
+    permission_classes = (IsAuthenticated, InnerTTNPermission)
     serializer_class = InnerTTNSerializer
+    queryset = InnerTTN.objects.all()
+
+
+@extend_schema(tags=["InnerTTN"])
+@extend_schema_view(
+    get=extend_schema(
+        summary='delete inner ttn by id',
+        description='Permission: admin, stz_reader, stz, ttn',
+    ),
+    put=extend_schema(
+        summary='full update inner ttn by id',
+        description='Permission: admin, stz, ttn',
+    ),
+    patch=extend_schema(
+        summary='partial update inner ttn by id',
+        description='Permission: admin, stz, ttn',
+    ),
+    delete=extend_schema(
+        summary='delete inner ttn by id',
+        description='Permission: admin, stz, ttn',
+    )
+)
+class InnerTTNStandardUpdateView(RetrieveUpdateDestroyAPIView):
+    permission_classes = (IsAuthenticated, InnerTTNPermission)
+    serializer_class = InnerTTNPostSerializer
     queryset = InnerTTN.objects.all()

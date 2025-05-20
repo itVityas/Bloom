@@ -28,6 +28,11 @@ from apps.sez.views.inner_ttn import (
     InnerTTNPDFView,
     InnerTTNDetailedView,
     InnerTTNUpdateView,
+    InnerTTNStandardUpdateView,
+)
+from apps.sez.views.inner_ttn_items import (
+    InnerTTNItemsListCreateView,
+    InnerTTNItemsRetrieveUpdateDestroyAPIView,
 )
 
 urlpatterns = [
@@ -62,12 +67,15 @@ urlpatterns = [
     path('custom_clearance/', CustomClearanceView.as_view()),
     path('barcode_table/', BarcodeTable.as_view()),
 
-    #
+    # InnerTTN
     path('innerttn/', InnerTTNListView.as_view()),
     path('innerttn/create/', InnerTTNCreateView.as_view()),
     path('innerttn/pdf/<int:pk>/', InnerTTNPDFView.as_view()),
     path('innerttn/detailed/<int:pk>/', InnerTTNDetailedView.as_view()),
     path('innerttn/update/<int:pk>/', InnerTTNUpdateView.as_view()),
+    path('innerttn/standard_update/<int:pk>/', InnerTTNStandardUpdateView.as_view()),
+    path('innerttn_items/', InnerTTNItemsListCreateView.as_view()),
+    path('innerttn_items/<int:pk>/', InnerTTNItemsRetrieveUpdateDestroyAPIView.as_view()),
 
     # Full clearance_workflow
     path('clearance/calculate/', FullClearanceWorkflowAPIView.as_view(), name='full-clearance-workflow'),
