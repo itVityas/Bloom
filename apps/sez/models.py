@@ -117,7 +117,7 @@ class InnerTTN(models.Model):
     unload = models.CharField(max_length=200)  # Пункт выгрузки
     date = models.DateField()  # Дата документа
     notice = models.CharField(max_length=200)  # Примечание
-    user = models.BooleanField(default=False)
+    used = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.pk:

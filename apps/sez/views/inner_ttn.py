@@ -6,6 +6,7 @@ from drf_spectacular.utils import (
     extend_schema, extend_schema_view, OpenApiResponse)
 from django.http import HttpResponse
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.sez.models import InnerTTN, InnerTTNItems
 from apps.shtrih.models import ModelNames
@@ -13,6 +14,7 @@ from apps.sez.serializers.inner_ttn import InnerTTNSerializer, InnerTTNPostSeria
 from apps.sez.permissions import InnerTTNPermission
 from apps.sez.services.inner_ttn_pdf import get_ttn_pdf
 from Bloom.paginator import StandartResultPaginator
+from apps.sez.filterset import InnerTTNFilter
 
 
 @extend_schema(tags=['InnerTTN'])
@@ -27,6 +29,8 @@ class InnerTTNListView(ListAPIView):
     serializer_class = InnerTTNSerializer
     queryset = InnerTTN.objects.all()
     pagination_class = StandartResultPaginator
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = InnerTTNFilter
 
 
 @extend_schema(tags=['InnerTTN'])

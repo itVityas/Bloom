@@ -1,6 +1,6 @@
 import django_filters as filters
 
-from .models import ClearanceInvoice
+from .models import ClearanceInvoice, InnerTTN
 
 
 class ClearanceInvoiceFilter(filters.FilterSet):
@@ -217,3 +217,36 @@ class DocumentSezFilter(filters.FilterSet):
         field_name='cost',
         lookup_expr='iendswith'
     )
+
+
+class InnerTTNFilter(filters.FilterSet):
+    start_uuid = filters.CharFilter(
+        field_name='uuid',
+        lookup_expr='istartswith'
+    )
+    end_uuid = filters.CharFilter(
+        field_name='uuid',
+        lookup_expr='iendswith'
+    )
+    cont_uuid = filters.CharFilter(
+        field_name='uuid',
+        lookup_expr='icontains'
+    )
+
+    ordering = filters.OrderingFilter(
+        fields=(
+            ('id', 'id'),
+            ('uuid', 'uuid'),
+            ('date', 'date'),
+        ),
+    )
+
+    class Meta:
+        model = InnerTTN
+        fields = [
+            'id',
+            'uuid',
+            'start_uuid',
+            'end_uuid',
+            'cont_uuid'
+        ]
