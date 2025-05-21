@@ -43,7 +43,6 @@ class ZipFileUploadAPIView(APIView):
 
         container = None
         if container_id is not None:
-            from apps.arrival.models import Container
             container = get_object_or_404(Container, pk=container_id)
 
         tmp_zip_path = None
@@ -54,12 +53,22 @@ class ZipFileUploadAPIView(APIView):
                 tmp_zip_path = tmp_zip.name
 
             process_all_dbf_files(tmp_zip_path, container=container)
+
         except DuplicateDeclarationException as de:
-            return Response({'error': str(de)}, status=409)
+            return Response(
+                {'detail': f'Дублирование декларации: {str(de)}'},
+                status=409
+            )
         except Exception as e:
-            return Response({'error': f'Error processing zip file: {str(e)}'}, status=400)
+            return Response(
+                {'detail': f'Ошибка обработки zip-файла: {str(e)}'},
+                status=400
+            )
         finally:
             if tmp_zip_path and os.path.exists(tmp_zip_path):
                 os.remove(tmp_zip_path)
 
-        return Response({'status': 'Zip file processed successfully.'}, status=201)
+        return Response(
+            {'detail': 'Архив успешно обработан.'},
+            status=201
+        )
