@@ -64,11 +64,12 @@ def execute_full_clearance_workflow(
     except ClearanceInvoice.DoesNotExist:
         raise ObjectDoesNotExist(f"ClearanceInvoice #{invoice_id} not found")
 
-    if invoice.date_calc is not None:
+    if invoice.date_calc is not None or invoice.cleared is True:
         raise AlreadyCalculatedError(f"Invoice #{invoice_id} was already calculated at {invoice.date_calc}")
 
     invoice.date_calc = timezone.now()
-    invoice.save(update_fields=['date_calc'])
+    invoice.cleared = True
+    invoice.save(update_fields=['date_calc', 'cleared'])
 
     # 3) Process each invoice item
     items_qs = ClearanceInvoiceItems.objects.filter(
@@ -132,5 +133,5 @@ def undo_full_clearance_workflow(invoice_id: int) -> None:
         Products.objects.filter(cleared=invoice_id).update(cleared=None)
 
         # 3) Clear invoice timestamp
-        ClearanceInvoice.objects.filter(pk=invoice_id).update(date_calc=None)
+        ClearanceInvoice.objects.filter(pk=invoice_id).update(date_calc=None, cleared = False)
 
