@@ -5,9 +5,14 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 
+from apps.sez.clearance_workflow.vznab_stock_service import PanelError
 from apps.sez.permissions import ClearanceInvoiceItemsPermission
-from apps.sez.clearance_workflow.full_clearance_workflow import execute_full_clearance_workflow, \
-    undo_full_clearance_workflow, AlreadyCalculatedError
+from apps.sez.clearance_workflow.full_clearance_workflow import (
+    execute_full_clearance_workflow,
+    undo_full_clearance_workflow,
+    AlreadyCalculatedError
+)
+from apps.sez.clearance_workflow.shtrih_service import NotEnoughProductsError
 from apps.sez.serializers.full_clearance_workflow import (
     FullClearanceWorkflowInputSerializer,
     FullClearanceWorkflowResultSerializer,
@@ -21,35 +26,28 @@ from apps.sez.models import ClearanceInvoice
         summary='Run full clearance workflow and create ClearedItem records',
         description='Permission: admin, cleared_item_writer',
         request=FullClearanceWorkflowInputSerializer,
-        responses=FullClearanceWorkflowResultSerializer(many=True)
+        responses=FullClearanceWorkflowResultSerializer(many=True),
     ),
     delete=extend_schema(
         summary='Undo full clearance workflow and remove ClearedItem records',
         description='Permission: admin, cleared_item_writer',
         request=FullClearanceWorkflowInputSerializer,
-        responses={204: None}
+        responses={204: None},
     )
 )
 class FullClearanceWorkflowAPIView(APIView):
     """
-    API endpoint to execute the full clearance workflow for a given invoice.
-
-    POST:
-        Runs the end‑to‑end pipeline:
-        1. Updates missing 1C codes.
-        2. Allocates components.
-        3. Clears declared items.
-        4. Marks Products as cleared.
-        Returns detailed results for each component cleared.
+    API endpoint to execute or undo the full clearance workflow for a given invoice.
     """
     permission_classes = (IsAuthenticated, ClearanceInvoiceItemsPermission,)
 
     def post(self, request, *args, **kwargs):
         """
-        Handle POST request to start the full clearance workflow.
-
-        Validates input, checks invoice existence, executes the workflow,
-        and returns serialized results.
+        Start the full clearance workflow:
+        - timestamp the invoice
+        - allocate components
+        - clear declared items
+        - mark products as cleared
 
         Request body:
             {
@@ -72,60 +70,73 @@ class FullClearanceWorkflowAPIView(APIView):
             ]
         """
         # 1) Validate input
-        inp_ser = FullClearanceWorkflowInputSerializer(data=request.data)
-        inp_ser.is_valid(raise_exception=True)
-        invoice_id = inp_ser.validated_data['invoice_id']
-        is_tv = inp_ser.validated_data['is_tv']
+        serializer = FullClearanceWorkflowInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        invoice_id = serializer.validated_data['invoice_id']
+        is_tv = serializer.validated_data['is_tv']
 
-        # 2) Ensure invoice exists
-        try:
-            ClearanceInvoice.objects.get(pk=invoice_id)
-        except ClearanceInvoice.DoesNotExist:
-            raise ObjectDoesNotExist(f"ClearanceInvoice #{invoice_id} not found")
-
-        # 3) Run workflow
+        # 2) Execute and catch errors
         try:
             results = execute_full_clearance_workflow(invoice_id, is_tv)
-        except  AlreadyCalculatedError as expt:
-            return Response(str(expt), status=status.HTTP_400_BAD_REQUEST)
+        except ObjectDoesNotExist as e:
+            return Response(
+                {"detail": str(e)},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except AlreadyCalculatedError as e:
+            return Response(
+                {"detail": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except NotEnoughProductsError as e:
+            return Response(
+                {"detail": f"Not enough products available: {e}"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except PanelError as e:
+            return Response(
+                {"detail": f"Panel check failed: {e}"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            # unexpected error
+            return Response(
+                {"detail": "An unexpected error occurred."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
-        # 4) Serialize and return output
+        # 3) Serialize and return
         out_ser = FullClearanceWorkflowResultSerializer(results, many=True)
-        return Response(out_ser.data)
+        return Response(out_ser.data, status=status.HTTP_200_OK)
 
     def delete(self, request, *args, **kwargs):
         """
-        Handle DELETE request to reverse the full clearance workflow.
+        Undo the full clearance workflow:
+        - restore declared_item quantities
+        - delete ClearedItem records
+        - reset products cleared flag
+        - clear invoice timestamp
 
-        1. Validates the input payload to obtain `invoice_id`.
-        2. Verifies that the ClearanceInvoice exists.
-        3. Calls `undo_full_clearance_workflow` to:
-           - Restore DeclaredItem.available_quantity.
-           - Remove all ClearedItem records for this invoice.
-           - Reset `cleared` to NULL on related Products.
-        4. Returns HTTP 204 No Content on success.
-
-        Request body:
-            {
-              "invoice_id": <int>,
-              "is_tv": <bool> # ignored for delete
-            }
-
-        Responses:
-            204 No Content: Workflow reversal completed successfully.
-            404 Not Found:  If the specified ClearanceInvoice does not exist.
+        Returns 204 No Content on success.
         """
         # 1) Validate input
-        inp_ser = FullClearanceWorkflowInputSerializer(data=request.data)
-        inp_ser.is_valid(raise_exception=True)
-        invoice_id = inp_ser.validated_data['invoice_id']
+        serializer = FullClearanceWorkflowInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        invoice_id = serializer.validated_data['invoice_id']
 
-        # 2) Ensure the invoice exists
-        if not ClearanceInvoice.objects.filter(pk=invoice_id).exists():
-            raise ObjectDoesNotExist(f"ClearanceInvoice #{invoice_id} not found")
+        # 2) Perform undo and catch errors
+        try:
+            undo_full_clearance_workflow(invoice_id)
+        except ObjectDoesNotExist:
+            return Response(
+                {"detail": f"ClearanceInvoice #{invoice_id} not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception:
+            return Response(
+                {"detail": "Failed to undo clearance workflow."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
-        # 3) Perform the undo operation
-        undo_full_clearance_workflow(invoice_id)
-
-        # 4) Return No Content
+        # 3) Return No Content
         return Response(status=status.HTTP_204_NO_CONTENT)
