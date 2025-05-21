@@ -48,7 +48,7 @@ declaration_declareditem.name
             declared_item_id=OuterRef('id')
         ).values('declared_item_id').annotate(
             total_cleared=Sum('quantity', output_field=IntegerField())
-        ).values('total_cleared')
+        ).values('total_cleared').order_by()
 
         queryset = DeclaredItem.objects.annotate(
             real_amount=F('quantity') - Coalesce(Subquery(cleared_items_subquery), 0)
