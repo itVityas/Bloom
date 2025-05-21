@@ -28,10 +28,10 @@ from apps.sez.models import ClearanceInvoice
         request=FullClearanceWorkflowInputSerializer,
         responses={
             200: FullClearanceWorkflowResultSerializer(many=True),
-            400: 'Bad Request (e.g. already calculated or panel missing)',
-            404: 'Invoice not found',
-            409: 'Conflict (not enough products)',
-            422: 'Unprocessable Entity (panel check failed)',
+            400: 'Bad Request (например, уже рассчитано)',
+            404: 'Накладная не найдена',
+            409: 'Conflict (недостаточно товаров)',
+            422: 'Unprocessable Entity (не пройдена проверка панели)',
             500: 'Server Error'
         }
     ),
@@ -41,7 +41,7 @@ from apps.sez.models import ClearanceInvoice
         request=FullClearanceWorkflowInputSerializer,
         responses={
             204: None,
-            404: 'Invoice not found',
+            404: 'Накладная не найдена',
             500: 'Server Error'
         }
     )
@@ -91,27 +91,27 @@ class FullClearanceWorkflowAPIView(APIView):
             results = execute_full_clearance_workflow(invoice_id, is_tv)
         except ObjectDoesNotExist as e:
             return Response(
-                {"detail": str(e)},
+                {"detail": f"Накладная с ID={invoice_id} не найдена."},
                 status=status.HTTP_404_NOT_FOUND
             )
         except AlreadyCalculatedError as e:
             return Response(
-                {"detail": str(e)},
+                {"detail": f"Расчёт для накладной уже выполнен: {e}"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         except NotEnoughProductsError as e:
             return Response(
-                {"detail": f"Not enough products: {e}"},
+                {"detail": f"Недостаточно товаров для списания: {e}"},
                 status=status.HTTP_409_CONFLICT
             )
         except PanelError as e:
             return Response(
-                {"detail": f"Panel check failed: {e}"},
+                {"detail": f"Проверка панели не пройдена: {e}"},
                 status=status.HTTP_422_UNPROCESSABLE_ENTITY
             )
         except Exception:
             return Response(
-                {"detail": "An unexpected error occurred."},
+                {"detail": "Произошла внутренняя ошибка сервера."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
@@ -139,12 +139,12 @@ class FullClearanceWorkflowAPIView(APIView):
             undo_full_clearance_workflow(invoice_id)
         except ObjectDoesNotExist:
             return Response(
-                {"detail": f"ClearanceInvoice #{invoice_id} not found."},
+                {"detail": f"Накладная с ID={invoice_id} не найдена."},
                 status=status.HTTP_404_NOT_FOUND
             )
         except Exception:
             return Response(
-                {"detail": "Failed to undo clearance workflow."},
+                {"detail": "Не удалось откатить процесс списания."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
