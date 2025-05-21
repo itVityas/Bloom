@@ -26,13 +26,24 @@ from apps.sez.models import ClearanceInvoice
         summary='Run full clearance workflow and create ClearedItem records',
         description='Permission: admin, cleared_item_writer',
         request=FullClearanceWorkflowInputSerializer,
-        responses=FullClearanceWorkflowResultSerializer(many=True),
+        responses={
+            200: FullClearanceWorkflowResultSerializer(many=True),
+            400: 'Bad Request (e.g. already calculated or panel missing)',
+            404: 'Invoice not found',
+            409: 'Conflict (not enough products)',
+            422: 'Unprocessable Entity (panel check failed)',
+            500: 'Server Error'
+        }
     ),
     delete=extend_schema(
         summary='Undo full clearance workflow and remove ClearedItem records',
         description='Permission: admin, cleared_item_writer',
         request=FullClearanceWorkflowInputSerializer,
-        responses={204: None},
+        responses={
+            204: None,
+            404: 'Invoice not found',
+            500: 'Server Error'
+        }
     )
 )
 class FullClearanceWorkflowAPIView(APIView):
@@ -90,16 +101,15 @@ class FullClearanceWorkflowAPIView(APIView):
             )
         except NotEnoughProductsError as e:
             return Response(
-                {"detail": f"Not enough products available: {e}"},
-                status=status.HTTP_400_BAD_REQUEST
+                {"detail": f"Not enough products: {e}"},
+                status=status.HTTP_409_CONFLICT
             )
         except PanelError as e:
             return Response(
                 {"detail": f"Panel check failed: {e}"},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
             )
-        except Exception as e:
-            # unexpected error
+        except Exception:
             return Response(
                 {"detail": "An unexpected error occurred."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
