@@ -256,13 +256,19 @@
                 {{item.price}}
             </td>
             <td>
-                Без НДС
+                {% if item.nds != 0 %}
+                    {{item.nds}}
+                {% else %}
+                    Без НДС
+                {% endif %}
             </td>
             <td>
-                
+                {% if item.nds_sum != 0 %}
+                    {{item.nds_sum}}
+                {% endif %}
             </td>
             <td>
-                {{item.price}}
+                {{item.full_price}}
             </td>
             <td>
                 
@@ -271,7 +277,7 @@
                 {{item.weight}}
             </td>
             <td>
-                
+                {{item.notice}}
             </td> 
         </tr>
         {% endfor %}
@@ -299,7 +305,7 @@
                 
             </td>
             <td>
-                <b>{{price}}</b>
+                <b>{{full_price}}</b>
             </td>
             <td>
                 

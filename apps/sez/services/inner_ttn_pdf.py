@@ -15,14 +15,18 @@ def get_ttn_pdf(id: int) -> str:
     quantity = 0
     price = 0
     weight = 0
+    full_price = 0
     for item in items:
         quantity += item.quantity
         item.price = item.price_pcs * item.quantity
         price += item.price
         weight += item.weight
+        item.nds_sum = price * item.nds / 100
+        item.full_price = item.nds_sum + item.price
+        full_price += item.full_price
 
-    coin = int((price % 1) * 100)
-    rub = int(price)
+    coin = int((full_price % 1) * 100)
+    rub = int(full_price)
     rub_text = num2words(rub, lang='ru')
     weight_text = num2words(int(weight*1000), lang='ru')
 
@@ -31,6 +35,7 @@ def get_ttn_pdf(id: int) -> str:
         "items": items,
         "quantity": quantity,
         "price": price,
+        "full_price": full_price,
         "weight": weight,
         "coin": coin,
         "rub_text": rub_text,
