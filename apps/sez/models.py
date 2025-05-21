@@ -105,6 +105,10 @@ class ClearedItem(models.Model):
 
 
 class InnerTTN(models.Model):
+    car = models.CharField(max_length=100, blank=True, null=True)
+    trailer = models.CharField(max_length=100, blank=True, null=True)
+    waybill = models.CharField(max_length=100, blank=True, null=True)
+    driver = models.CharField(max_length=100, blank=True, null=True)
     uuid = models.CharField(max_length=20, blank=True, null=True)
     shipper_unp = models.CharField(max_length=20)  # УНП грузоотправителя
     consignee_unp = models.CharField(max_length=20)  # УНП грузополучателя
@@ -143,6 +147,8 @@ class InnerTTNItems(models.Model):
     quantity = models.IntegerField()  # Количество
     price_pcs = models.DecimalField(max_digits=19, decimal_places=2)  # цена за единицу
     weight = models.DecimalField(max_digits=19, decimal_places=3)  # Вес
+    nds = models.PositiveIntegerField(default=0)  # % ндс
+    notice = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"InnerTTNItem #{self.pk} (InnerTTN #{self.inner_ttn_id})"
