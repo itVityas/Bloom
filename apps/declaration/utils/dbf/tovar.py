@@ -15,7 +15,7 @@ def get_declaration(record):
         try:
             declaration_instance = Declaration.objects.get(declaration_id=decl_id)
         except Declaration.DoesNotExist:
-            raise ValueError(f"Declaration with declaration_id {decl_id} not found.")
+            raise ValueError(f"Декларация с declaration_id {decl_id} не найдена.")
     else:
         declaration_instance = None
     return declaration_instance
@@ -96,4 +96,4 @@ def process_tovar_dbf_file(file_path):
         list_items = list_of_dict_dbf_records(records)
         save_items_to_db(list_items)
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Ошибка обработки файла: {e}")

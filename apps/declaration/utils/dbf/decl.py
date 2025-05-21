@@ -78,7 +78,7 @@ def save_declaration_to_db(declarations_data):
     elif declarations:
         Declaration.objects.bulk_create(declarations)
     else:
-        raise Exception("No data to save.")
+        raise Exception("Нет данных для сохранения.")
 
 
 def process_decl_dbf_file(file_path, container=None):
