@@ -63,7 +63,7 @@ class ClearanceInvoiceItems(models.Model):
         related_name='clearance_invoice_items',
     )
     quantity = models.FloatField()
-    models_unv = models.ManyToManyField(
+    models = models.ManyToManyField(
         'shtrih.Models',
         through='ClearanceInvoiceItemModels',
         related_name='clearance_invoice_items'

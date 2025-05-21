@@ -60,7 +60,7 @@ def process_products_for_invoice_item(
         raise ObjectDoesNotExist(f"ClearanceInvoiceItems #{invoice_item_id} not found")
 
     request_quantity = int(invoice_item.quantity)
-    related_models_qs = invoice_item.models_unv.all().only(
+    related_models_qs = invoice_item.models.all().only(
         'id', 'letter_part', 'numeric_part', 'execution_part'
     )
 
