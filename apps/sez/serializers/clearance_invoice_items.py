@@ -4,7 +4,7 @@ from django.db.models.functions import Coalesce
 
 from apps.sez.models import ClearanceInvoiceItems, ClearedItem
 from apps.shtrih.serializers.model_name import ModelNamesSerializer
-from apps.shtrih.models import Models
+from apps.shtrih.models import Models, Products
 from apps.declaration.models import DeclaredItem
 
 
@@ -70,7 +70,11 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
     def get_real_amount(self, obj) -> float:
         declaration_item = obj.declared_item
         if not declaration_item:
-            return 0
+            count = Products.objects.filter(
+                cleared__isnull=True,
+                model__name__id=obj.model_name_id.id
+            ).values('barcode').distinct().count()
+            return count
 
         cleared_items_subquery = ClearedItem.objects.filter(
             declared_item_id=OuterRef('id')
