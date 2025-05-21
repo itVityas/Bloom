@@ -1,4 +1,4 @@
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiResponse
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -23,27 +23,27 @@ from apps.sez.models import ClearanceInvoice
 @extend_schema(tags=['ClearedItem'])
 @extend_schema_view(
     post=extend_schema(
-        summary='Run full clearance workflow and create ClearedItem records',
-        description='Permission: admin, cleared_item_writer',
+        summary='Запустить полный процесс списания и создать записи ClearedItem',
+        description='Права: admin, cleared_item_writer',
         request=FullClearanceWorkflowInputSerializer,
         responses={
             200: FullClearanceWorkflowResultSerializer(many=True),
-            400: 'Bad Request (например, уже рассчитано)',
-            404: 'Накладная не найдена',
-            409: 'Conflict (недостаточно товаров)',
-            422: 'Unprocessable Entity (не пройдена проверка панели)',
-            500: 'Server Error'
-        }
+            400: OpenApiResponse(description='Накладная уже рассчитана'),
+            404: OpenApiResponse(description='Накладная не найдена'),
+            409: OpenApiResponse(description='Недостаточно товаров для списания'),
+            422: OpenApiResponse(description='Проверка панели не пройдена'),
+            500: OpenApiResponse(description='Внутренняя ошибка сервера'),
+        },
     ),
     delete=extend_schema(
-        summary='Undo full clearance workflow and remove ClearedItem records',
-        description='Permission: admin, cleared_item_writer',
+        summary='Откатить полный процесс списания и удалить записи ClearedItem',
+        description='Права: admin, cleared_item_writer',
         request=FullClearanceWorkflowInputSerializer,
         responses={
-            204: None,
-            404: 'Накладная не найдена',
-            500: 'Server Error'
-        }
+            204: OpenApiResponse(description='Успешно отменено'),
+            404: OpenApiResponse(description='Накладная не найдена'),
+            500: OpenApiResponse(description='Сбой при попытке отката'),
+        },
     )
 )
 class FullClearanceWorkflowAPIView(APIView):
