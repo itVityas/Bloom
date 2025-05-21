@@ -1,9 +1,30 @@
 from django.db.models import Sum
 
 from rest_framework import serializers
-from apps.arrival.models import Container, Content
+from apps.arrival.models import Container, Content, Order
 from apps.arrival.serializers.content import ContentSerializer, ContentMultySerializer
 from apps.declaration.serializers.declaration import DeclarationSerializer
+
+
+class OrderSmallSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Order model.
+    This serializer includes only the 'id' and 'name' fields of the Order model.
+    """
+    class Meta:
+        model = Order
+        fields = ['id', 'name']
+
+
+class ContainerAndOrderSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Container model including its associated order.
+    """
+    order = OrderSmallSerializer(read_only=True)
+
+    class Meta:
+        model = Container
+        fields = '__all__'
 
 
 class ContainerFullSerializer(serializers.ModelSerializer):

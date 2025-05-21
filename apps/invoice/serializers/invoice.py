@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from apps.invoice.models import Invoice, InvoiceItem
 from apps.invoice.serializers.invoice_item import InvoiceItemSerializer
-from apps.arrival.serializers.container import ContainerFullSerializer
+from apps.arrival.serializers.container import ContainerAndOrderSerializer
 
 
 class InvoiceFullSerializer(serializers.ModelSerializer):
@@ -12,7 +12,7 @@ class InvoiceFullSerializer(serializers.ModelSerializer):
     that contains the serialized data of related InvoiceItem objects.
     """
     items = serializers.SerializerMethodField()
-    container = ContainerFullSerializer(read_only=True)
+    container = ContainerAndOrderSerializer(read_only=True)
 
     class Meta:
         model = Invoice
