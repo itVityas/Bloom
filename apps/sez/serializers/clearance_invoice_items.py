@@ -80,7 +80,7 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
             declared_item_id=OuterRef('id')
         ).values('declared_item_id').annotate(
             total_cleared=Sum('quantity', output_field=IntegerField())
-        ).values('total_cleared')
+        ).values('total_cleared').order_by()
 
         real_amount = DeclaredItem.objects.filter(id=declaration_item.id).annotate(
             real_amount=F('quantity') - Coalesce(Subquery(cleared_items_subquery), 0)
