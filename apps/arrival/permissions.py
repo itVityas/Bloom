@@ -43,7 +43,7 @@ class ContentPermission(RoleBasedPermission):
     - GET: Allowed for 'admin', 'arrival_reader' and 'content_writer'.
     - Other methods: Allowed for 'admin' and 'content_writer'.
     """
-    allowed_roles_get = {'admin', 'arrival_reader', 'content_writer'}
-    allowed_roles_post = {'admin', 'content_writer'}
-    allowed_roles_update = {'admin', 'content_writer'}
-    allowed_roles_delete = {'admin', 'content_writer'}
+    allowed_roles_get = {'admin', 'arrival_reader', 'container_writer'}
+    allowed_roles_post = {'admin', 'container_writer'}
+    allowed_roles_update = {'admin', 'container_writer'}
+    allowed_roles_delete = {'admin', 'container_writer'}
