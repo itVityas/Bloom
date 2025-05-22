@@ -269,14 +269,14 @@ LOGGING = {
         'rotating_file': {
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': BASE_DIR / 'logs' / 'django.log',
-            'maxBytes': 10 * 1024 * 1024, # 10 mb
+            'maxBytes': 10 * 1024 * 1024,  # 10 mb
             'backupCount': 10,
             'formatter': 'standard',
         },
         'omega_file': {
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': BASE_DIR / 'logs' / 'omega.log',
-            'maxBytes': 1 * 1024 * 1024, # 1 mb
+            'maxBytes': 1 * 1024 * 1024,  # 1 mb
             'backupCount': 5,
             'formatter': 'standard',
         },
