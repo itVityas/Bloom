@@ -37,7 +37,8 @@ def execute_full_clearance_workflow(
          - allocate Products (process_products_for_invoice_item)
          - clear declared items (clear_model_items)
     4. Mark all used Products as cleared.
-    5. Return aggregated results.
+    5. Mark invoice as calculated
+    6. Return aggregated results.
 
     Args:
         invoice_id (int):
@@ -67,10 +68,6 @@ def execute_full_clearance_workflow(
     if invoice.date_calc is not None or invoice.cleared is True:
         raise AlreadyCalculatedError(f"Invoice #{invoice_id} was already calculated at {invoice.date_calc}")
 
-    invoice.date_calc = timezone.now()
-    invoice.cleared = True
-    invoice.save(update_fields=['date_calc', 'cleared'])
-
     # 3) Process each invoice item
     items_qs = ClearanceInvoiceItems.objects.filter(
         clearance_invoice_id=invoice_id,
@@ -93,6 +90,12 @@ def execute_full_clearance_workflow(
 
     # 4) Mark products
     mark_products_cleared(products_for_cleared, invoice_id)
+
+    # 5) Mark invoice as calculated
+    invoice.date_calc = timezone.now()
+    invoice.cleared = True
+    invoice.save(update_fields=['date_calc', 'cleared'])
+
     return all_results
 
 
