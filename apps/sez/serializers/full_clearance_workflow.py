@@ -14,10 +14,6 @@ class FullClearanceWorkflowInputSerializer(serializers.Serializer):
     invoice_id = serializers.IntegerField(
         help_text="ID of the ClearanceInvoice to process."
     )
-    is_tv = serializers.BooleanField(
-        default=False,
-        help_text="If true, perform TV‑panel existence checks."
-    )
 
 
 class ClearedComponentPlanSerializer(serializers.Serializer):

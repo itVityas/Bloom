@@ -84,11 +84,10 @@ class FullClearanceWorkflowAPIView(APIView):
         serializer = FullClearanceWorkflowInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         invoice_id = serializer.validated_data['invoice_id']
-        is_tv = serializer.validated_data['is_tv']
 
         # 2) Execute and catch errors
         try:
-            results = execute_full_clearance_workflow(invoice_id, is_tv)
+            results = execute_full_clearance_workflow(invoice_id)
         except ObjectDoesNotExist as e:
             return Response(
                 {"detail": f"Накладная с ID={invoice_id} не найдена."},

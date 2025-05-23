@@ -31,7 +31,6 @@ class ModelClearanceEmptyError(Exception):
 
 def execute_full_clearance_workflow(
     invoice_id: int,
-    is_tv: bool = False,
 ) -> List[Dict[str, Any]]:
     """
     Process a ClearanceInvoice by clearing items for each
@@ -92,7 +91,7 @@ def execute_full_clearance_workflow(
                 model_code=m.get('unvcode'),
                 quantity=m.get('count'),
                 invoice_item_id=invoice_item.id,
-                is_tv=is_tv,
+                is_tv=m.get('is_tv'),
             )
 
             if not results:

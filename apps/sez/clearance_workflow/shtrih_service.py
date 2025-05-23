@@ -61,7 +61,7 @@ def process_products_for_invoice_item(
 
     request_quantity = int(invoice_item.quantity)
     related_models_qs = invoice_item.models.all().only(
-        'id', 'letter_part', 'numeric_part', 'execution_part'
+        'id', 'letter_part', 'numeric_part', 'execution_part', 'production_code'
     )
 
     # Build a mapping model_id → display string
@@ -69,6 +69,11 @@ def process_products_for_invoice_item(
         m.id: f"{m.letter_part}{m.numeric_part}{m.execution_part or ''}"
         for m in related_models_qs
     }
+    # Build a mapping model_id → is_tv flag (True if production_code == 400)
+    model_is_tv_map: Dict[int, bool] = {
+        m.id: (m.production_code_id == 400)
+        for m in related_models_qs}
+
     model_ids = list(model_display_map.keys())
 
     if not model_ids:
@@ -116,6 +121,7 @@ def process_products_for_invoice_item(
             "model_display": disp,
             "count": float(cnt),
             "unvcode": int(sign_to_unv.get(disp)),
+            "is_tv": model_is_tv_map.get(mid, False),
         })
 
     return results, products_list
