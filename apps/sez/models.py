@@ -155,3 +155,25 @@ class InnerTTNItems(models.Model):
 
     class Meta:
         ordering = ['id']
+
+
+class ClearanceResult(models.Model):
+    invoice_item = models.ForeignKey(
+        'ClearanceInvoiceItems',
+        on_delete=models.CASCADE,
+        related_name='clearance_results'
+    )
+    name = models.CharField(max_length=255)
+    request_quantity = models.IntegerField()
+    uncleared_quantity = models.IntegerField()
+    reason = models.TextField(blank=True, default='')
+    comment = models.TextField(blank=True, default='')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Результат полной очистки'
+        verbose_name_plural = 'Результаты полной очистки'
+
+    def __str__(self):
+        return f'{self.invoice_item} – {self.name}'
