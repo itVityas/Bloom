@@ -9,7 +9,7 @@ from apps.sez.permissions import ClearanceInvoiceItemsPermission
 from apps.sez.serializers.cleared_item_by_clearance import ClearedItemListSerializer
 
 
-@extend_schema(tags=['ClearedItem'])
+@extend_schema(tags=['Clearance Workflow'])
 @extend_schema_view(
     get=extend_schema(
         summary='Получить ClearedItem по ClearanceInvoice',

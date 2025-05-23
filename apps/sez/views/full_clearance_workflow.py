@@ -19,7 +19,7 @@ from apps.sez.serializers.full_clearance_workflow import (
 )
 
 
-@extend_schema(tags=['ClearedItem'])
+@extend_schema(tags=['Clearance Workflow'])
 @extend_schema_view(
     post=extend_schema(
         summary='Запустить полный процесс списания и создать записи ClearedItem',
