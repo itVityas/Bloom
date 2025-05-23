@@ -10,7 +10,7 @@ from apps.sez.clearance_workflow.clear_items_without_order import clear_model_it
 from apps.sez.clearance_workflow.shtrih_service import process_products_for_invoice_item, \
     mark_products_cleared
 from apps.sez.clearance_workflow.independent.update_item_codes_1c import update_item_codes_1c
-from apps.sez.models import ClearanceInvoiceItems, ClearedItem, ClearanceInvoice
+from apps.sez.models import ClearanceInvoiceItems, ClearedItem, ClearanceInvoice, ClearanceResult
 from apps.shtrih.models import Products
 
 logger = logging.getLogger(__name__)
@@ -29,38 +29,10 @@ class ModelClearanceEmptyError(Exception):
     pass
 
 
-def execute_full_clearance_workflow(
-    invoice_id: int,
-) -> List[Dict[str, Any]]:
+def execute_full_clearance_workflow(invoice_id: int) -> None:
     """
-    Process a ClearanceInvoice by clearing items for each
-    ClearanceInvoiceItems without declared_item and mark the calculation timestamp.
-
-    1. Load the ClearanceInvoice instance.
-       - If `date_calc` is already set, raises AlreadyCalculatedError.
-       - Otherwise sets `date_calc = now()` and saves it.
-    2. Update all missing 1C codes.
-    3. For each unprocessed ClearanceInvoiceItems:
-         - allocate Products (process_products_for_invoice_item)
-         - clear declared items (clear_model_items)
-    4. Mark all used Products as cleared.
-    5. Mark invoice as calculated
-    6. Return aggregated results.
-
-    Args:
-        invoice_id (int):
-            ID of the ClearanceInvoice to process
-        is_tv (bool, optional):
-            Passed through to clear_model_items for TV panel checks.
-
-    Returns:
-        List[Dict[str, Any]]: Aggregated results from clear_model_items calls.
-
-    Raises:
-        ObjectDoesNotExist:
-            If no ClearanceInvoice with the given ID exists.
-        AlreadyCalculatedError:
-            If this invoice was already processed (date_calc not null).
+    Обрабатывает ClearanceInvoice, очищает каждый ClearanceInvoiceItems,
+    сохраняет результаты в таблицу ClearanceResult и устанавливает флаг расчёта.
     """
 
     # 1) Update all fields where item_code_1c is NULL in DeclaredItem
@@ -72,44 +44,53 @@ def execute_full_clearance_workflow(
     except ClearanceInvoice.DoesNotExist:
         raise ObjectDoesNotExist(f"ClearanceInvoice #{invoice_id} not found")
 
-    if invoice.date_calc is not None or invoice.cleared is True:
-        raise AlreadyCalculatedError(f"Invoice #{invoice_id} was already calculated at {invoice.date_calc}")
+    if invoice.date_calc is not None or invoice.cleared:
+        raise AlreadyCalculatedError(
+            f"Invoice #{invoice_id} was already calculated at {invoice.date_calc}"
+        )
 
     # 3) Process each invoice item
     items_qs = ClearanceInvoiceItems.objects.filter(
         clearance_invoice_id=invoice_id,
         declared_item__isnull=True
     )
-    all_results: List[Dict[str, Any]] = []
-    products_for_cleared: List[Products] = []
 
-    for invoice_item in items_qs:
-        used_models, product_list = process_products_for_invoice_item(invoice_item.id)
+    with transaction.atomic():
+        all_products = []
+        for invoice_item in items_qs:
+            used_models, product_list = process_products_for_invoice_item(invoice_item.id)
 
-        for m in used_models:
-            results = clear_model_items(
-                model_code=m.get('unvcode'),
-                quantity=m.get('count'),
-                invoice_item_id=invoice_item.id,
-                is_tv=m.get('is_tv'),
-            )
+            for m in used_models:
+                results = clear_model_items(
+                    model_code=m.get('unvcode'),
+                    quantity=m.get('count'),
+                    invoice_item_id=invoice_item.id,
+                    is_tv=m.get('is_tv'),
+                )
 
-            if not results:
-                raise ModelClearanceEmptyError(f"Нет доступных товаров в декларации для {invoice_item.model_name_id.name}")
+                if not results:
+                    raise ModelClearanceEmptyError(
+                        f"Нет доступных товаров в декларации для {invoice_item.model_name_id.name}"
+                    )
 
-            all_results.extend(results)
+                for res in results:
+                    ClearanceResult.objects.create(
+                        invoice_item=invoice_item,
+                        name=res['name'],
+                        request_quantity=res['requested'],
+                        uncleared_quantity=res['not_cleared'],
+                    )
 
-        products_for_cleared.extend(product_list)
+            all_products.extend(product_list)
 
     # 4) Mark products
-    mark_products_cleared(products_for_cleared, invoice_id)
+    mark_products_cleared(all_products, invoice_id)
 
     # 5) Mark invoice as calculated
     invoice.date_calc = timezone.now()
     invoice.cleared = True
     invoice.save(update_fields=['date_calc', 'cleared'])
 
-    return all_results
 
 
 def undo_full_clearance_workflow(invoice_id: int) -> None:
@@ -151,3 +132,5 @@ def undo_full_clearance_workflow(invoice_id: int) -> None:
         # 3) Clear invoice timestamp
         ClearanceInvoice.objects.filter(pk=invoice_id).update(date_calc=None, cleared = False)
 
+        # 4) Clear ClearanceResult
+        ClearanceResult.objects.filter(invoice_item__clearance_invoice_id = invoice_id).delete()
