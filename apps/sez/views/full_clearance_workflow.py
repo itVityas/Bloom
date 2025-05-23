@@ -1,23 +1,22 @@
+from django.core.exceptions import ObjectDoesNotExist
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiResponse
 from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from apps.sez.clearance_workflow.vznab_stock_service import PanelError
-from apps.sez.permissions import ClearanceInvoiceItemsPermission
 from apps.sez.clearance_workflow.full_clearance_workflow import (
     execute_full_clearance_workflow,
     undo_full_clearance_workflow,
     AlreadyCalculatedError, ModelClearanceEmptyError
 )
 from apps.sez.clearance_workflow.shtrih_service import NotEnoughProductsError
+from apps.sez.clearance_workflow.vznab_stock_service import PanelError
+from apps.sez.permissions import ClearanceInvoiceItemsPermission
 from apps.sez.serializers.full_clearance_workflow import (
     FullClearanceWorkflowInputSerializer,
     FullClearanceWorkflowResultSerializer,
 )
-from apps.sez.models import ClearanceInvoice
 
 
 @extend_schema(tags=['ClearedItem'])
@@ -32,6 +31,7 @@ from apps.sez.models import ClearanceInvoice
             404: OpenApiResponse(description='Накладная не найдена'),
             409: OpenApiResponse(description='Недостаточно товаров для списания'),
             422: OpenApiResponse(description='Проверка панели не пройдена'),
+            424: OpenApiResponse(description='Нет совпадений в декларации для данной модели'),
             500: OpenApiResponse(description='Внутренняя ошибка сервера'),
         },
     ),
@@ -111,7 +111,7 @@ class FullClearanceWorkflowAPIView(APIView):
         except ModelClearanceEmptyError as e:
             return Response(
                 {"detail": str(e)},
-                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                status=status.HTTP_424_FAILED_DEPENDENCY
             )
         except Exception:
             return Response(
