@@ -1,5 +1,6 @@
 from django.urls import path
 
+from apps.sez.views.clearance_result import ClearanceResultListAPIView
 from apps.sez.views.cleared_item_by_clearance import ClearedItemListAPIView
 from apps.sez.views.full_clearance_workflow import FullClearanceWorkflowAPIView
 from apps.sez.views.report_stz1 import ReportSTZ1View
@@ -81,6 +82,7 @@ urlpatterns = [
     # Full clearance_workflow
     path('clearance/calculate/', FullClearanceWorkflowAPIView.as_view(), name='full-clearance-workflow'),
     path('clearance/calculate/', FullClearanceWorkflowAPIView.as_view(), name='full-clearance-workflow'),
-    path('clearance/<int:invoice_id>/cleared-items/', ClearedItemListAPIView.as_view(), name='cleared-item-list')
+    path('clearance/<int:invoice_id>/cleared-items/', ClearedItemListAPIView.as_view(), name='cleared-item-list'),
+    path('clearance/<int:invoice_id>/cleared-result/', ClearanceResultListAPIView.as_view(), name='cleared-item-list')
 
 ]
