@@ -21,6 +21,14 @@ class AlreadyCalculatedError(Exception):
     pass
 
 
+class ModelClearanceEmptyError(Exception):
+    """
+    Raised when clear_model_items returns no results for a given model.
+    The message includes the UNV code of the model.
+    """
+    pass
+
+
 def execute_full_clearance_workflow(
     invoice_id: int,
     is_tv: bool = False,
@@ -78,6 +86,7 @@ def execute_full_clearance_workflow(
 
     for invoice_item in items_qs:
         used_models, product_list = process_products_for_invoice_item(invoice_item.id)
+
         for m in used_models:
             results = clear_model_items(
                 model_code=m.get('unvcode'),
@@ -85,7 +94,12 @@ def execute_full_clearance_workflow(
                 invoice_item_id=invoice_item.id,
                 is_tv=is_tv,
             )
+
+            if not results:
+                raise ModelClearanceEmptyError(f"Нет доступных товаров в декларации для {invoice_item.model_name_id.name}")
+
             all_results.extend(results)
+
         products_for_cleared.extend(product_list)
 
     # 4) Mark products

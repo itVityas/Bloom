@@ -10,7 +10,7 @@ from apps.sez.permissions import ClearanceInvoiceItemsPermission
 from apps.sez.clearance_workflow.full_clearance_workflow import (
     execute_full_clearance_workflow,
     undo_full_clearance_workflow,
-    AlreadyCalculatedError
+    AlreadyCalculatedError, ModelClearanceEmptyError
 )
 from apps.sez.clearance_workflow.shtrih_service import NotEnoughProductsError
 from apps.sez.serializers.full_clearance_workflow import (
@@ -107,6 +107,11 @@ class FullClearanceWorkflowAPIView(APIView):
         except PanelError as e:
             return Response(
                 {"detail": f"Проверка панели не пройдена: {e}"},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        except ModelClearanceEmptyError as e:
+            return Response(
+                {"detail": str(e)},
                 status=status.HTTP_422_UNPROCESSABLE_ENTITY
             )
         except Exception:
