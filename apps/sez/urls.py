@@ -30,6 +30,7 @@ from apps.sez.views.inner_ttn import (
     InnerTTNPDFView,
     InnerTTNDetailedView,
     InnerTTNStandardUpdateView,
+    InnerTTNDetailedByUUIDView,
 )
 from apps.sez.views.inner_ttn_items import (
     InnerTTNItemsListView,
@@ -74,6 +75,7 @@ urlpatterns = [
     path('innerttn/create/', InnerTTNCreateView.as_view()),
     path('innerttn/pdf/<int:pk>/', InnerTTNPDFView.as_view()),
     path('innerttn/detailed/<int:pk>/', InnerTTNDetailedView.as_view()),
+    path('innerttn/uuid/<str:uuid>/', InnerTTNDetailedByUUIDView.as_view()),
     path('innerttn/standard_update/<int:pk>/', InnerTTNStandardUpdateView.as_view()),
     path('innerttn_items/', InnerTTNItemsListView.as_view()),
     path('innerttn_items/create/', InnerTTNItemsCreateView.as_view()),

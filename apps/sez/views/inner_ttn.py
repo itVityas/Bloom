@@ -141,6 +141,23 @@ class InnerTTNDetailedView(RetrieveAPIView):
 @extend_schema(tags=["InnerTTN"])
 @extend_schema_view(
     get=extend_schema(
+        summary='get inner ttn by uuid',
+        description='Permission: admin, stz_reader, stz, ttn',
+    )
+)
+class InnerTTNDetailedByUUIDView(RetrieveAPIView):
+    permission_classes = (IsAuthenticated, InnerTTNPermission)
+    serializer_class = InnerTTNSerializer
+    queryset = InnerTTN.objects.all()
+
+    def get_object(self):
+        uuid = self.kwargs.get('uuid')
+        return InnerTTN.objects.filter(uuid=uuid).first()
+
+
+@extend_schema(tags=["InnerTTN"])
+@extend_schema_view(
+    get=extend_schema(
         summary='delete inner ttn by id',
         description='Permission: admin, stz_reader, stz, ttn',
     ),
