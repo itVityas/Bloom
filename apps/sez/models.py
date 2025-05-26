@@ -148,6 +148,7 @@ class InnerTTNItems(models.Model):
     price_pcs = models.DecimalField(max_digits=19, decimal_places=2)  # цена за единицу
     weight = models.DecimalField(max_digits=19, decimal_places=3)  # Вес
     nds = models.PositiveIntegerField(default=0)  # % ндс
+    release = models.CharField(max_length=100, blank=True, null=True)  # Реализация
     notice = models.TextField(blank=True, null=True)
 
     def __str__(self):
