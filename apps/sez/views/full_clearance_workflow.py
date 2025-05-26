@@ -13,10 +13,7 @@ from apps.sez.clearance_workflow.full_clearance_workflow import (
 from apps.sez.clearance_workflow.shtrih_service import NotEnoughProductsError
 from apps.sez.clearance_workflow.vznab_stock_service import PanelError
 from apps.sez.permissions import ClearanceInvoiceItemsPermission
-from apps.sez.serializers.full_clearance_workflow import (
-    FullClearanceWorkflowInputSerializer,
-    FullClearanceWorkflowResultSerializer,
-)
+from apps.sez.serializers.full_clearance_workflow import FullClearanceWorkflowInputSerializer
 
 
 @extend_schema(tags=['Clearance Workflow'])
@@ -62,23 +59,8 @@ class FullClearanceWorkflowAPIView(APIView):
 
         Request body:
             {
-              "invoice_id": <int>,
-              "is_tv": <bool>
+              "invoice_id": <int>
             }
-
-        Response (200 OK):
-            [
-              {
-                "name": "Component A",
-                "requested": 10.0,
-                "plan": [
-                  {"declaration_number": "000123", "cleared": 6.0},
-                  {"declaration_number": "000456", "cleared": 4.0}
-                ],
-                "not_cleared": 0.0
-              },
-              ...
-            ]
         """
         # 1) Validate input
         serializer = FullClearanceWorkflowInputSerializer(data=request.data)
@@ -90,7 +72,7 @@ class FullClearanceWorkflowAPIView(APIView):
             execute_full_clearance_workflow(invoice_id)
         except ObjectDoesNotExist as e:
             return Response(
-                {"detail": f"Накладная с ID={invoice_id} не найдена."},
+                {"detail": f"Накладная с ID={invoice_id} не найдена: {e}"},
                 status=status.HTTP_404_NOT_FOUND
             )
         except AlreadyCalculatedError as e:
