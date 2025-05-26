@@ -164,8 +164,8 @@ class ClearanceResult(models.Model):
         related_name='clearance_results'
     )
     name = models.CharField(max_length=255)
-    request_quantity = models.IntegerField()
-    uncleared_quantity = models.IntegerField()
+    request_quantity = models.DecimalField(max_digits=19, decimal_places=4)
+    uncleared_quantity = models.DecimalField(max_digits=19, decimal_places=4)
     reason = models.TextField(blank=True, default='')
     comment = models.TextField(blank=True, default='')
 
