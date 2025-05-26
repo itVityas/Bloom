@@ -120,8 +120,8 @@ def clear_model_items(
                     break
 
             # Skip if nothing was cleared for this component
-            if not plan:
-                continue
+            # if not plan:
+            #     continue
 
             # Fallback product name
             if not product_name:
