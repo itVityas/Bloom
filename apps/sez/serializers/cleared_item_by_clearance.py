@@ -1,5 +1,4 @@
-# apps/sez/serializers/cleared_item_list.py
-
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from apps.sez.models import ClearedItem
 
@@ -43,7 +42,8 @@ class ClearedItemListSerializer(serializers.ModelSerializer):
             'sum_cost',
         ]
 
-    def get_sum_cost(self, obj):
+    @extend_schema_field(serializers.FloatField())
+    def get_sum_cost(self, obj) -> float:
         """
         Calculate total cost for this cleared line as quantity * declared_item.cost.
         """
