@@ -28,6 +28,6 @@ class ClearanceResultListAPIView(ListAPIView):
     def get_queryset(self):
         invoice_id = self.kwargs.get('invoice_id')
         return ClearanceResult.objects.filter(
-            invoice_item__clearance_invoice_id=invoice_id
+            invoice_item__clearance_invoice_id=invoice_id,
+            uncleared_quantity__gt=0
         ).order_by('invoice_item')
-
