@@ -1,5 +1,4 @@
 import logging
-from typing import List, Dict, Any
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
@@ -7,9 +6,9 @@ from django.db.models import F
 from django.utils import timezone
 
 from apps.sez.clearance_workflow.clear_items_without_order import clear_model_items
+from apps.sez.clearance_workflow.independent.update_item_codes_1c import update_item_codes_1c
 from apps.sez.clearance_workflow.shtrih_service import process_products_for_invoice_item, \
     mark_products_cleared
-from apps.sez.clearance_workflow.independent.update_item_codes_1c import update_item_codes_1c
 from apps.sez.models import ClearanceInvoiceItems, ClearedItem, ClearanceInvoice, ClearanceResult
 from apps.shtrih.models import Products
 
@@ -68,10 +67,8 @@ def execute_full_clearance_workflow(invoice_id: int) -> None:
                     is_tv=m.get('is_tv'),
                 )
 
-                if not results:
-                    raise ModelClearanceEmptyError(
-                        f"Нет доступных товаров в декларации для {invoice_item.model_name_id.name}"
-                    )
+                if all(not item.get('plan') for item in results):
+                    raise ModelClearanceEmptyError(f'Для модели {m.get('unvcode')} не найдено ни одного материала в декларации')
 
                 for res in results:
                     ClearanceResult.objects.create(
