@@ -26,7 +26,7 @@ from apps.sez.serializers.full_clearance_workflow import (
         description='Права: admin, cleared_item_writer',
         request=FullClearanceWorkflowInputSerializer,
         responses={
-            200: FullClearanceWorkflowResultSerializer(many=True),
+            200: OpenApiResponse(description='Успешный расчет'),
             400: OpenApiResponse(description='Накладная уже рассчитана'),
             404: OpenApiResponse(description='Накладная не найдена'),
             409: OpenApiResponse(description='Недостаточно товаров для списания'),
@@ -87,7 +87,7 @@ class FullClearanceWorkflowAPIView(APIView):
 
         # 2) Execute and catch errors
         try:
-            results = execute_full_clearance_workflow(invoice_id)
+            execute_full_clearance_workflow(invoice_id)
         except ObjectDoesNotExist as e:
             return Response(
                 {"detail": f"Накладная с ID={invoice_id} не найдена."},
@@ -119,9 +119,7 @@ class FullClearanceWorkflowAPIView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-        # 3) Serialize and return
-        out_ser = FullClearanceWorkflowResultSerializer(results, many=True)
-        return Response(out_ser.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
 
     def delete(self, request, *args, **kwargs):
         """
