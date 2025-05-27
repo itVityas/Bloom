@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 from weasyprint import HTML
 from weasyprint.fonts import FontConfiguration
 
-from apps.declaration.models import DeclaredItem
+from apps.sez.models import ClearanceInvoice, ClearedItem
 from apps.sez.permissions import STZPermission
 from apps.sez.serializers.report_stz1 import DocumentRequestSerializer
 
@@ -31,19 +31,31 @@ class ReportSTZ1View(APIView):
     seriaziler_class = DocumentRequestSerializer
 
     def post(self, request):
-        ttn = request.data.get('ttn', None)
-        document = request.data.get('document', None)
-        if not ttn or not document:
+        invoices_id = request.data.get('ttn', None)
+
+        if not invoices_id:
             return HttpResponse("Missing required parameters", status=400)
 
-        declaration = DeclaredItem.objects.select_related(
-            'declaration').all().order_by('declaration')
+        temp_name = ''
+        list_invoices = []
+        for item in invoices_id:
+            try:
+                ids = item.get('name', None)
+                list_invoices.append(int(ids))
+                temp_name += ids
+            except Exception:
+                pass
+
+        invoices = ClearanceInvoice.objects.filter(id__in=list_invoices)
+
+        for i_invoice in invoices:
+            cleared_items = ClearedItem.objects.filter(clearance_invoice=i_invoice) \
+                .select_related('declared_item_id__declaration') \
+                .order_by('declared_item_id__declaration__declaration_date')
+            invoices.cleared_items = cleared_items
 
         context = {
-            "declarations": declaration,
-            "ttn": ttn,
-            "ttn_date": "13.03.2025",
-            "document": document,
+            "invoices": invoices,
             "year": datetime.now().year,
             }
 
@@ -53,7 +65,7 @@ class ReportSTZ1View(APIView):
             )
         font_config = FontConfiguration()
 
-        file_path = 'tmp/' + f'{ttn}_{document}.pdf'
+        file_path = 'tmp/' + f'{temp_name}.pdf'
         HTML(string=html_message).write_pdf(file_path, font_config=font_config)
 
         document = open(file_path, 'rb')

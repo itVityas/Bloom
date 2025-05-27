@@ -22,18 +22,22 @@
             padding: 7px; /* Отступы внутри ячеек */
             text-align: center; /* Выравнивание текста по центру */
         }
+        .pb-before { 
+            page-break-before: always; 
+        }
     </style>
 </head>
 
-<body>   
-    <div style="text-align: center;">
+<body>
+    {% for invoice in invoices %}   
+    <div class="pb-before" style="text-align: center;">
         <div>ОТЧЕТ СТЗ-1</div>
         <div>об использовании товаров в свободной таможенной зоне</div>
     </div>
     <div style="display: flex;justify-content: center;">
         <div style="display: block;">
-        <div>1. Транспортный или коммерческий документ: № <b><u>{{ttn}} от {{ttn_date}}г.</u></b></div>
-        <div>2. Исходящий номер ГТД: № <b><u>{{document}} от ___.___.{{year}}г.</u></b></div>
+        <div>1. Транспортный или коммерческий документ: № <b><u>{{invoice.ttn}} от {{invoice.create_at|date:"d.m.Y"}}г.</u></b></div>
+        <div>2. Исходящий номер ГТД: № <b><u>{{invoice.id}} от ___.___.{{year}}г.</u></b></div>
         </div>
     </div>
 
@@ -70,14 +74,14 @@
                     <td>6</td>
                 </tr>
 
-                {% for decl in declarations %}
+                {% for item in invoice.cleared_items.all %}
                     <tr>
                         <td>{{ forloop.counter }}</td>
-                        <td>{{decl.declaration.declaration_number}} от {{decl.declaration.provision_date|date:"d.m.Y"}}г.</td>
-                        <td>{{decl.ordinal_number}}</td>
-                        <td>{{decl.name}}</td>
-                        <td>{{decl.quantity}}</td>
-                        <td>{{decl.unit_name}}</td>
+                        <td>{{item.declared_item_id.declaration.declaration_number}} от {{item.declared_item_id.declaration.provision_date|date:"d.m.Y"}}г.</td>
+                        <td>{{item.declared_item_id.ordinal_number}}</td>
+                        <td>{{item.declared_item_id.name}}</td>
+                        <td>{{item.declared_item_id.quantity}}</td>
+                        <td>{{item.declared_item_id.unit_name}}</td>
                         <td></td>
                     </tr>
                 {% endfor %}
@@ -93,7 +97,7 @@
             <p>Отчет принят: ___.___.20__   _______________ (                 ) № свидетельства _________________ ЛНП</p>
         </div>
     </div>
-
+    {% endfor %}
 </body>
 </head>
 </html>
