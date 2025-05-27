@@ -30,7 +30,6 @@ class FullClearanceInvoiceSerializer(serializers.ModelSerializer):
             'recipient',
             'quantity_shipped',
             'create_at',
-            'date_cleared',
             'date_payments',
             'date_calc',
             'items',

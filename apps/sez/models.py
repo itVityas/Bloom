@@ -12,7 +12,6 @@ class ClearanceInvoice(models.Model):
     recipient = models.CharField(max_length=100, blank=True, null=True)
     quantity_shipped = models.IntegerField(default=0)
     create_at = models.DateTimeField(default=datetime.now)
-    date_cleared = models.DateField(blank=True, null=True)
     date_payments = models.DateTimeField(blank=True, null=True)
     date_calc = models.DateTimeField(blank=True, null=True)
 
