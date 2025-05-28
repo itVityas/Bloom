@@ -9,6 +9,8 @@ from apps.declaration.views.declared_item import (
     DeclaredItemListCreateAPIView, DeclaredItemDetailedView
 )
 from apps.declaration.views.upload_declaration import ZipFileUploadAPIView
+from apps.declaration.views.gtd_dvi import GTDDVIFileUploadView
+
 
 urlpatterns = [
     # Declaration endpoints
@@ -26,4 +28,5 @@ urlpatterns = [
     path('declared_item/detailed/<int:pk>/', DeclaredItemDetailedView.as_view(), name='declared-item-detail'),
     path('declaration/upload_zip/', ZipFileUploadAPIView.as_view(), name='zip-upload'),
     path('declaration/delete_all_declaration/', DeclarationBulkDeleteAPIView.as_view(), name='delete-all'),
+    path('utils/upload_dbf/', GTDDVIFileUploadView.as_view()),
 ]
