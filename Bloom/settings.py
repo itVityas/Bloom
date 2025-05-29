@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'apps.shtrih',
     'apps.omega',
     'apps.general',
+    'apps.onec',
 ]
 
 MIDDLEWARE = [
