@@ -76,7 +76,8 @@ class GTDDVIFileUploadView(APIView):
             count = 0
             declaration_number = ''
             for decl in decl_list:
-                if float(decl['PRIXOD'])-float(decl['RASXOD']) > 0:
+                available_items = float(decl['PRIXOD'])-float(decl['RASXOD'])
+                if available_items == 0:
                     continue
                 if declaration_number != decl['NOM_GTD']:
                     try:
@@ -120,6 +121,7 @@ class GTDDVIFileUploadView(APIView):
                 try:
                     if not declaration:
                         continue
+                    print(decl['NOM_GTD'])
                     DeclaredItem.objects.create(
                         declaration=declaration[0],
                         factory_code=None,
@@ -147,7 +149,7 @@ class GTDDVIFileUploadView(APIView):
                         measurement_code='old',
                         measurement=decl['EI'],
                         valuation_method='',
-                        available_quantity=float(decl['PRIXOD'])-float(decl['RASXOD']),
+                        available_quantity=available_items,
                         item_code_1c=int(decl['KM_GTD'])
                     )
                 except Exception as e:
