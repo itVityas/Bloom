@@ -77,6 +77,8 @@ class Declaration(models.Model):
     declaration_date = models.DateField()
     # G013 / Permit code for customs authorization
     permit_code = models.CharField(max_length=10)
+    # Additional fields
+    gifted = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-id']
