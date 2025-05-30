@@ -25,7 +25,7 @@ from apps.invoice.models import Invoice
         description='Permission: admin, arrival_reader, order_writer',
         request=ListOrderSerializer,
         responses={
-            200: OpenApiResponse(description="PDF file"),
+            200: OpenApiResponse(description="xlsx file"),
             400: OpenApiResponse(description="Missing required parameters"),
         }
     )

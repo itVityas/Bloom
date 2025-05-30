@@ -6,6 +6,7 @@ from apps.invoice.views.invoice import (
     InvoiceCreateAPIView, InvoiceDetailedAPIView, InvoiceListAPIView
 )
 from apps.invoice.views.report_invoice import ReportPDFInvoice
+from apps.invoice.views.report_invoice_exel import ReportXLSXInvoice
 
 urlpatterns = [
     # InvoiceItem
@@ -16,4 +17,5 @@ urlpatterns = [
     path('invoice/create/', InvoiceCreateAPIView.as_view()),
     path('invoice/detailed/<int:pk>/', InvoiceDetailedAPIView.as_view()),
     path('invoice/report/', ReportPDFInvoice.as_view()),
+    path('invoice/report/exel/', ReportXLSXInvoice.as_view()),
 ]
