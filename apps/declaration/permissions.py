@@ -10,4 +10,4 @@ class DeclarationPermission(RoleBasedPermission):
     allowed_roles_get = {'admin', 'arrival_reader', 'declaration_writer'}
     allowed_roles_post = {'admin', 'declaration_writer'}
     allowed_roles_update = {'admin', 'declaration_writer'}
-    allowed_roles_delete = {'admin', 'declaration_writer'}
+    allowed_roles_delete = {'admin', 'declaration_delete'}
