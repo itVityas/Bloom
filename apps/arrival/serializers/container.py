@@ -2,8 +2,19 @@ from django.db.models import Sum
 
 from rest_framework import serializers
 from apps.arrival.models import Container, Content, Order
+from apps.invoice.models import Invoice
 from apps.arrival.serializers.content import ContentSerializer, ContentMultySerializer
 from apps.declaration.serializers.declaration import DeclarationSerializer
+
+
+class InvoiceSerializer(serializers.ModelSerializer):
+    """
+    Basic serializer for the Invoice model.
+    This serializer includes all fields of the Invoice model without nested data.
+    """
+    class Meta:
+        model = Invoice
+        fields = '__all__'
 
 
 class OrderSmallSerializer(serializers.ModelSerializer):
@@ -34,6 +45,7 @@ class ContainerFullSerializer(serializers.ModelSerializer):
     """
     contents = serializers.SerializerMethodField()
     count = serializers.SerializerMethodField()
+    invoice = serializers.SerializerMethodField()
 
     class Meta:
         model = Container
@@ -50,6 +62,7 @@ class ContainerFullSerializer(serializers.ModelSerializer):
             'order',
             'notice',
             'contents',
+            'invoice',
         ]
 
     def get_contents(self, obj) -> list:
@@ -71,6 +84,15 @@ class ContainerFullSerializer(serializers.ModelSerializer):
         count = Content.objects.filter(container=obj).aggregate(total=Sum('count'))['total']
         return count if count else 0
 
+    def get_invoice(self, obj) -> dict:
+        """
+        Returns whether the container has an invoice.
+
+        :return: True if the container has an invoice, False otherwise.
+        """
+        invoice = Invoice.objects.filter(container=obj).first()
+        return InvoiceSerializer(invoice).data
+
 
 class ContainerSetSerializer(serializers.ModelSerializer):
     """
@@ -89,6 +111,7 @@ class ContainerAndDeclarationSerializer(serializers.ModelSerializer):
     """
     declarations = DeclarationSerializer(many=True, read_only=True)
     count = serializers.SerializerMethodField()
+    invoice = serializers.SerializerMethodField()
 
     class Meta:
         model = Container
@@ -102,6 +125,15 @@ class ContainerAndDeclarationSerializer(serializers.ModelSerializer):
         """
         count = Content.objects.filter(container=obj).aggregate(total=Sum('count'))['total']
         return count if count else 0
+
+    def get_invoice(self, obj) -> dict:
+        """
+        Returns whether the container has an invoice.
+
+        :return: True if the container has an invoice, False otherwise.
+        """
+        invoice = Invoice.objects.filter(container=obj).first()
+        return InvoiceSerializer(invoice).data
 
 
 class ContainerBindSerializer(serializers.Serializer):
