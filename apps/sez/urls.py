@@ -1,8 +1,8 @@
 from django.urls import path
 
-from apps.sez.views.clearance_result import ClearanceResultListAPIView
-from apps.sez.views.cleared_item_by_clearance import ClearedItemListAPIView
-from apps.sez.views.full_clearance_workflow import FullClearanceWorkflowAPIView
+from apps.sez.views.clearance_workflow.clearance_result import ClearanceResultListAPIView
+from apps.sez.views.clearance_workflow.cleared_item_by_clearance import ClearedItemListAPIView
+from apps.sez.views.clearance_workflow.full_clearance_workflow import FullClearanceWorkflowAPIView
 from apps.sez.views.report_stz1 import ReportSTZ1View
 from apps.sez.views.report_clearanceinvoice import ReportClearanceInvoicePDFView
 from apps.sez.views.clearance_invoice import (
