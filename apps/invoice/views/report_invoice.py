@@ -10,7 +10,6 @@ from weasyprint.fonts import FontConfiguration
 
 from apps.invoice.permissions import InvoicePermission
 from apps.invoice.models import Invoice, InvoiceItem
-from django.db.models import Sum
 
 
 @extend_schema(tags=['Invoice'])
@@ -44,15 +43,39 @@ class ReportPDFInvoice(APIView):
         if not invoice:
             return HttpResponse('Invoice not found', status=status.HTTP_400_BAD_REQUEST)
         items = InvoiceItem.objects.filter(invoice=invoice)
-        q_sum = items.aggregate(q_sum=Sum('quantity'))['q_sum']
-        n_sum = items.aggregate(n_sum=Sum('net_weight'))['n_sum']
-        g_sum = items.aggregate(g_sum=Sum('gross_weight'))['g_sum']
-        amount = items.aggregate(amount=Sum('price_amount'))['amount']
-        total_sum = amount + invoice.freight_cost
 
+        q_sum = 0
+        n_sum = 0
+        g_sum = 0
+        amount = 0
+        table = {}
+        for item in items:
+            model = table.get(item.model, None)
+            if not model:
+                model = {
+                            "model": "",
+                            "q_sum": 0,
+                            "n_sum": 0,
+                            "g_sum": 0,
+                            "amount": 0,
+                            "items": []
+                        }
+            model["model"] = item.model
+            model["q_sum"] += item.quantity
+            model["n_sum"] += item.net_weight
+            model["g_sum"] += item.gross_weight
+            model["amount"] += item.price_amount
+            model["items"].append(item)
+            q_sum += item.quantity
+            n_sum += item.net_weight
+            g_sum += item.gross_weight
+            amount += item.price_amount
+            table[item.model] = model
+
+        total_sum = invoice.freight_cost + amount
         context = {
             'invoice': invoice,
-            'invoice_items': items,
+            'table': table,
             'q_sum': q_sum,
             'n_sum': n_sum,
             'g_sum': g_sum,

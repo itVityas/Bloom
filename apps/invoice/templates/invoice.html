@@ -157,49 +157,73 @@
                 Amount(CNY)/Сумма
             </td>
         </tr>
+
+
+        {% for key, table_line in table.items %}
         <tr>
             <td colspan=12>
-                parts for / комплектующие для {{test}}
+                parts for / комплектующие для {{table_line.model}}
             </td>
         </tr>
 
-        {% for items in invoice_items%}
+            {% for items in table_line.items%}
+            <tr>
+                <td>
+                    {{forloop.counter}}
+                </td>
+                <td>
+                    {{items.code}}
+                </td>
+                <td>
+                    {{items.country}}
+                </td>
+                <td>
+                    {{items.description_ru}}
+                </td>
+                <td>
+                    {{items.description_en}}
+                </td>
+                <td>
+                    {{items.measurements}}
+                </td>
+                <td>
+                    {{items.quantity}}
+                </td>
+                <td>
+                    {{invoice.packages}}
+                </td>
+                <td>
+                    {{items.net_weight}}
+                </td>
+                <td>
+                    {{items.gross_weight}}
+                </td>
+                <td>
+                    {{items.price_pcs}}
+                </td>
+                <td>
+                    {{items.price_amount}}
+                </td>
+            </tr>
+            {% endfor %}
         <tr>
+            <td colspan=6><b>Sub Total/Промежуточный итог</b></td>
             <td>
-                {{forloop.counter}}
+                {{table_line.q_sum}}
             </td>
             <td>
-                {{items.code}}
+                
             </td>
             <td>
-                {{items.country}}
+                {{table_line.n_sum}}
             </td>
             <td>
-                {{items.description_ru}}
+                {{table_line.g_sum}}
             </td>
             <td>
-                {{items.description_en}}
             </td>
             <td>
-                {{items.measurements}}
-            </td>
-            <td>
-                {{items.quantity}}
-            </td>
-            <td>
-                {{invoice.packages}}
-            </td>
-            <td>
-                {{items.net_weight}}
-            </td>
-            <td>
-                {{items.gross_weight}}
-            </td>
-            <td>
-                {{items.price_pcs}}
-            </td>
-            <td>
-                {{items.price_amount}}
+                {{table_line.amount}}
             </td>
         </tr>
         {% endfor %}
