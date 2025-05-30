@@ -81,7 +81,7 @@ def clear_model_items(
             di_qs = (
                 DeclaredItem.objects.select_for_update()
                 .select_related("declaration")
-                .filter(item_code_1c=code_1c)
+                .filter(item_code_1c=code_1c, available_quantity__gt=0.0, declaration__gifted=False)
                 .order_by("declaration__declaration_date")
             )
 
