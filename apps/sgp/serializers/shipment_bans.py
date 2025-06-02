@@ -9,7 +9,15 @@ from apps.shtrih.serializers.model_name import ModelNamesSerializer
 
 class ShipmentBansGetSerializer(serializers.ModelSerializer):
     """
-    Serializer for get ShipmentBans model
+    Detailed serializer for retrieving ShipmentBan records with nested relationships.
+
+    Provides complete shipment ban information including:
+    - Core ban details (dates, status, references)
+    - Nested representations of related objects:
+      * Production codes
+      * Model names
+      * Colors
+      * Modules
     """
     production_code_obj = serializers.SerializerMethodField()
     model_obj = serializers.SerializerMethodField()
@@ -66,7 +74,17 @@ class ShipmentBansGetSerializer(serializers.ModelSerializer):
 
 class ShipmentBansPostSerializer(serializers.ModelSerializer):
     """
-    Serializer for post ShipmentBans model
+    Serializer for creating and updating ShipmentBan records.
+
+    Handles:
+    - Validation of all input data
+    - Enforcement of business rules
+    - Proper relationship handling
+
+    Includes comprehensive field validation for:
+    - Date consistency
+    - Required field combinations
+    - Value constraints
     """
     class Meta:
         model = ShipmentBans

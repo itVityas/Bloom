@@ -15,6 +15,13 @@ from apps.sgp.permissions import SGPPermission
     )
 )
 class StorageLimitsListView(ListAPIView):
+    """
+    API endpoint for listing all storage time limitations.
+
+    Provides information about maximum storage durations for:
+    - Production codes (required)
+    - Specific models (optional)
+    """
     queryset = StorageLimits.objects.all()
     serializer_class = StorageLimitsGetSerializer
     permission_classes = (IsAuthenticated, SGPPermission)
@@ -28,6 +35,16 @@ class StorageLimitsListView(ListAPIView):
     )
 )
 class StorageLimitsCreateView(CreateAPIView):
+    """
+    API endpoint for creating new storage time limitations.
+
+    Required fields:
+    - max_storage_days (1-365)
+    - production_code
+
+    Optional field:
+    - model_code
+    """
     queryset = StorageLimits.objects.all()
     serializer_class = StorageLimitsPostSerializer
     permission_classes = (IsAuthenticated, SGPPermission)
@@ -53,6 +70,15 @@ class StorageLimitsCreateView(CreateAPIView):
     )
 )
 class StorageLimitsRUDView(RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for retrieving, updating, and deleting storage time limitations.
+
+    Supports:
+    - GET: Retrieve details
+    - PUT: Full update
+    - PATCH: Partial update
+    - DELETE: Remove limitation
+    """
     queryset = StorageLimits.objects.all()
     serializer_class = StorageLimitsPostSerializer
     permission_classes = (IsAuthenticated, SGPPermission)
