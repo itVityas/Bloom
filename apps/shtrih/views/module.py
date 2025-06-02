@@ -17,6 +17,21 @@ from Bloom.paginator import StandartResultPaginator
     )
 )
 class ModulesListView(ListAPIView):
+    """
+    API endpoint that allows product modules to be viewed.
+
+    Provides:
+    - Full list of all modules with their numbers and classification digits
+    - Filtering capabilities by number and digit
+    - Search functionality
+    - Standard pagination
+
+    Each module includes:
+    - Unique ID
+    - Module number
+    - Classification digit (0-9)
+    - Generated module_code (number-digit format)
+    """
     permission_classes = (IsAuthenticated, StrihPermission)
     serializer_class = ModulesSerializer
     queryset = Modules.objects.all()

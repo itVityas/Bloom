@@ -20,6 +20,16 @@ from Bloom.paginator import StandartResultPaginator
     )
 )
 class ModelNameListView(ListAPIView):
+    """
+    API endpoint that allows model names to be viewed.
+
+    Supports filtering by:
+    - id (exact match)
+    - name (contains match)
+    - short_name (exact match)
+
+    Returns paginated results using standard Bloom pagination format.
+    """
     queryset = ModelNames.objects.all()
     serializer_class = ModelNamesSerializer
     permission_classes = (IsAuthenticated, StrihPermission)
@@ -45,6 +55,12 @@ class ModelNameListView(ListAPIView):
     )
 )
 class ModelNameByProductCodeListView(ListAPIView):
+    """
+    API endpoint that returns model names filtered by production code.
+
+    Requires production_code_id query parameter.
+    Returns paginated results using standard Bloom pagination format.
+    """
     queryset = ModelNames.objects.all()
     serializer_class = ModelNamesSerializer
     permission_classes = (IsAuthenticated, StrihPermission)
@@ -73,6 +89,13 @@ class ModelNameByProductCodeListView(ListAPIView):
     ),
 )
 class ProductCountByModelNameView(APIView):
+    """
+    API endpoint that returns product count for a specific model name.
+
+    Returns:
+    - count: Number of products for the model
+    - code: Internal model code (0 if model not found)
+    """
     permission_classes = (IsAuthenticated, StrihPermission)
     serializer_class = CountSerializer
 

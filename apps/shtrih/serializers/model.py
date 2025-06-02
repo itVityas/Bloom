@@ -6,6 +6,19 @@ from apps.shtrih.serializers.production_code import ProductionCodeSerializer
 
 
 class ModelsSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Models entity representing product specifications.
+
+    Handles serialization of complete product model data including:
+    - Technical specifications
+    - Warranty information
+    - Identification codes
+    - Related model names and production codes
+
+    Includes nested serializers for:
+    - production_code (ProductionCodeSerializer)
+    - name (ModelNamesSerializer)
+    """
     omega_model_id = serializers.IntegerField()
     omega_variant_id = serializers.IntegerField()
     production_code = ProductionCodeSerializer(read_only=True)

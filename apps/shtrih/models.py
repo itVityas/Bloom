@@ -2,6 +2,10 @@ from django.db import models
 
 
 class ModelNames(models.Model):
+    """
+    Represents model names with their full and short versions.
+    Used as a reference table for product models.
+    """
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=100)
     short_name = models.CharField(max_length=50)
@@ -16,6 +20,9 @@ class ModelNames(models.Model):
 
 
 class Production_codes(models.Model):
+    """
+    Stores production codes with their associated names and nameplate indicators.
+    """
     code = models.IntegerField(db_column='code', primary_key=True)
     name = models.CharField(max_length=70, db_column='name')
     nameplate = models.BooleanField(db_column='nameplate')
@@ -25,8 +32,15 @@ class Production_codes(models.Model):
         db_table = 'production_codes'
         ordering = ['-code']
 
+    def __str__(self):
+        return f"{self.code} - {self.name}"
+
 
 class Models(models.Model):
+    """
+    Main product model containing all technical specifications and attributes.
+    Relates to ModelNames and Production_codes.
+    """
     omega_model_id = models.IntegerField()
     omega_variant_id = models.IntegerField()
     production_code = models.ForeignKey(Production_codes, on_delete=models.CASCADE, db_column='production_code')
@@ -50,8 +64,14 @@ class Models(models.Model):
         db_table = 'models'
         ordering = ['-id']
 
+    def __str__(self):
+        return f"{self.name} (Code: {self.code})"
+
 
 class Consignments(models.Model):
+    """
+    Represents product consignments with import declaration information.
+    """
     model_name = models.ForeignKey(ModelNames, on_delete=models.CASCADE, db_column='model_name_id')
     quantity = models.IntegerField()
     used_quantity = models.IntegerField()
@@ -63,8 +83,14 @@ class Consignments(models.Model):
         db_table = 'consignments'
         ordering = ['id']
 
+    def __str__(self):
+        return f"Consignment {self.declaration_number}"
+
 
 class Colors(models.Model):
+    """
+    Color reference table containing color codes and their descriptions.
+    """
     color_code = models.CharField(
         max_length=4, db_column='color_code', blank=True, null=True)
     russian_title = models.CharField(
@@ -75,8 +101,14 @@ class Colors(models.Model):
         db_table = 'colors'
         ordering = ['id']
 
+    def __str__(self):
+        return f"{self.color_code} - {self.russian_title}"
+
 
 class Products(models.Model):
+    """
+    Individual product items with barcodes, colors, and inventory information.
+    """
     barcode = models.CharField(max_length=18)
     color_id = models.ForeignKey(Colors, on_delete=models.CASCADE, db_column='color_id')
     model = models.ForeignKey(Models, on_delete=models.CASCADE, db_column='model_id')
@@ -104,8 +136,14 @@ class Products(models.Model):
         db_table = 'products'
         ordering = ['-id']
 
+    def __str__(self):
+        return f"Product {self.barcode}"
+
 
 class Modules(models.Model):
+    """
+    Module reference table for product components.
+    """
     number = models.IntegerField(db_column='number')
     digit = models.IntegerField(db_column='digit')
 
@@ -114,8 +152,14 @@ class Modules(models.Model):
         db_table = 'modules'
         ordering = ['-id']
 
+    def __str__(self):
+        return f"Module {self.number}-{self.digit}"
+
 
 class ModelColors(models.Model):
+    """
+    Junction table linking Models to their available Colors (many-to-many relationship).
+    """
     model_id = models.ForeignKey(Models, on_delete=models.CASCADE, db_column='model_id')
     color_id = models.ForeignKey(Colors, on_delete=models.CASCADE, db_column='color_id')
 
@@ -123,3 +167,6 @@ class ModelColors(models.Model):
         managed = False
         db_table = 'model_colors'
         ordering = ['-id']
+
+    def __str__(self):
+        return f"{self.model_id} - {self.color_id}"

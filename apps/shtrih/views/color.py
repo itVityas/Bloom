@@ -19,6 +19,16 @@ from rest_framework.response import Response
     )
 )
 class ColorsListView(ListAPIView):
+    """
+    API endpoint that allows colors to be viewed.
+
+    Supports filtering by:
+    - id (exact match)
+    - color_code (exact match)
+    - russian_title (contains match)
+
+    Returns paginated results using standard Bloom pagination format.
+    """
     queryset = Colors.objects.all()
     serializer_class = ColorsSerializer
     permission_classes = (IsAuthenticated, StrihPermission)
@@ -44,6 +54,12 @@ class ColorsListView(ListAPIView):
     )
 )
 class ColorsByModelNameListView(ListAPIView):
+    """
+    API endpoint that returns colors available for a specific model name.
+
+    Requires model_name_id query parameter.
+    Returns paginated results using standard Bloom pagination format.
+    """
     queryset = Colors.objects.all()
     serializer_class = ColorsSerializer
     permission_classes = (IsAuthenticated, StrihPermission)

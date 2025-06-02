@@ -17,6 +17,21 @@ from Bloom.paginator import StandartResultPaginator
     )
 )
 class ProductionCodeListView(ListAPIView):
+    """
+    API endpoint that allows production codes to be viewed.
+
+    Provides:
+    - Complete list of production codes with their details
+    - Filtering capabilities by code, name, and nameplate requirement
+    - Search functionality across code numbers and names
+    - Standard pagination
+
+    Each production code includes:
+    - Unique code number
+    - Descriptive name
+    - Nameplate requirement flag
+    - Formatted code (string representation)
+    """
     permission_classes = (IsAuthenticated, StrihPermission)
     serializer_class = ProductionCodeSerializer
     queryset = Production_codes.objects.all()

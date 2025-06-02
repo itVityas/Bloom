@@ -19,7 +19,7 @@ from apps.invoice.permissions import InvoicePermission
 
 @extend_schema(tags=['ReportXLSX'])
 @extend_schema_view(
-    post=extend_schema(
+    get=extend_schema(
         summary='Get Orders report in xlsx',
         description='Permission: admin, arrival_reader, order_writer',
         parameters=[

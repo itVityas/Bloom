@@ -17,6 +17,22 @@ from apps.shtrih.filterset import ProductFilter
     )
 )
 class ProductListView(ListAPIView):
+    """
+    API endpoint that allows products to be viewed with their complete details.
+
+    Provides:
+    - Full product information including nested color and model data
+    - Advanced filtering capabilities
+    - Search functionality
+    - Standard pagination
+
+    Typical filters include:
+    - barcode: Exact barcode match
+    - state: Product condition/state
+    - model: Filter by specific model
+    - color_id: Filter by color
+    - search: Search across multiple fields
+    """
     queryset = Products.objects.all()
     serializer_class = ProductGetSerializer
     permission_classes = (IsAuthenticated, StrihPermission)
