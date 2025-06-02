@@ -2,6 +2,18 @@ from rest_framework import serializers
 
 
 class ConsignmentSerializer(serializers.Serializer):
+    """
+    Serializer for consignment data with comprehensive validation.
+
+    Handles serialization and validation of consignment information including:
+    - Document identification
+    - Recipient details
+    - Quantity and article information
+    - Invoice references
+    - Tax and product identifiers
+
+    All fields include proper validation and documentation for API consumers.
+    """
     document_number = serializers.CharField(max_length=20)
     doc_date = serializers.IntegerField()
     recipient = serializers.CharField(max_length=250, required=False,

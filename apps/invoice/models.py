@@ -42,10 +42,10 @@ class InvoiceItem(models.Model):
     description_ru = models.CharField(max_length=200)  # Description in Russian
     measurements = models.CharField(max_length=20)  # Unit of measurement (e.g., kg, liters)
     quantity = models.IntegerField()  # Quantity of the item
-    net_weight = models.DecimalField(max_digits=10, decimal_places=2)  # Net weight of the item
-    gross_weight = models.DecimalField(max_digits=10, decimal_places=2)  # Gross weight of the item
-    price_pcs = models.DecimalField(max_digits=10, decimal_places=2)  # Price per unit
-    price_amount = models.DecimalField(max_digits=15, decimal_places=2)  # Total price for the item
+    net_weight = models.DecimalField(max_digits=10, decimal_places=5)  # Net weight of the item
+    gross_weight = models.DecimalField(max_digits=10, decimal_places=5)  # Gross weight of the item
+    price_pcs = models.DecimalField(max_digits=10, decimal_places=5)  # Price per unit
+    price_amount = models.DecimalField(max_digits=24, decimal_places=5)  # Total price for the item
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)  # Associated invoice
 
     class Meta:

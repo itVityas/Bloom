@@ -4,8 +4,8 @@ from Bloom.permission import RoleBasedPermission
 class SGPPermission(RoleBasedPermission):
     """
     Permission for arrival operations.
-    - GET: Allowed for 'admin' and 'sgp_reader'.
-    - Other methods: Allowed only for 'admin' and 'sgp'.
+    - GET: Allowed for 'admin' and 'sgp_reader' and 'ban'.
+    - Other methods: Allowed only for 'admin' and 'ban'.
     """
     allowed_roles_get = {'admin', 'sgp_reader', 'ban'}
     allowed_roles_post = {'admin', 'ban'}
