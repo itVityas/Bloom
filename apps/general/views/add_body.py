@@ -20,6 +20,9 @@ from apps.general.permission import AddPermission
     ),
 )
 class AddBodyListCreateAPIView(ListCreateAPIView):
+    """
+    API endpoint that allows AddBody entries to be listed or created.
+    """
     queryset = AddBody.objects.all()
     serializer_class = AddBodySerializer
     permission_classes = (IsAuthenticated, AddPermission)
@@ -47,6 +50,9 @@ class AddBodyListCreateAPIView(ListCreateAPIView):
     ),
 )
 class AddBodyRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint that allows single AddBody entry to be retrieved, updated or deleted.
+    """
     queryset = AddBody.objects.all()
     serializer_class = AddBodySerializer
     permission_classes = (IsAuthenticated, AddPermission)

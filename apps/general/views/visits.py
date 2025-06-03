@@ -19,6 +19,9 @@ from apps.general.serializers.visits import VisitsSerializers
     )
 )
 class VisitsListCreateView(ListCreateAPIView):
+    """
+    API endpoint for listing and creating user visit records.
+    """
     permission_classes = (IsAuthenticated,)
     queryset = Visits.objects.all()
     serializer_class = VisitsSerializers
@@ -46,6 +49,9 @@ class VisitsListCreateView(ListCreateAPIView):
     )
 )
 class VisitsRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for retrieving, updating and deleting visit records.
+    """
     permission_classes = (IsAuthenticated,)
     queryset = Visits.objects.all()
     serializer_class = VisitsSerializers

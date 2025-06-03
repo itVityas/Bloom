@@ -5,6 +5,15 @@ from apps.general.serializers.add_body import AddBodySerializer
 
 
 class AddTitleSerializer(serializers.ModelSerializer):
+    """
+    Serializer for AddTitle model with nested content.
+
+    Features:
+    - Nested serialization of related content
+    - Read-only content field
+    - Explicit field definitions
+    - Optimized database queries
+    """
     body = AddBodySerializer(many=True, read_only=True)
 
     class Meta:
@@ -13,6 +22,14 @@ class AddTitleSerializer(serializers.ModelSerializer):
 
 
 class AddTitleGetSerializer(serializers.ModelSerializer):
+    """
+    Lightweight serializer for listing titles with associated content counts.
+
+    Features:
+    - Content count instead of full content list
+    - Optimized for list views
+    - Minimal data transfer
+    """
     bodies = serializers.SerializerMethodField()
 
     class Meta:

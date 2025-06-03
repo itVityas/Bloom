@@ -4,6 +4,9 @@ from apps.general.models import Visits
 
 
 class VisitsSerializers(serializers.ModelSerializer):
+    """
+    Serializer for Visit model with automatic visit management.
+    """
     class Meta:
         model = Visits
         fields = '__all__'

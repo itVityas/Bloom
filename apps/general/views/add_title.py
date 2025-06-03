@@ -17,6 +17,14 @@ from apps.general.permission import AddPermission
     )
 )
 class AddTitleCreateAPIView(CreateAPIView):
+    """
+    API endpoint for creating new additional titles.
+
+    Handles POST requests to create new title entries with:
+    - Authentication requirement
+    - Custom permission checks
+    - Name filtering capability
+    """
     queryset = AddTitle.objects.all()
     serializer_class = AddTitleSerializer
     permission_classes = (IsAuthenticated, AddPermission)
@@ -32,6 +40,14 @@ class AddTitleCreateAPIView(CreateAPIView):
     ),
 )
 class AddTitleListAPIView(ListAPIView):
+    """
+    API endpoint for listing additional titles.
+
+    Handles GET requests to retrieve title listings with:
+    - Lightweight serialization for lists
+    - Name filtering capability
+    - Pagination support
+    """
     queryset = AddTitle.objects.all()
     serializer_class = AddTitleGetSerializer
     permission_classes = (IsAuthenticated,)
@@ -59,6 +75,14 @@ class AddTitleListAPIView(ListAPIView):
     )
 )
 class AddTitleRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for retrieving, updating and deleting additional titles.
+
+    Handles:
+    - GET for single title details
+    - PUT/PATCH for updates
+    - DELETE for removal
+    """
     queryset = AddTitle.objects.all()
     serializer_class = AddTitleSerializer
     permission_classes = (IsAuthenticated, AddPermission)

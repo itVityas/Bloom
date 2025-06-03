@@ -5,7 +5,7 @@ class AddPermission(RoleBasedPermission):
     """
     Permission for arrival operations.
     - GET: Allowed for 'admin' and 'add'.
-    - Other methods: Allowed only for 'admin' and 'sgp'.
+    - Other methods: Allowed only for 'admin' and 'add'.
     """
     allowed_roles_get = None
     allowed_roles_post = {'admin', 'add'}
