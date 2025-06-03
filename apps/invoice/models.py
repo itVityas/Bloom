@@ -29,6 +29,9 @@ class Invoice(models.Model):
     class Meta:
         ordering = ['-id']  # Order invoices by date in descending order
 
+    def __str__(self):
+        return f"Invoice {self.number} (Contract: {self.contract})"
+
 
 class InvoiceItem(models.Model):
     """
@@ -50,3 +53,6 @@ class InvoiceItem(models.Model):
 
     class Meta:
         ordering = ['model']  # Order invoice items by date in descending order
+
+    def __str__(self):
+        return f"{self.code} - {self.description_en} (Qty: {self.quantity})"

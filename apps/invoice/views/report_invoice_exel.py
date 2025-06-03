@@ -26,18 +26,27 @@ from apps.invoice.permissions import InvoicePermission
             OpenApiParameter(
                 name='invoice_id',
                 location=OpenApiParameter.QUERY,
-                description='invoice.id',
+                description='ID of the invoice to generate report for',
                 required=True,
                 type=int,
             ),
         ],
         responses={
-            200: OpenApiResponse(description="xlsx file"),
-            400: OpenApiResponse(description="Missing required parameters"),
+            200: OpenApiResponse(description="Excel file with invoice data"),
+            400: OpenApiResponse(description="Missing or invalid parameters"),
         }
     )
 )
 class ReportXLSXInvoice(APIView):
+    """
+    API View for generating Excel reports for invoices.
+
+    This view generates a comprehensive Excel spreadsheet containing:
+    - Invoice header information
+    - Line items with product details
+    - Subtotals by product model
+    - Final totals including freight costs
+    """
     permission_classes = (IsAuthenticated, InvoicePermission)
 
     def get(self, request):

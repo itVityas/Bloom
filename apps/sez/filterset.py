@@ -5,47 +5,68 @@ from .models import ClearanceInvoice, InnerTTN
 
 class ClearanceInvoiceFilter(filters.FilterSet):
     """
-    Filter for ClearanceInvoice
+    Advanced filtering for ClearanceInvoice records.
+
+    Supports:
+    - Exact matches and partial matches (prefix/suffix/contains)
+    - Case-insensitive text matching
+    - Date filtering
+    - Null checks for optional fields
+
+    Example Usage:
+        /api/clearance-invoices/?series__startswith=INV&date_calc__isnull=false
     """
     id = filters.NumberFilter(
         field_name='id',
-        lookup_expr='iexact'
+        lookup_expr='iexact',
+        help_text=("Filter by exact ID match")
     )
     cont_id = filters.NumberFilter(
         field_name='id',
-        lookup_expr='icontains'
+        lookup_expr='icontains',
+        help_text=("Filter by ID containing value")
     )
     start_id = filters.NumberFilter(
         field_name='id',
-        lookup_expr='istartswith'
+        lookup_expr='istartswith',
+        help_text=("Filter by ID starting with value")
     )
     end_id = filters.NumberFilter(
         field_name='id',
-        lookup_expr='iendswith')
+        lookup_expr='iendswith',
+        help_text=("Filter by ID ending with value"))
     ttn = filters.CharFilter(
         field_name='ttn',
-        lookup_expr='iexact')
+        lookup_expr='iexact',
+        help_text=("Filter by exact TTN number (case-insensitive)"))
     cont_ttn = filters.CharFilter(
         field_name='ttn',
-        lookup_expr='icontains')
+        lookup_expr='icontains',
+        help_text=("Filter by TTN containing value (case-insensitive)"))
     start_ttn = filters.CharFilter(
         field_name='ttn',
-        lookup_expr='istartswith')
+        lookup_expr='istartswith',
+        help_text=("Filter by TTN starting with value (case-insensitive)"))
     end_ttn = filters.CharFilter(
         field_name='ttn',
-        lookup_expr='iendswith')
+        lookup_expr='iendswith',
+        help_text=("Filter by TTN ending with value (case-insensitive)"))
     series = filters.CharFilter(
         field_name='series',
-        lookup_expr='iexact')
+        lookup_expr='iexact',
+        help_text=("Filter by exact series (case-insensitive)"))
     cont_series = filters.CharFilter(
         field_name='series',
-        lookup_expr='icontains')
+        lookup_expr='icontains',
+        help_text=("Filter by series containing value (case-insensitive)"))
     start_series = filters.CharFilter(
         field_name='series',
-        lookup_expr='istartswith')
+        lookup_expr='istartswith',
+        help_text=("Filter by series starting with value (case-insensitive)"))
     end_series = filters.CharFilter(
         field_name='series',
-        lookup_expr='iendswith')
+        lookup_expr='iendswith',
+        help_text=("Filter by series ending with value (case-insensitive)"))
     recipient = filters.CharFilter(
         field_name='recipient',
         lookup_expr='iexact')
@@ -60,7 +81,8 @@ class ClearanceInvoiceFilter(filters.FilterSet):
         lookup_expr='iendswith')
     quantity_shipped = filters.NumberFilter(
         field_name='quantity_shipped',
-        lookup_expr='iexact')
+        lookup_expr='iexact',
+        help_text=("Filter by exact shipped quantity"))
     cont_quantity_shipped = filters.NumberFilter(
         field_name='quantity_shipped',
         lookup_expr='icontains')
@@ -72,10 +94,12 @@ class ClearanceInvoiceFilter(filters.FilterSet):
         lookup_expr='iendswith')
     date_calc = filters.DateFilter(
         field_name='date_calc',
-        lookup_expr='iexact')
+        lookup_expr='iexact',
+        help_text=("Filter by exact calculation date"))
     isnull_date_calc = filters.BooleanFilter(
         field_name='date_calc',
-        lookup_expr='isnull')
+        lookup_expr='isnull',
+        help_text=("Filter whether calculation date exists (true/false)"))
 
     class Meta:
         model = ClearanceInvoice
@@ -106,6 +130,12 @@ class ClearanceInvoiceFilter(filters.FilterSet):
 
 
 class DocumentSezFilter(filters.FilterSet):
+    """
+    Filter for SEZ (Special Economic Zone) documents.
+
+    Note: This appears to be a stub implementation - consider completing
+    with proper model reference and field definitions.
+    """
     product_id = filters.NumberFilter(
         field_name='product_id',
         lookup_expr='iexact'

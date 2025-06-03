@@ -27,12 +27,21 @@ from apps.invoice.models import Invoice, InvoiceItem
             ),
         ],
         responses={
-            200: OpenApiResponse(description="PDF file"),
-            400: OpenApiResponse(description="Missing required parameters"),
+            200: OpenApiResponse(description="PDF file with invoice data"),
+            400: OpenApiResponse(description="Missing or invalid parameters"),
         }
     ),
 )
 class ReportPDFInvoice(APIView):
+    """
+    API View for generating PDF reports for invoices.
+
+    This view generates a comprehensive PDF document containing:
+    - Invoice header information
+    - Line items grouped by product model
+    - Subtotals by product model
+    - Final totals including freight costs
+    """
     permission_classes = (IsAuthenticated, InvoicePermission)
 
     def get(self, request):

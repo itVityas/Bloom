@@ -30,9 +30,26 @@ from django.conf import settings
     ),
 )
 class Weight1cView(APIView):
+    """
+    API endpoint for retrieving product weight information from 1C ERP system.
+
+    This view:
+    - Accepts a model name parameter
+    - Makes authenticated request to 1C web service
+    - Returns the weight information
+    """
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        """
+        Handle GET request to fetch weight from 1C.
+
+        Args:
+            request: HTTP request containing 'model_name' query parameter
+
+        Returns:
+            Response with weight data or error message
+        """
         model_name = request.query_params.get('model_name', None)
         if not model_name:
             return Response({'error': 'Missing required parameters'}, status=status.HTTP_400_BAD_REQUEST)
