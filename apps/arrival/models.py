@@ -43,8 +43,8 @@ class Content(models.Model):
     """
     Model representing content associated with a container.
     """
-    name = models.CharField(max_length=100)
-    short_name = models.CharField(max_length=30)
+    name = models.CharField(max_length=600)
+    short_name = models.CharField(max_length=300)
     count = models.PositiveIntegerField()
     container = models.ForeignKey(
         Container, on_delete=models.CASCADE, related_name='contents'
