@@ -45,7 +45,7 @@ class ContainerFullSerializer(serializers.ModelSerializer):
     """
     contents = serializers.SerializerMethodField()
     count = serializers.SerializerMethodField()
-    invoice = serializers.SerializerMethodField()
+    invoice_container = serializers.SerializerMethodField()
 
     class Meta:
         model = Container
