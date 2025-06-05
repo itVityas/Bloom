@@ -8,8 +8,8 @@ class Invoice(models.Model):
     filename = models.CharField(max_length=100, blank=True, null=True)
     file = models.FileField(upload_to='invoices/')
     prev_file = models.FileField(upload_to='invoices/', null=True, blank=True)
-    create_date = models.DateField(auto_now_add=True)  # Date create of the invoice
-    update_date = models.DateField(auto_now=True)  # Date update of the invoice
+    create_date = models.DateTimeField(auto_now_add=True)  # Date create of the invoice
+    update_date = models.DateTimeField(auto_now=True)  # Date update of the invoice
 
     def __str__(self):
         return f"Invoice for Order: id:{self.id} order_id:{self.order.id}"
