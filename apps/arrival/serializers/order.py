@@ -36,7 +36,7 @@ class OrderListSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'containers',
-            'invoice',
+            'invoicefile',
         ]
 
     def get_containers(self, obj) -> list:
