@@ -9,7 +9,7 @@ from apps.invoice.serializers.invoice import InvoicePostSerializer, InvoiceGetSe
 from apps.invoice.permissions import InvoicePermission
 
 
-@extend_schema(tags=["Invoice"])
+@extend_schema(tags=["InvoiceFile"])
 @extend_schema_view(
     get=extend_schema(
         summary='Get list of invoices',
@@ -25,7 +25,7 @@ class InvoiceListAPIView(ListAPIView):
     filterset_fields = ['id', 'filename', 'order']
 
 
-@extend_schema(tags=["Invoice"])
+@extend_schema(tags=["InvoiceFile"])
 @extend_schema_view(
     post=extend_schema(
         summary='Create a new invoice',
@@ -39,7 +39,7 @@ class InvoiceCreateAPIView(CreateAPIView):
     permission_classes = [IsAuthenticated, InvoicePermission]
 
 
-@extend_schema(tags=["Invoice"])
+@extend_schema(tags=["InvoiceFile"])
 @extend_schema_view(
     get=extend_schema(
         summary='Get invoice by id',
@@ -53,7 +53,7 @@ class InvoiceRetrieveAPIView(RetrieveAPIView):
     permission_classes = [IsAuthenticated, InvoicePermission]
 
 
-@extend_schema(tags=["Invoice"])
+@extend_schema(tags=["InvoiceFile"])
 @extend_schema_view(
     get=extend_schema(
         summary='Get invoice by id',

@@ -28,7 +28,7 @@ class OrderListSerializer(serializers.ModelSerializer):
     Serializer for listing orders with their associated containers.
     """
     containers = serializers.SerializerMethodField()
-    invoice = serializers.SerializerMethodField()
+    invoicefile = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
@@ -50,7 +50,7 @@ class OrderListSerializer(serializers.ModelSerializer):
         containers = Container.objects.filter(order=obj)
         return ContainerFullSerializer(containers, many=True).data
 
-    def get_invoice(self, obj) -> dict:
+    def get_invoicefile(self, obj) -> dict:
         """
         Returns serialized invoices associated with the given order.
 
@@ -69,13 +69,13 @@ class OrderWithContainerSerializer(serializers.ModelSerializer):
     Serializer for Order with its associated containers (with declarations).
     """
     containers = ContainerAndDeclarationSerializer(many=True, read_only=True)
-    invoice = serializers.SerializerMethodField()
+    invoicefile = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
         fields = '__all__'
 
-    def get_invoice(self, obj) -> dict:
+    def get_invoicefile(self, obj) -> dict:
         """
         Returns serialized invoices associated with the given order.
 
