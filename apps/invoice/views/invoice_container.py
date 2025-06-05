@@ -14,6 +14,7 @@ from apps.invoice.serializers.invoice_container import (
     InvoiceContainerPostSerializer
 )
 from apps.invoice.permissions import InvoicePermission
+from Bloom.paginator import StandartResultPaginator
 
 
 @extend_schema(tags=['InvoiceContainer'])
@@ -48,6 +49,7 @@ class InvoiceContainerListAPIView(ListAPIView):
         'number',
         'container'
         ]
+    pagination_class = StandartResultPaginator
 
 
 @extend_schema(tags=['InvoiceContainer'])
