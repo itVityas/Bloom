@@ -1,38 +1,47 @@
 from rest_framework import serializers
 
-from apps.invoice.models import Invoice, InvoiceItem
-from apps.invoice.serializers.invoice_item import InvoiceItemSerializer
-from apps.arrival.serializers.container import ContainerAndOrderSerializer
+from apps.invoice.models import Invoice
 
 
-class InvoiceFullSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the Invoice model with nested InvoiceItem data.
-    This serializer includes all fields of the Invoice model and a custom field 'items'
-    that contains the serialized data of related InvoiceItem objects.
-    """
-    items = serializers.SerializerMethodField()
-    container = ContainerAndOrderSerializer(read_only=True)
-
+class InvoicePostSerializer(serializers.ModelSerializer):
+    """Serializer for create and update Invoice model."""
     class Meta:
         model = Invoice
-        fields = '__all__'
+        fields = [
+            'order',
+            'file'
+        ]
 
-    def get_items(self, obj) -> dict:
-        """
-        Method to retrieve and serialize related InvoiceItem objects.
-        :param obj: The Invoice instance being serialized.
-        :return: Serialized data of related InvoiceItem objects.
-        """
-        items = InvoiceItem.objects.filter(invoice=obj)
-        return InvoiceItemSerializer(items, many=True).data
+    def create(self, validated_data):
+        return self._check_save(validated_data)
+
+    def update(self, instance, validated_data):
+        return self._check_save(validated_data, instance)
+
+    def _check_save(self, validated_date, instance=None):
+        file = validated_date.get('file', None)
+        order = validated_date.get('order', None)
+        if not file or not order:
+            raise serializers.ValidationError('File and order are required')
+
+        invoice = Invoice.objects.filter(order=order).first()
+        if invoice:
+            invoice.prev_file = invoice.file
+            invoice.file = file
+            invoice.filename = file.name
+            invoice.save()
+            return invoice
+        if instance:
+            instance.prev_file = instance.file
+            instance.file = file
+            invoice.filename = file.name
+            instance.save()
+            return instance
+        return Invoice.objects.create(order=order, file=file, filename=file.name)
 
 
-class InvoiceSerializer(serializers.ModelSerializer):
-    """
-    Basic serializer for the Invoice model.
-    This serializer includes all fields of the Invoice model without nested data.
-    """
+class InvoiceGetSerializer(serializers.ModelSerializer):
+    """Serializer for get Invoice model."""
     class Meta:
         model = Invoice
         fields = '__all__'

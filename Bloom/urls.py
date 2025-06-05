@@ -25,6 +25,8 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView,
 )
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     # DJANGO-ADMIN
@@ -50,3 +52,5 @@ urlpatterns = [
     path('api/v1/', include('apps.general.urls')),
     path('api/v1/', include('apps.onec.urls')),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

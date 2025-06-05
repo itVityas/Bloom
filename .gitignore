@@ -166,3 +166,6 @@ db.sqlite3
 tmp/*
 !tmp
 apps/omega/models.txt
+
+media/*
+!media
