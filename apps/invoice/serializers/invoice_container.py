@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
-from apps.invoice.models import InvoiceContainer
+from apps.invoice.models import InvoiceContainer, Invoice
 from apps.arrival.models import Container, Order
+from apps.invoice.utils.check_excel import find_sheet
 
 
 class OrderSmallSerializer(serializers.ModelSerializer):
@@ -29,6 +30,32 @@ class InvoiceContainerPostSerializer(serializers.ModelSerializer):
             'date',
             'container'
         ]
+
+    def create(self, validated_data):
+        validated_data['sheet'] = self._fill_sheet(
+            validated_data['number'],
+            validated_data['container']
+        )
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        number = validated_data.get('number', instance.number)
+        container = validated_data.get('container', instance.container)
+        validated_data['sheet'] = self._fill_sheet(
+            number,
+            container
+        )
+        return super().update(instance, validated_data)
+
+    def _fill_sheet(self, number, container) -> str:
+        """Fill sheet with data from instance."""
+        container_name = container.name
+        invoice = Invoice.objects.filter(order=container.order).first()
+        if not invoice:
+            return None
+        file = invoice.file
+        return find_sheet(invoice_number=number, container_name=container_name, file=file)
+        return None
 
 
 class InvoiceContainerGetSerializer(serializers.ModelSerializer):
