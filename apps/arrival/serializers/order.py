@@ -5,7 +5,7 @@ from apps.arrival.serializers.container import (
     ContainerFullSerializer,
     ContainerAndDeclarationSerializer)
 from apps.invoice.models import TrainDoc
-from apps.invoice.serializers.invoice import TrainDocGetSerializer
+from apps.invoice.serializers.traindoc import TrainDocGetSerializer
 from apps.arrival.serializers.lot import LotPostSerializer
 
 

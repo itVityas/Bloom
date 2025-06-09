@@ -109,7 +109,7 @@ class ContainerAndDeclarationDetailView(RetrieveAPIView):
     serializer_class = ContainerAndDeclarationSerializer
     queryset = Container.objects.all()
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('name',)
+    filterset_fields = ('name', 'lot')
     pagination_class = None
 
 

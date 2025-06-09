@@ -5,7 +5,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.invoice.models import TrainDoc
-from apps.invoice.serializers.invoice import TrainDocPostSerializer, TrainDocGetSerializer
+from apps.invoice.serializers.traindoc import TrainDocPostSerializer, TrainDocGetSerializer
 from apps.invoice.permissions import InvoicePermission
 
 
