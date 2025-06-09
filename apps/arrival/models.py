@@ -75,3 +75,23 @@ class Content(models.Model):
     def __str__(self):
         """Return the string representation of the Content."""
         return self.shot_name
+
+
+class LotModel(models.Model):
+    """
+    Model representing a lot model.
+    """
+    name = models.CharField(max_length=100)
+    count = models.PositiveIntegerField()
+    panel = models.PositiveIntegerField()
+    skd = models.PositiveIntegerField()
+    lot = models.ForeignKey(
+        Lot, on_delete=models.CASCADE
+    )
+
+    class Meta:
+        ordering = ['-id']
+
+    def __str__(self):
+        """Return the string representation of the LotModel."""
+        return self.name

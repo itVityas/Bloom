@@ -24,7 +24,7 @@ class LotGetSerializer(serializers.ModelSerializer):
         model = Lot
         fields = '__all__'
 
-    def get_traindoc(self, obj):
+    def get_traindoc(self, obj) -> dict:
         """
         Get the train document associated with the lot.
         """

@@ -21,6 +21,10 @@ from apps.arrival.views.lot import (
     LotListAPIView,
     LotRetrieveUpdateDestroyAPIView,
 )
+from apps.arrival.views.lot_model import (
+    LotModelListCreateAPIView,
+    LotModelRetrieveUpdateDestroyAPIView,
+)
 
 urlpatterns = [
     # Order endpoints
@@ -50,4 +54,8 @@ urlpatterns = [
     path('lot/create/', LotCreateAPIView.as_view()),
     path('lot/list/', LotListAPIView.as_view()),
     path('lot/update/<int:pk>/', LotRetrieveUpdateDestroyAPIView.as_view()),
+
+    # Lot Model
+    path('lot_model/', LotModelListCreateAPIView.as_view()),
+    path('lot_model/detail/<int:pk>/', LotModelRetrieveUpdateDestroyAPIView.as_view()),
 ]
