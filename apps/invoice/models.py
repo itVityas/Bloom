@@ -1,13 +1,17 @@
 from django.db import models
 
-from apps.arrival.models import Container, Order
+from apps.arrival.models import Container, Lot
 
 
 class TrainDoc(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    """
+    Model representing a train document.
+    Each train document is associated with an order and contains details about the document.
+    """
+    lot = models.ForeignKey(Lot, on_delete=models.CASCADE)
     filename = models.CharField(max_length=100, blank=True, null=True)
-    file = models.FileField(upload_to='traindoc/')
-    prev_file = models.FileField(upload_to='traindoc/', null=True, blank=True)
+    file = models.FileField(upload_to='invoices/')
+    prev_file = models.FileField(upload_to='invoices/', null=True, blank=True)
     create_date = models.DateTimeField(auto_now_add=True)  # Date create of the invoice
     update_date = models.DateTimeField(auto_now=True)  # Date update of the invoice
 
@@ -15,7 +19,7 @@ class TrainDoc(models.Model):
         return f"TrainDoc for Order: id:{self.id} order_id:{self.order.id}"
 
     class Meta:
-        ordering = ['-id']  # Order traindoc by date in descending order
+        ordering = ['-id']  # Order TrainDoc by date in descending order
 
 
 class InvoiceContainer(models.Model):

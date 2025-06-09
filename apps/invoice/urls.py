@@ -1,10 +1,10 @@
 from django.urls import path
 
-from apps.invoice.views.invoice import (
-    InvoiceCreateAPIView,
-    InvoiceListAPIView,
-    InvoiceRetrieveAPIView,
-    InvoiceRetrieveUpdateDestroyAPIView,
+from apps.invoice.views.traindoc import (
+    TrainDocCreateAPIView,
+    TrainDocListAPIView,
+    TrainDocRetrieveAPIView,
+    TrainDocRetrieveUpdateDestroyAPIView,
 )
 from apps.invoice.views.invoice_container import (
     InvoiceContainerCreateAPIView,
@@ -15,10 +15,10 @@ from apps.invoice.views.invoice_container import (
 
 
 urlpatterns = [
-    path('invoice_file/create/', InvoiceCreateAPIView.as_view()),
-    path('invoice_file/list/', InvoiceListAPIView.as_view()),
-    path('invoice_file/detailed/<int:pk>/', InvoiceRetrieveAPIView.as_view()),
-    path('invoice_file/update/<int:pk>/', InvoiceRetrieveUpdateDestroyAPIView.as_view()),
+    path('traindoc/create/', TrainDocCreateAPIView.as_view()),
+    path('traindoc/list/', TrainDocListAPIView.as_view()),
+    path('traindoc/detailed/<int:pk>/', TrainDocRetrieveAPIView.as_view()),
+    path('traindoc/update/<int:pk>/', TrainDocRetrieveUpdateDestroyAPIView.as_view()),
     path('invoice_container/create/', InvoiceContainerCreateAPIView.as_view()),
     path('invoice_container/list/', InvoiceContainerListAPIView.as_view()),
     path('invoice_container/detailed/<int:pk>/', InvoiceContainerRetrieveAPIView.as_view()),

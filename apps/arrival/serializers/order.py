@@ -1,11 +1,12 @@
 from rest_framework import serializers
 
-from apps.arrival.models import Order, Container
+from apps.arrival.models import Order, Container, Lot
 from apps.arrival.serializers.container import (
     ContainerFullSerializer,
     ContainerAndDeclarationSerializer)
 from apps.invoice.models import TrainDoc
-from apps.invoice.serializers.invoice import InvoiceGetSerializer
+from apps.invoice.serializers.invoice import TrainDocGetSerializer
+from apps.arrival.serializers.lot import LotPostSerializer
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -28,7 +29,8 @@ class OrderListSerializer(serializers.ModelSerializer):
     Serializer for listing orders with their associated containers.
     """
     containers = serializers.SerializerMethodField()
-    invoicefile = serializers.SerializerMethodField()
+    traindoc = serializers.SerializerMethodField()
+    lots = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
@@ -36,7 +38,8 @@ class OrderListSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'containers',
-            'invoicefile',
+            'traindoc',
+            'lots',
         ]
 
     def get_containers(self, obj) -> list:
@@ -50,7 +53,18 @@ class OrderListSerializer(serializers.ModelSerializer):
         containers = Container.objects.filter(order=obj)
         return ContainerFullSerializer(containers, many=True).data
 
-    def get_invoicefile(self, obj) -> dict:
+    def get_lots(self, obj) -> list:
+        """
+        Returns serialized lots associated with the given order.
+
+        :param obj: Order instance.
+        :return: List of serialized lot data.
+        """
+        # It is assumed that Container model has a ForeignKey to Order.
+        lots = Lot.objects.filter(order=obj)
+        return LotPostSerializer(lots, many=True).data
+
+    def get_traindoc(self, obj) -> dict:
         """
         Returns serialized invoices associated with the given order.
 
@@ -58,10 +72,10 @@ class OrderListSerializer(serializers.ModelSerializer):
         :return: List of serialized invoice data.
         """
         # It is assumed that Invoice model has a ForeignKey to Order.
-        invoices = TrainDoc.objects.filter(order=obj).first()
+        invoices = TrainDoc.objects.filter(lot__order=obj).first()
         if not invoices:
             return {}
-        return InvoiceGetSerializer(invoices).data
+        return TrainDocGetSerializer(invoices).data
 
 
 class OrderWithContainerSerializer(serializers.ModelSerializer):
@@ -69,13 +83,14 @@ class OrderWithContainerSerializer(serializers.ModelSerializer):
     Serializer for Order with its associated containers (with declarations).
     """
     containers = ContainerAndDeclarationSerializer(many=True, read_only=True)
-    invoicefile = serializers.SerializerMethodField()
+    traindoc = serializers.SerializerMethodField()
+    lots = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
         fields = '__all__'
 
-    def get_invoicefile(self, obj) -> dict:
+    def get_traindoc(self, obj) -> dict:
         """
         Returns serialized invoices associated with the given order.
 
@@ -83,7 +98,18 @@ class OrderWithContainerSerializer(serializers.ModelSerializer):
         :return: List of serialized invoice data.
         """
         # It is assumed that Invoice model has a ForeignKey to Order.
-        invoices = TrainDoc.objects.filter(order=obj).first()
+        invoices = TrainDoc.objects.filter(lot__order=obj).first()
         if not invoices:
             return {}
-        return InvoiceGetSerializer(invoices).data
+        return TrainDocGetSerializer(invoices).data
+
+    def get_lots(self, obj) -> list:
+        """
+        Returns serialized lots associated with the given order.
+
+        :param obj: Order instance.
+        :return: List of serialized lot data.
+        """
+        # It is assumed that Container model has a ForeignKey to Order.
+        lots = Lot.objects.filter(order=obj)
+        return LotPostSerializer(lots, many=True).data

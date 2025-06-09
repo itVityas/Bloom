@@ -15,12 +15,31 @@ class Order(models.Model):
         return self.name
 
 
+class Lot(models.Model):
+    """
+    Model representing a lot associated with a container.
+    """
+    name = models.CharField(max_length=50)
+    order = models.ForeignKey(
+        Order, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['-id']
+
+    def __str__(self):
+        """Return the string representation of the Lot."""
+        return self.name
+
+
 class Container(models.Model):
     """
     Model representing a container.
     """
     order = models.ForeignKey(
         Order, on_delete=models.SET_NULL, null=True, blank=True, related_name='containers'
+    )
+    lot = models.ForeignKey(
+        Lot, on_delete=models.SET_NULL, null=True, blank=True
     )
     name = models.CharField(max_length=30)
     suppose_date = models.DateField(blank=True, null=True)

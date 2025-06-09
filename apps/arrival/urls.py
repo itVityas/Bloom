@@ -16,6 +16,11 @@ from apps.arrival.views.container import (
     ContainerAndContentCreateView
 )
 from apps.arrival.views.report import ReportCSVView
+from apps.arrival.views.lot import (
+    LotCreateAPIView,
+    LotListAPIView,
+    LotRetrieveUpdateDestroyAPIView,
+)
 
 urlpatterns = [
     # Order endpoints
@@ -40,4 +45,9 @@ urlpatterns = [
     # Content endpoints
     path('content/', ContentListView.as_view()),
     path('content/detailed/<int:pk>/', ContentDetailView.as_view()),
+
+    # Lot endpoints
+    path('lot/create/', LotCreateAPIView.as_view()),
+    path('lot/list/', LotListAPIView.as_view()),
+    path('lot/update/<int:pk>/', LotRetrieveUpdateDestroyAPIView.as_view()),
 ]

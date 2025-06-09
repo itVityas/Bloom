@@ -5,12 +5,12 @@ from apps.arrival.models import Container
 from apps.invoice.utils.check_excel import find_sheet
 
 
-class InvoicePostSerializer(serializers.ModelSerializer):
+class TrainDocPostSerializer(serializers.ModelSerializer):
     """Serializer for create and update TrainDoc model."""
     class Meta:
         model = TrainDoc
         fields = [
-            'order',
+            'lot',
             'file'
         ]
 
@@ -19,8 +19,8 @@ class InvoicePostSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         file = validated_data.get('file', instance.file)
-        order = validated_data.get('order', instance.order)
-        containers = Container.objects.filter(order=order)
+        lot = validated_data.get('lot', instance.lot)
+        containers = Container.objects.filter(lot=lot)
         for container in containers:
             container_invoices = InvoiceContainer.objects.filter(container=container)
             for container_invoice in container_invoices:
@@ -34,16 +34,16 @@ class InvoicePostSerializer(serializers.ModelSerializer):
     def _check_save(self, validated_date, instance=None):
         """Check save TrainDoc model."""
         inst_file = None
-        inst_order = None
+        inst_lot = None
         if instance:
             inst_file = instance.file
-            inst_order = instance.order
+            inst_lot = instance.order
         file = validated_date.get('file', inst_file)
-        order = validated_date.get('order', inst_order)
-        if not file or not order:
+        lot = validated_date.get('lot', inst_lot)
+        if not file or not lot:
             raise serializers.ValidationError('File and order are required')
 
-        invoice = TrainDoc.objects.filter(order=order).first()
+        invoice = TrainDoc.objects.filter(lot=lot).first()
         if invoice:
             invoice.prev_file = invoice.file
             invoice.file = file
@@ -56,10 +56,10 @@ class InvoicePostSerializer(serializers.ModelSerializer):
             invoice.filename = file.name
             instance.save()
             return instance
-        return TrainDoc.objects.create(order=order, file=file, filename=file.name)
+        return TrainDoc.objects.create(lot=lot, file=file, filename=file.name)
 
 
-class InvoiceGetSerializer(serializers.ModelSerializer):
+class TrainDocGetSerializer(serializers.ModelSerializer):
     """Serializer for get TrainDoc model."""
     class Meta:
         model = TrainDoc
