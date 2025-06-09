@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from django_filters.rest_framework import DjangoFilterBackend
 
-from apps.invoice.models import Invoice
+from apps.invoice.models import TrainDoc
 from apps.invoice.serializers.invoice import InvoicePostSerializer, InvoiceGetSerializer
 from apps.invoice.permissions import InvoicePermission
 
@@ -18,7 +18,7 @@ from apps.invoice.permissions import InvoicePermission
 )
 class InvoiceListAPIView(ListAPIView):
     """List all invoices."""
-    queryset = Invoice.objects.all()
+    queryset = TrainDoc.objects.all()
     serializer_class = InvoiceGetSerializer
     permission_classes = [IsAuthenticated, InvoicePermission]
     filter_backends = [DjangoFilterBackend]
@@ -34,7 +34,7 @@ class InvoiceListAPIView(ListAPIView):
 )
 class InvoiceCreateAPIView(CreateAPIView):
     """Create a new invoice."""
-    queryset = Invoice.objects.all()
+    queryset = TrainDoc.objects.all()
     serializer_class = InvoicePostSerializer
     permission_classes = [IsAuthenticated, InvoicePermission]
 
@@ -48,7 +48,7 @@ class InvoiceCreateAPIView(CreateAPIView):
 )
 class InvoiceRetrieveAPIView(RetrieveAPIView):
     """Get invoice by id."""
-    queryset = Invoice.objects.all()
+    queryset = TrainDoc.objects.all()
     serializer_class = InvoiceGetSerializer
     permission_classes = [IsAuthenticated, InvoicePermission]
 
@@ -74,6 +74,6 @@ class InvoiceRetrieveAPIView(RetrieveAPIView):
 )
 class InvoiceRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     """Get, update, and delete invoice by id."""
-    queryset = Invoice.objects.all()
+    queryset = TrainDoc.objects.all()
     serializer_class = InvoicePostSerializer
     permission_classes = [IsAuthenticated, InvoicePermission]

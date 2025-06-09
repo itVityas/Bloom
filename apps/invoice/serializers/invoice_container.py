@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.invoice.models import InvoiceContainer, Invoice
+from apps.invoice.models import InvoiceContainer, TrainDoc
 from apps.arrival.models import Container, Order
 from apps.invoice.utils.check_excel import find_sheet
 
@@ -50,7 +50,7 @@ class InvoiceContainerPostSerializer(serializers.ModelSerializer):
     def _fill_sheet(self, number, container) -> str:
         """Fill sheet with data from instance."""
         container_name = container.name
-        invoice = Invoice.objects.filter(order=container.order).first()
+        invoice = TrainDoc.objects.filter(order=container.order).first()
         if not invoice:
             return None
         file = invoice.file

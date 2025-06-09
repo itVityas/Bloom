@@ -15,7 +15,7 @@ from openpyxl.styles import (
 from apps.arrival.serializers.report import ListOrderSerializer
 from apps.arrival.permissions import ArrivalPermission
 from apps.arrival.models import Order, Content
-from apps.invoice.models import Invoice
+from apps.invoice.models import TrainDoc
 
 
 @extend_schema(tags=['ReportXLSX'])
@@ -102,7 +102,7 @@ class ReportCSVView(APIView):
             col11.alignment = Alignment(wrap_text=True)
             contents = Content.objects.filter(container__order=order)
             for content in contents:
-                invoice = Invoice.objects.filter(
+                invoice = TrainDoc.objects.filter(
                     container=content.container).first()
                 contract = ''
                 number = ''

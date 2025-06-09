@@ -4,7 +4,7 @@ from apps.arrival.models import Order, Container
 from apps.arrival.serializers.container import (
     ContainerFullSerializer,
     ContainerAndDeclarationSerializer)
-from apps.invoice.models import Invoice
+from apps.invoice.models import TrainDoc
 from apps.invoice.serializers.invoice import InvoiceGetSerializer
 
 
@@ -58,7 +58,7 @@ class OrderListSerializer(serializers.ModelSerializer):
         :return: List of serialized invoice data.
         """
         # It is assumed that Invoice model has a ForeignKey to Order.
-        invoices = Invoice.objects.filter(order=obj).first()
+        invoices = TrainDoc.objects.filter(order=obj).first()
         if not invoices:
             return {}
         return InvoiceGetSerializer(invoices).data
@@ -83,7 +83,7 @@ class OrderWithContainerSerializer(serializers.ModelSerializer):
         :return: List of serialized invoice data.
         """
         # It is assumed that Invoice model has a ForeignKey to Order.
-        invoices = Invoice.objects.filter(order=obj).first()
+        invoices = TrainDoc.objects.filter(order=obj).first()
         if not invoices:
             return {}
         return InvoiceGetSerializer(invoices).data

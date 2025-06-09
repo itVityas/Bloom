@@ -9,7 +9,7 @@ from drf_spectacular.utils import (
 )
 
 from apps.invoice.serializers.pdf_invoice import PDFInvoiceSerializer
-from apps.invoice.models import Invoice, InvoiceContainer
+from apps.invoice.models import TrainDoc, InvoiceContainer
 from apps.arrival.models import Container
 
 
