@@ -13,9 +13,11 @@ from django.http import HttpResponse
 from apps.invoice.models import InvoiceContainer, TrainDoc
 from apps.invoice.permissions import InvoicePermission
 from apps.invoice.utils.sheet_to_excel import sheet_to_excel
+from apps.arrival.models import Container
+from apps.invoice.utils.check_excel import find_sheet
 
 
-@extend_schema(tags=['InvoiceContainer'])
+@extend_schema(tags=['ReportXLSX'])
 @extend_schema_view(
     get=extend_schema(
         summary='Get invoice in pdf by invoice_container',
@@ -54,6 +56,66 @@ class InvoiceContainerSheetView(APIView):
             return Response({'error': 'train_doc not found'}, status=status.HTTP_404_NOT_FOUND)
 
         file_path = sheet_to_excel(train_doc.file.path, invoice_container.sheet)
+
+        document = open(file_path, 'rb')
+        file_name = file_path.split('/')[1]
+        response = HttpResponse(
+            document,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+        return response
+
+
+@extend_schema(tags=['ReportXLSX'])
+@extend_schema_view(
+    get=extend_schema(
+        summary='Get invoice in pdf by invoice_container',
+        description="Permission: 'admin', 'arrival_reader', 'invoice_reader'",
+        parameters=[
+            OpenApiParameter(
+                name='container',
+                description='invoice_container_id',
+                required=True,
+                type=int
+            ),
+            OpenApiParameter(
+                name='number',
+                description='invoice_number',
+                required=True,
+                type=str
+            )
+        ],
+        responses={
+            200: OpenApiResponse(description="Report generated successfully"),
+            400: OpenApiResponse(description="Bad request"),
+            401: OpenApiResponse(description="Unauthorized"),
+            403: OpenApiResponse(description="Forbidden"),
+            404: OpenApiResponse(description="Not found"),
+        },
+    )
+)
+class InvoiceByContainerNumberAPIView(APIView):
+    permission_classes = [IsAuthenticated, InvoicePermission]
+
+    def get(self, request):
+        container_id = request.query_params.get('container', None)
+        number = request.query_params.get('number', None)
+        if not container_id or not number:
+            return Response({'error': 'container and number are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        container = Container.objects.filter(id=container_id).first()
+        if not container:
+            return Response({'error': 'container not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        train_doc = TrainDoc.objects.filter(lot=container.lot).first()
+        if not train_doc:
+            return Response({'error': 'train_doc not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        sheet = find_sheet(invoice_number=number, file=train_doc.file.path, container_name=container.name)
+        if not sheet:
+            return Response({'error': 'sheet not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        file_path = sheet_to_excel(train_doc.file.path, sheet)
 
         document = open(file_path, 'rb')
         file_name = file_path.split('/')[1]

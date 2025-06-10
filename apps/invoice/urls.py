@@ -12,7 +12,7 @@ from apps.invoice.views.invoice_container import (
     InvoiceContainerRetrieveAPIView,
     InvoiceContainerRetrieveUpdateDestroyAPIView,
 )
-from apps.invoice.views.sheet_to_excel import InvoiceContainerSheetView
+from apps.invoice.views.sheet_to_excel import InvoiceContainerSheetView, InvoiceByContainerNumberAPIView
 
 
 urlpatterns = [
@@ -25,4 +25,5 @@ urlpatterns = [
     path('invoice_container/detailed/<int:pk>/', InvoiceContainerRetrieveAPIView.as_view()),
     path('invoice_container/update/<int:pk>/', InvoiceContainerRetrieveUpdateDestroyAPIView.as_view()),
     path('invoice_container/sheet/', InvoiceContainerSheetView.as_view()),
+    path('invoice/by_container_number/', InvoiceByContainerNumberAPIView.as_view()),
 ]
