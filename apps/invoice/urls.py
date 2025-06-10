@@ -12,6 +12,7 @@ from apps.invoice.views.invoice_container import (
     InvoiceContainerRetrieveAPIView,
     InvoiceContainerRetrieveUpdateDestroyAPIView,
 )
+from apps.invoice.views.sheet_to_excel import InvoiceContainerSheetView
 
 
 urlpatterns = [
@@ -23,4 +24,5 @@ urlpatterns = [
     path('invoice_container/list/', InvoiceContainerListAPIView.as_view()),
     path('invoice_container/detailed/<int:pk>/', InvoiceContainerRetrieveAPIView.as_view()),
     path('invoice_container/update/<int:pk>/', InvoiceContainerRetrieveUpdateDestroyAPIView.as_view()),
+    path('invoice_container/sheet/', InvoiceContainerSheetView.as_view()),
 ]
