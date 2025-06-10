@@ -2,6 +2,7 @@ from rest_framework.generics import (
     ListAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView)
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.arrival.models import Lot
 from apps.arrival.serializers.lot import LotGetSerializer, LotPostSerializer
@@ -19,6 +20,8 @@ class LotListAPIView(ListAPIView):
     queryset = Lot.objects.all()
     serializer_class = LotGetSerializer
     permission_classes = [IsAuthenticated, OrderPermission]
+    filter_backends = [DjangoFilterBackend,]
+    filterset_fields = ['id', 'name', 'order']
 
 
 @extend_schema(tags=['Lot'])
