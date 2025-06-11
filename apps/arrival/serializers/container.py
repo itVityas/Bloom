@@ -5,6 +5,7 @@ from apps.arrival.models import Container, Content, Order
 from apps.invoice.models import InvoiceContainer
 from apps.arrival.serializers.content import ContentSerializer, ContentMultySerializer
 from apps.declaration.serializers.declaration import DeclarationSerializer
+from apps.arrival.serializers.lot import LotPostSerializer
 
 
 class InvoiceContainerSerializer(serializers.ModelSerializer):
@@ -114,6 +115,7 @@ class ContainerAndDeclarationSerializer(serializers.ModelSerializer):
     declarations = DeclarationSerializer(many=True, read_only=True)
     count = serializers.SerializerMethodField()
     invoice_container = serializers.SerializerMethodField()
+    lot = LotPostSerializer(read_only=True)
 
     class Meta:
         model = Container
