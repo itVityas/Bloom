@@ -31,6 +31,7 @@ def get_ttn_pdf(id: int) -> str:
     weight_text = num2words(int(weight*1000), lang='ru')
 
     context = {
+        "date": ttn.date.strftime("%d.%m.%Y"),
         "ttn": ttn,
         "items": items,
         "quantity": quantity,
