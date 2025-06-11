@@ -3,6 +3,7 @@ from rest_framework import serializers
 from apps.invoice.models import InvoiceContainer, TrainDoc
 from apps.arrival.models import Container, Order
 from apps.invoice.utils.check_excel import find_sheet
+from apps.arrival.serializers.lot import LotPostSerializer
 
 
 class OrderSmallSerializer(serializers.ModelSerializer):
@@ -15,6 +16,7 @@ class OrderSmallSerializer(serializers.ModelSerializer):
 class ContainerSmallSerializer(serializers.ModelSerializer):
     """Serializer for Container model."""
     order = OrderSmallSerializer(read_only=True)
+    lot = LotPostSerializer(read_only=True)
 
     class Meta:
         model = Container
