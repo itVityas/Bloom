@@ -1,8 +1,9 @@
 from rest_framework import serializers
 
 from apps.arrival.models import Order, Container
-from apps.declaration.models import Declaration
+from apps.declaration.models import Declaration, G44
 from apps.declaration.serializers.declared_item import DeclaredItemSerializer
+from apps.declaration.serializers.g44 import G44Serializer
 
 
 class DeclarationSerializer(serializers.ModelSerializer):
@@ -11,6 +12,7 @@ class DeclarationSerializer(serializers.ModelSerializer):
     """
     containers = serializers.SerializerMethodField()
     orders = serializers.SerializerMethodField()
+    g44 = serializers.SerializerMethodField()
 
     class Meta:
         model = Declaration
@@ -35,6 +37,13 @@ class DeclarationSerializer(serializers.ModelSerializer):
             return None
         orders = obj.container.order
         return OrderSmallSerializer(orders).data
+
+    def get_g44(self, obj) -> dict:
+        """
+        Get the G44 value associated with the declaration.
+        """
+        g44 = G44.objects.filter(declaration=obj).first()
+        return G44Serializer(g44).data
 
 
 class DeclarationFileUploadSerializer(serializers.Serializer):
