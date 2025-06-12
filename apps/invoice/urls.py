@@ -5,6 +5,7 @@ from apps.invoice.views.traindoc import (
     TrainDocListAPIView,
     TrainDocRetrieveAPIView,
     TrainDocRetrieveUpdateDestroyAPIView,
+    TrainDocByLotAPIView,
 )
 from apps.invoice.views.invoice_container import (
     InvoiceContainerCreateAPIView,
@@ -20,6 +21,7 @@ urlpatterns = [
     path('traindoc/list/', TrainDocListAPIView.as_view()),
     path('traindoc/detailed/<int:pk>/', TrainDocRetrieveAPIView.as_view()),
     path('traindoc/update/<int:pk>/', TrainDocRetrieveUpdateDestroyAPIView.as_view()),
+    path('traindoc/by_lot/<int:pk>/', TrainDocByLotAPIView.as_view()),
     path('invoice_container/create/', InvoiceContainerCreateAPIView.as_view()),
     path('invoice_container/list/', InvoiceContainerListAPIView.as_view()),
     path('invoice_container/detailed/<int:pk>/', InvoiceContainerRetrieveAPIView.as_view()),

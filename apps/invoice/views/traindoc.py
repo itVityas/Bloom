@@ -3,6 +3,7 @@ from rest_framework.generics import (
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.response import Response
 
 from apps.invoice.models import TrainDoc
 from apps.invoice.serializers.traindoc import TrainDocPostSerializer, TrainDocGetSerializer
@@ -77,3 +78,21 @@ class TrainDocRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = TrainDoc.objects.all()
     serializer_class = TrainDocPostSerializer
     permission_classes = [IsAuthenticated, InvoicePermission]
+
+
+@extend_schema(tags=["TrainDoc"])
+@extend_schema_view(
+    get=extend_schema(
+        summary='Get TrainDoc by lot id',
+        description="Permission: 'admin', 'invoice_writer', 'arrival_reader',"
+    )
+)
+class TrainDocByLotAPIView(RetrieveAPIView):
+    """Create a new TrainDoc."""
+    queryset = TrainDoc.objects.all()
+    serializer_class = TrainDocGetSerializer
+    permission_classes = [IsAuthenticated, InvoicePermission]
+
+    def get(self, request, pk):
+        traindoc = TrainDoc.objects.filter(lot=pk).first()
+        return Response(TrainDocGetSerializer(traindoc).data)
