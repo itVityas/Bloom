@@ -42,7 +42,7 @@ class DeclarationSerializer(serializers.ModelSerializer):
         """
         Get the G44 value associated with the declaration.
         """
-        g44 = G44.objects.filter(declaration=obj).first()
+        g44 = G44.objects.filter(declaration=obj, g44kd="04021").first()
         return G44Serializer(g44).data
 
 
