@@ -37,7 +37,7 @@ class TrainDocPostSerializer(serializers.ModelSerializer):
         inst_lot = None
         if instance:
             inst_file = instance.file
-            inst_lot = instance.order
+            inst_lot = instance.lot
         file = validated_date.get('file', inst_file)
         lot = validated_date.get('lot', inst_lot)
         if not file or not lot:

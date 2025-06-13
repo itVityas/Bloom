@@ -16,7 +16,7 @@ class TrainDoc(models.Model):
     update_date = models.DateTimeField(auto_now=True)  # Date update of the invoice
 
     def __str__(self):
-        return f"TrainDoc for Order: id:{self.id} order_id:{self.order.id}"
+        return f"TrainDoc for Order: id:{self.id} order_id:{self.lot.id}"
 
     class Meta:
         ordering = ['-id']  # Order TrainDoc by date in descending order
