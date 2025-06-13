@@ -114,7 +114,7 @@ class ReportCSVView(APIView):
                     contract,                               # B
                     number,                                 # C
                     content.container.name,                 # D
-                    content.short_name,                     # E
+                    content.name,                           # E
                     content.count,                          # F
                     content.container.exit_date,            # G
                     content.container.location,             # H
