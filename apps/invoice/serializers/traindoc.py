@@ -1,3 +1,5 @@
+import os
+
 from rest_framework import serializers
 
 from apps.invoice.models import TrainDoc, InvoiceContainer
@@ -45,13 +47,19 @@ class TrainDocPostSerializer(serializers.ModelSerializer):
 
         invoice = TrainDoc.objects.filter(lot=lot).first()
         if invoice:
-            invoice.prev_file = invoice.file
+            if not os.path.exists(invoice.file.path):
+                invoice.prev_file = None
+            else:
+                invoice.prev_file = invoice.file
             invoice.file = file
             invoice.filename = file.name
             invoice.save()
             return invoice
         if instance:
-            instance.prev_file = instance.file
+            if not os.path.exists(invoice.file.path):
+                invoice.prev_file = None
+            else:
+                invoice.prev_file = invoice.file
             instance.file = file
             invoice.filename = file.name
             instance.save()

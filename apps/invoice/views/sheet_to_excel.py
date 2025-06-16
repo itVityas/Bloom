@@ -1,3 +1,5 @@
+import os
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -52,10 +54,16 @@ class InvoiceContainerSheetView(APIView):
             return Response({'error': 'invoice_container not found'}, status=status.HTTP_404_NOT_FOUND)
 
         train_doc = TrainDoc.objects.filter(lot=invoice_container.container.lot).first()
+        if not os.path.exists(train_doc.file.path):
+            train_doc.file = None
+            train_doc.save()
+            return Response({'error': 'file not found'}, status=status.HTTP_404_NOT_FOUND)
         if not train_doc:
             return Response({'error': 'train_doc not found'}, status=status.HTTP_404_NOT_FOUND)
 
         file_path = sheet_to_excel(train_doc.file.path, invoice_container.sheet)
+        if not file_path:
+            return Response({'error': 'file not found'}, status=status.HTTP_404_NOT_FOUND)
 
         document = open(file_path, 'rb')
         file_name = file_path.split('/')[1]
@@ -111,11 +119,18 @@ class InvoiceByContainerNumberAPIView(APIView):
         if not train_doc:
             return Response({'error': 'train_doc not found'}, status=status.HTTP_404_NOT_FOUND)
 
+        if not os.path.exists(train_doc.file.path):
+            train_doc.file = None
+            train_doc.save()
+            return Response({'error': 'file not found'}, status=status.HTTP_404_NOT_FOUND)
+
         sheet = find_sheet(invoice_number=number, file=train_doc.file.path, container_name=container.name)
         if not sheet:
             return Response({'error': 'sheet not found'}, status=status.HTTP_404_NOT_FOUND)
 
         file_path = sheet_to_excel(train_doc.file.path, sheet)
+        if not file_path:
+            return Response({'error': 'file_path not found'}, status=status.HTTP_404_NOT_FOUND)
 
         document = open(file_path, 'rb')
         file_name = file_path.split('/')[1]

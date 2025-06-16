@@ -10,7 +10,7 @@ class TrainDoc(models.Model):
     """
     lot = models.ForeignKey(Lot, on_delete=models.CASCADE)
     filename = models.CharField(max_length=100, blank=True, null=True)
-    file = models.FileField(upload_to='invoices/')
+    file = models.FileField(upload_to='invoices/', null=True, blank=True)
     prev_file = models.FileField(upload_to='invoices/', null=True, blank=True)
     create_date = models.DateTimeField(auto_now_add=True)  # Date create of the invoice
     update_date = models.DateTimeField(auto_now=True)  # Date update of the invoice

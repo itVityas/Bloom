@@ -1,7 +1,13 @@
+import os
+
 from openpyxl import load_workbook
 
 
 def find_sheet(invoice_number, container_name, file) -> str:
+    if not file:
+        return None
+    if not os.path.exists(file):
+        return None
     try:
         invoice_number = invoice_number.lower()
         container_name = invoice_number.lower()
@@ -9,7 +15,6 @@ def find_sheet(invoice_number, container_name, file) -> str:
         for sheet in wb.worksheets:
             container_check = False
             number_check = False
-            print(sheet.title)
             for row in sheet.iter_rows(values_only=True, max_row=30):
                 for cell in row:
                     if str(cell).lower().find(container_name) != -1:
