@@ -45,6 +45,12 @@ class ContainerCreateView(CreateAPIView):
     serializer_class = ContainerSetSerializer
     queryset = Container.objects.all()
 
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        container = serializer.save()
+        return Response(ContainerAndDeclarationSerializer(container).data)
+
 
 @extend_schema(tags=['Containers'])
 @extend_schema_view(
