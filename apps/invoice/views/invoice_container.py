@@ -15,6 +15,7 @@ from apps.invoice.serializers.invoice_container import (
 )
 from apps.invoice.permissions import InvoicePermission
 from Bloom.paginator import StandartResultPaginator
+from apps.invoice.filters import InvoiceContainerFilter
 
 
 @extend_schema(tags=['InvoiceContainer'])
@@ -44,11 +45,7 @@ class InvoiceContainerListAPIView(ListAPIView):
     serializer_class = InvoiceContainerGetSerializer
     permission_classes = [IsAuthenticated, InvoicePermission]
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = [
-        'id',
-        'number',
-        'container'
-        ]
+    filterset_class = InvoiceContainerFilter
     pagination_class = StandartResultPaginator
 
 
