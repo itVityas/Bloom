@@ -1,6 +1,5 @@
 from rest_framework.pagination import PageNumberPagination
 
-
 class StandartResultPaginator(PageNumberPagination):
     page_size = 20
     page_size_query_param = 'pagesize'
@@ -12,5 +11,9 @@ class StandartResultPaginator(PageNumberPagination):
 
         if reverse_order:
             queryset = queryset.reverse()
+
+        size_param = request.query_params.get(self.page_size_query_param)
+        if size_param == '-1':
+            self.page_size = queryset.count()
 
         return super().paginate_queryset(queryset, request, view)
