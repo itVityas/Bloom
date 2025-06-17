@@ -82,7 +82,7 @@ def clear_model_items(
                 DeclaredItem.objects.select_for_update()
                 .select_related("declaration")
                 .filter(item_code_1c=code_1c, available_quantity__gt=0.0, declaration__gifted=False)
-                .order_by("declaration__declaration_date")
+                .order_by('item_code_1c', "declaration__declaration_date")
             )
 
             plan: List[Dict[str, Any]] = []
