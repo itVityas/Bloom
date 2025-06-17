@@ -6,7 +6,7 @@ from openpyxl import load_workbook
 def find_sheet(invoice_number, container_name, file) -> str:
     if not file:
         return None
-    if not os.path.exists(file):
+    if not os.path.exists(file.path):
         return None
     try:
         invoice_number = invoice_number.lower()
