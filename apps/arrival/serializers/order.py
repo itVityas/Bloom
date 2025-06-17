@@ -20,7 +20,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if Order.objects.filter(name=attrs['name']).exists():
-            raise serializers.ValidationError('Order with this name already exists')
+            raise serializers.ValidationError('Заказ с таким именем уже существует')
         return attrs
 
 
