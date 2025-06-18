@@ -35,6 +35,20 @@ class UserFilter(filters.FilterSet):
     start_role = filters.CharFilter(method='filter_start_role')
     end_role = filters.CharFilter(method='filter_end_role')
 
+    ordering = filters.OrderingFilter(
+        fields=(
+            ('id', 'id'),
+            ('username', 'username'),
+            ('fio', 'fio'),
+            ('departmant', 'departmant'),
+            ('position', 'position'),
+            ('room', 'room'),
+            ('is_active', 'is_active'),
+            ('created', 'created'),
+            ('role', 'role')
+        ),
+    )
+
     class Meta:
         model = User
         fields = [
