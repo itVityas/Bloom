@@ -14,8 +14,8 @@ from openpyxl.styles import (
 
 from apps.arrival.serializers.report import ListOrderSerializer
 from apps.arrival.permissions import ArrivalPermission
-from apps.arrival.models import Order, Content
-from apps.invoice.models import InvoiceContainer
+from apps.arrival.models import Order, Content, Lot
+from apps.invoice.models import InvoiceContainer, TrainDoc
 
 
 @extend_schema(tags=['ReportXLSX'])
@@ -55,8 +55,8 @@ class ReportCSVView(APIView):
             ws.merge_cells('A4:K4')
             ws.append([
                 "Заказ",
-                "Инвойс",
-                "№ инвойса",
+                "Лот",
+                "Specification",
                 "Контейнер",
                 "Товары",
                 "Кол-во коробок",
@@ -71,10 +71,10 @@ class ReportCSVView(APIView):
             col1 = ws.column_dimensions["A"]
             col1.alignment = Alignment(wrap_text=True)
             col2 = ws.column_dimensions["B"]
-            col2.width = 15
+            col2.width = 10
             col2.alignment = Alignment(wrap_text=True)
             col3 = ws.column_dimensions["C"]
-            col3.width = 12
+            col3.width = 17
             col3.alignment = Alignment(wrap_text=True)
             col4 = ws.column_dimensions["D"]
             col4.width = 15
@@ -104,14 +104,20 @@ class ReportCSVView(APIView):
             for content in contents:
                 invoice = InvoiceContainer.objects.filter(
                     container=content.container).first()
-                contract = ''
+                lot = Lot.objects.filter(container=content.container).first()
+                lot_name = ''
+                traindoc = TrainDoc.objects.filter(lot=lot).first()
+                if lot:
+                    lot_name = lot.name
                 number = ''
+                if traindoc:
+                    number = f'1/{traindoc.sheet_count}'
                 if invoice:
                     # contract = invoice.contract
-                    number = invoice.number
+                    number += ' от' + str(invoice.date)
                 ws.append([
                     content.container.order.name,           # A
-                    contract,                               # B
+                    lot_name,                               # B
                     number,                                 # C
                     content.container.name,                 # D
                     content.name,                           # E
