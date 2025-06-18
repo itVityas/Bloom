@@ -54,6 +54,7 @@ class TrainDocPostSerializer(serializers.ModelSerializer):
                 invoice.prev_file = invoice.file
             invoice.file = file
             invoice.filename = file.name
+            invoice.sheet_count = sheet_count(file)
             invoice.save()
             return invoice
         if instance:
@@ -63,6 +64,7 @@ class TrainDocPostSerializer(serializers.ModelSerializer):
                 invoice.prev_file = invoice.file
             instance.file = file
             invoice.filename = file.name
+            invoice.sheet_count = sheet_count(file)
             instance.save()
             return instance
         count = sheet_count(file)
