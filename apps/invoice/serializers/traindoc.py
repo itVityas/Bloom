@@ -18,11 +18,18 @@ class TrainDocPostSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
+        file = validated_data.get('file', None)
+        lot = validated_data.get('lot', None)
+        self._update_invoice(file, lot)
         return self._check_save(validated_data)
 
     def update(self, instance, validated_data):
         file = validated_data.get('file', instance.file)
         lot = validated_data.get('lot', instance.lot)
+        self._update_invoice(file, lot)
+        return self._check_save(validated_data, instance)
+
+    def _update_invoice(self, file, lot):
         containers = Container.objects.filter(lot=lot)
         for container in containers:
             container_invoices = InvoiceContainer.objects.filter(container=container)
@@ -32,7 +39,6 @@ class TrainDocPostSerializer(serializers.ModelSerializer):
                     invoice_number=container_invoice.number,
                     file=file)
                 container_invoice.save()
-        return self._check_save(validated_data, instance)
 
     def _check_save(self, validated_date, instance=None):
         """Check save TrainDoc model."""
