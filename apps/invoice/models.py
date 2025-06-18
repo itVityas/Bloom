@@ -28,7 +28,7 @@ class InvoiceContainer(models.Model):
     Model representing an invoice.
     Each invoice is associated with a contract and contains details about the transaction.
     """
-    number = models.CharField(max_length=10)  # Invoice number
+    number = models.CharField(max_length=15)  # Invoice number
     date = models.DateField()  # Date of the invoice
     sheet = models.CharField(max_length=50, blank=True, null=True)  # Excel sheet name
     container = models.ForeignKey(
