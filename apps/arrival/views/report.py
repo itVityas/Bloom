@@ -114,7 +114,7 @@ class ReportCSVView(APIView):
                     number = f'1/{traindoc.sheet_count}'
                 if invoice:
                     # contract = invoice.contract
-                    number += ' от' + str(invoice.date)
+                    number += ' от ' + str(invoice.date)
                 ws.append([
                     content.container.order.name,           # A
                     lot_name,                               # B

@@ -6,7 +6,7 @@ from openpyxl.utils import get_column_letter
 
 
 def sheet_to_excel(input_file, sheet_name) -> str:
-    if not os.path.exists(input_file.path):
+    if not os.path.exists(input_file):
         return None
     wb_big = load_workbook(input_file)
     sheet = wb_big[sheet_name]
