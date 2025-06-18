@@ -6,7 +6,7 @@ def find_sheet(invoice_number, container_name, file) -> str:
         return None
     try:
         invoice_number = invoice_number.lower()
-        container_name = invoice_number.lower()
+        container_name = container_name.lower()
         wb = load_workbook(file)
         for sheet in wb.worksheets:
             container_check = False
