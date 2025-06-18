@@ -4,9 +4,10 @@ from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from django_filters.rest_framework import DjangoFilterBackend
 
-from apps.arrival.models import Lot
+from apps.arrival.models import Lot, Container
 from apps.arrival.serializers.lot import LotGetSerializer, LotPostSerializer
 from apps.arrival.permissions import OrderPermission
+from apps.invoice.models import InvoiceContainer
 
 
 @extend_schema(tags=['Lot'])
@@ -60,3 +61,8 @@ class LotRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Lot.objects.all()
     serializer_class = LotPostSerializer
     permission_classes = [IsAuthenticated, OrderPermission]
+
+    def delete(self, request, *args, **kwargs):
+        containers = Container.objects.filter(lot=kwargs['pk'])
+        InvoiceContainer.objects.filter(container__in=containers).update(sheet=None)
+        return super().delete(request, *args, **kwargs)
