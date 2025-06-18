@@ -54,12 +54,12 @@ class InvoiceContainerSheetView(APIView):
             return Response({'error': 'invoice_container not found'}, status=status.HTTP_404_NOT_FOUND)
 
         train_doc = TrainDoc.objects.filter(lot=invoice_container.container.lot).first()
+        if not train_doc:
+            return Response({'error': 'train_doc not found'}, status=status.HTTP_404_NOT_FOUND)
         if not os.path.exists(train_doc.file.path):
             train_doc.file = None
             train_doc.save()
             return Response({'error': 'file not found'}, status=status.HTTP_404_NOT_FOUND)
-        if not train_doc:
-            return Response({'error': 'train_doc not found'}, status=status.HTTP_404_NOT_FOUND)
 
         file_path = sheet_to_excel(train_doc.file.path, invoice_container.sheet)
         if not file_path:
