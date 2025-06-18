@@ -68,7 +68,7 @@ class TrainDocPostSerializer(serializers.ModelSerializer):
             instance.save()
             return instance
         count = sheet_count(file)
-        return TrainDoc.objects.create(lot=lot, file=file, filename=file.name, count=count)
+        return TrainDoc.objects.create(lot=lot, file=file, filename=file.name, sheet_count=count)
 
 
 class TrainDocGetSerializer(serializers.ModelSerializer):
