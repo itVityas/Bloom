@@ -56,7 +56,7 @@ class AddBody(models.Model):
     title = models.ForeignKey(AddTitle, on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ['id']
+        ordering = ['-id']
 
     def __str__(self):
         return f'Content for {self.title.name}'
