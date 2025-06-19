@@ -26,7 +26,7 @@ PROCESSING_FUNCTIONS = {
 }
 
 
-def process_all_dbf_files(zip_file_path, container=None):
+def process_all_dbf_files(zip_file_path, container=None, gifted=False):
     """
     Process all DBF files contained in the provided zip archive.
 
@@ -41,6 +41,7 @@ def process_all_dbf_files(zip_file_path, container=None):
     Args:
         zip_file_path (str): The file system path to the uploaded zip archive.
         container (Optional[Container]): An optional container instance to associate with declarations.
+        gifted (bool): Whether the declarations are gifted. Defaults to False.
 
     Raises:
         Exception: If one or more required files are missing or if any exception occurs during extraction or processing.
@@ -58,7 +59,7 @@ def process_all_dbf_files(zip_file_path, container=None):
                 tmp_file_path = tmp_file.name
             try:
                 if file_name == 'DECL.DBF':
-                    process_func(tmp_file_path, container=container)
+                    process_func(tmp_file_path, container=container, gifted=gifted)
                 else:
                     process_func(tmp_file_path)
             finally:

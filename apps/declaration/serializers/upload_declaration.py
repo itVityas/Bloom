@@ -12,3 +12,4 @@ class ZipFileUploadSerializer(serializers.Serializer):
     """
     file = serializers.FileField()
     container_id = serializers.IntegerField(required=False, allow_null=True)
+    gifted = serializers.BooleanField(required=False, default=False)

@@ -81,12 +81,13 @@ def save_declaration_to_db(declarations_data):
         raise Exception("Нет данных для сохранения.")
 
 
-def process_decl_dbf_file(file_path, container=None):
+def process_decl_dbf_file(file_path, container=None, gifted=False):
     """
     Main function for processing a DBF file containing Declaration data.
 
     :param file_path: Path to the DBF file.
     :param container: Optional container instance to associate with each declaration.
+    :param gifted: Optional flag indicating whether the declarations are gifted.
     :raises Exception: Propagates any exceptions encountered during processing.
     """
     records = read_dbf_records(file_path)
@@ -95,5 +96,8 @@ def process_decl_dbf_file(file_path, container=None):
     if container:
         for data in list_declarations:
             data['container'] = container
+    if gifted:
+        for data in list_declarations:
+            data['gifted'] = gifted
 
     save_declaration_to_db(list_declarations)

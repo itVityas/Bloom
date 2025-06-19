@@ -40,6 +40,7 @@ class ZipFileUploadAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         uploaded_zip = serializer.validated_data['file']
         container_id = serializer.validated_data.get('container_id')
+        gifted = serializer.validated_data.get('gifted')
 
         container = None
         if container_id is not None:
@@ -52,7 +53,7 @@ class ZipFileUploadAPIView(APIView):
                     tmp_zip.write(chunk)
                 tmp_zip_path = tmp_zip.name
 
-            process_all_dbf_files(tmp_zip_path, container=container)
+            process_all_dbf_files(tmp_zip_path, container=container, gifted=gifted)
 
         except DuplicateDeclarationException as de:
             return Response(
