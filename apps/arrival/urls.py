@@ -25,6 +25,11 @@ from apps.arrival.views.lot_model import (
     LotModelListCreateAPIView,
     LotModelRetrieveUpdateDestroyAPIView,
 )
+from apps.arrival.views.makeup import (
+    MakeUpCreateView,
+    MakeUpListView,
+    MakeUpRetrieveUpdateDestroyView,
+)
 
 urlpatterns = [
     # Order endpoints
@@ -58,4 +63,9 @@ urlpatterns = [
     # Lot Model
     path('lot_model/', LotModelListCreateAPIView.as_view()),
     path('lot_model/detail/<int:pk>/', LotModelRetrieveUpdateDestroyAPIView.as_view()),
+
+    # MakeUp endpoints
+    path('makeup/create/', MakeUpCreateView.as_view()),
+    path('makeup/list/', MakeUpListView.as_view()),
+    path('makeup/detail/<int:pk>/', MakeUpRetrieveUpdateDestroyView.as_view()),
 ]
