@@ -17,6 +17,7 @@ class DeclarationFilter(filters.FilterSet):
     end_outgoing_number = filters.CharFilter(field_name='outgoing_number', lookup_expr='iendswith')
     cont_outgoing_number = filters.CharFilter(field_name='outgoing_number', lookup_expr='icontains')
     declaration_date = filters.DateFilter(field_name='declaration_date', lookup_expr='exact')
+    gifted = filters.BooleanFilter(field_name='gifted', lookup_expr='exact')
     container = filters.CharFilter(method='filter_container')
     start_container = filters.CharFilter(method='filter_start_container')
     end_container = filters.CharFilter(method='filter_end_container')
@@ -54,6 +55,7 @@ class DeclarationFilter(filters.FilterSet):
             'end_outgoing_number',
             'cont_outgoing_number',
             'declaration_date',
+            'gifted',
             'container',
             'start_container',
             'end_container',
