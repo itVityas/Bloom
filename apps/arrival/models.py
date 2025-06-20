@@ -102,13 +102,13 @@ class MakeUp(models.Model):
     Model representing makeup associated with a lot.
     """
     filename = models.CharField(max_length=100)
-    file = models.FileField(upload_to='makeup/', null=True, blank=True)
-    lot = models.ForeignKey(
-        Lot, on_delete=models.CASCADE)
+    file = models.FileField(upload_to='makeup/')
+    order = models.ForeignKey(
+        Order, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['-id']
 
     def __str__(self):
         """Return the string representation of the MakeUp."""
-        return self.filename
+        return self.filename1

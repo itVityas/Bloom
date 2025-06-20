@@ -25,7 +25,7 @@ class MakeUpListView(ListAPIView):
     serializer_class = MakeUpGetSerializer
     permission_classes = [IsAuthenticated, ArrivalPermission]
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['id', 'lot']
+    filterset_fields = ['id', 'order']
 
 
 @extend_schema(tags=['MakeUp'])
