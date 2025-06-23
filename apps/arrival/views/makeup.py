@@ -68,5 +68,5 @@ class MakeUpRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     Retrieve, update or delete a makeup.
     """
     queryset = MakeUp.objects.all()
-    serializer_class = MakeUpGetSerializer
+    serializer_class = MakeUpPostSerializer
     permission_classes = [IsAuthenticated, ArrivalPermission]

@@ -103,6 +103,7 @@ class MakeUp(models.Model):
     """
     filename = models.CharField(max_length=100)
     file = models.FileField(upload_to='makeup/')
+    note = models.CharField(max_length=100, blank=True, null=True)
     order = models.ForeignKey(
         Order, on_delete=models.CASCADE)
 
