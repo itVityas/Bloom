@@ -5,7 +5,7 @@ class Order(models.Model):
     """
     Model representing an order.
     """
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     is_completed = models.BooleanField(default=False)
 
     class Meta:
