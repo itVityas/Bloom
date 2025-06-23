@@ -5,7 +5,6 @@ from rest_framework import serializers
 from apps.invoice.models import TrainDoc, InvoiceContainer
 from apps.arrival.models import Container
 from apps.invoice.utils.check_excel import find_sheet
-from apps.invoice.utils.sheet_count import sheet_count
 
 
 class TrainDocPostSerializer(serializers.ModelSerializer):
@@ -60,7 +59,6 @@ class TrainDocPostSerializer(serializers.ModelSerializer):
                 invoice.prev_file = invoice.file
             invoice.file = file
             invoice.filename = file.name
-            invoice.sheet_count = sheet_count(file)
             invoice.save()
             return invoice
         if instance:
@@ -70,11 +68,9 @@ class TrainDocPostSerializer(serializers.ModelSerializer):
                 invoice.prev_file = invoice.file
             instance.file = file
             invoice.filename = file.name
-            invoice.sheet_count = sheet_count(file)
             instance.save()
             return instance
-        count = sheet_count(file)
-        return TrainDoc.objects.create(lot=lot, file=file, filename=file.name, sheet_count=count)
+        return TrainDoc.objects.create(lot=lot, file=file, filename=file.name)
 
 
 class TrainDocGetSerializer(serializers.ModelSerializer):

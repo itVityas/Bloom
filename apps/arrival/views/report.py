@@ -15,7 +15,7 @@ from openpyxl.styles import (
 from apps.arrival.serializers.report import ListOrderSerializer
 from apps.arrival.permissions import ArrivalPermission
 from apps.arrival.models import Order, Content, Lot
-from apps.invoice.models import InvoiceContainer, TrainDoc
+from apps.invoice.models import InvoiceContainer
 
 
 @extend_schema(tags=['ReportXLSX'])
@@ -106,14 +106,12 @@ class ReportCSVView(APIView):
                     container=content.container).first()
                 lot = Lot.objects.filter(container=content.container).first()
                 lot_name = ''
-                traindoc = TrainDoc.objects.filter(lot=lot).first()
                 if lot:
                     lot_name = lot.name
                 number = ''
-                if traindoc:
-                    number = f'1/{traindoc.sheet_count}'
                 if invoice:
                     # contract = invoice.contract
+                    number = '1/' + invoice.number.split('/')[-1]
                     number += ' от ' + str(invoice.date)
                 ws.append([
                     content.container.order.name,           # A
