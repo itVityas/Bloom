@@ -5,6 +5,7 @@ from rest_framework import serializers
 from apps.invoice.models import TrainDoc, InvoiceContainer
 from apps.arrival.models import Container
 from apps.invoice.utils.check_excel import find_sheet
+from apps.invoice.utils.new_traindoc import create_invoice
 
 
 class TrainDocPostSerializer(serializers.ModelSerializer):
@@ -20,7 +21,9 @@ class TrainDocPostSerializer(serializers.ModelSerializer):
         file = validated_data.get('file', None)
         lot = validated_data.get('lot', None)
         self._update_invoice(file, lot)
-        return self._check_save(validated_data)
+        traindoc = self._check_save(validated_data)
+        create_invoice(traindoc)
+        return traindoc
 
     def update(self, instance, validated_data):
         file = validated_data.get('file', instance.file)
