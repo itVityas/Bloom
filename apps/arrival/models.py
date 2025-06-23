@@ -6,6 +6,7 @@ class Order(models.Model):
     Model representing an order.
     """
     name = models.CharField(max_length=100)
+    is_completed = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-id']

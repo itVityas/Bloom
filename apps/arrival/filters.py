@@ -17,6 +17,7 @@ class OrderFilter(filters.FilterSet):
     start_declaration_number = filters.CharFilter(method='filter_start_declaration_number')
     end_declaration_number = filters.CharFilter(method='filter_end_declaration_number')
     cont_declaration_number = filters.CharFilter(method='filter_cont_declaration_number')
+    is_completed = filters.BooleanFilter(field_name='is_completed', lookup_expr='exact')
 
     ordering = filters.OrderingFilter(
         fields=(
@@ -45,6 +46,7 @@ class OrderFilter(filters.FilterSet):
             'start_declaration_number',
             'end_declaration_number',
             'cont_declaration_number',
+            'is_completed',
         ]
 
     def filter_name_container(self, queryset, name, value):

@@ -37,6 +37,7 @@ class OrderListSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'name',
+            'is_completed',
             'containers',
             'traindoc',
             'lots',
