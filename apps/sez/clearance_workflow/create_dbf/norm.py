@@ -1,13 +1,12 @@
 import os
-import datetime
 import dbf
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Prefetch
 
-from apps.sez.models import ClearanceInvoice, ClearanceInvoiceItems
-from apps.sez.models import ClearedItem
+from apps.sez.models import ClearanceInvoice, ClearanceInvoiceItems, ClearedItem
 
-# Список товаров
+# Field definitions for the NORM .dbf
 NORM_FIELDS = [
     ('GTDGA_O',   'C', 16, 0),      # Порядковый номер, ClearanceInvoice.id
     ('TOVGTDNO_O','N', 11, 0),      # Порядковый номер модели в ClearanceInvoiceItems (Например есть 5 ClearanceInvoiceItems для ClearanceInvoice, нужно записать какой это по порядку 1,2,3,4,5)
@@ -23,14 +22,30 @@ NORM_FIELDS = [
 
 
 def generate_norm_dbf(clearance_invoice_id: int, output_path: str, encoding: str = 'cp866') -> None:
+    """
+    Generate a NORM-format DBF file for a given ClearanceInvoice.
 
-    # 1. Получаем инвойс
+    The output .dbf will contain one row per ClearedItem across all items
+    in the specified invoice. Schema defined by NORM_FIELDS.
+
+    Args:
+        clearance_invoice_id (int): PK of the ClearanceInvoice.
+        output_path (str): Full file path where the .dbf should be written.
+        encoding (str, optional): Code page for the DBF. Defaults to 'cp866'.
+
+    Raises:
+        ValueError: If no ClearanceInvoice with the given ID exists.
+        ValueError: If an unsupported field type is found in NORM_FIELDS.
+        OSError: If file deletion or writing fails.
+    """
+    # 1. Fetch invoice or error out early
     try:
         invoice = ClearanceInvoice.objects.get(pk=clearance_invoice_id)
-    except ObjectDoesNotExist:
-        raise ValueError(f"ClearanceInvoice с id={clearance_invoice_id} не найден")
+    except ClearanceInvoice.DoesNotExist:
 
-    # 2. Готовим spec для dbf.Table
+        raise ValueError(f"ClearanceInvoice with id={clearance_invoice_id} not found")
+
+    # 2. Build DBF table spec string
     specs = []
     for name, ftype, length, dec in NORM_FIELDS:
         if ftype == 'C':
@@ -45,33 +60,38 @@ def generate_norm_dbf(clearance_invoice_id: int, output_path: str, encoding: str
             raise ValueError(f"Unsupported field type {ftype!r} in NORM_FIELDS")
     spec_line = "; ".join(specs)
 
-    # 3. Создаём/перезаписываем файл
+    # 3. Remove existing file if present
     if os.path.exists(output_path):
         os.remove(output_path)
+
+    # 4. Open DBF table for writing
     table = dbf.Table(output_path, spec_line, codepage=encoding)
     table.open(dbf.READ_WRITE)
 
-    # 4. Заполняем строки
-    invoice_items = ClearanceInvoiceItems.objects.filter(clearance_invoice_id=clearance_invoice_id)
-
-    with transaction.atomic():
-        for idx, item in enumerate(invoice_items, start=1):
-            print(item.declared_item)
-
-            records = ClearedItem.objects.filter(
-                clearance_invoice=item.clearance_invoice_id,
+    # 5. Query invoice items and prefetch all related cleared items + declarations
+    invoice_items = (
+        ClearanceInvoiceItems.objects
+        .filter(clearance_invoice_id=invoice.id)
+        .prefetch_related(
+            Prefetch(
+                'cleared_items',
+                queryset=ClearedItem.objects.select_related('declared_item_id__declaration'),
+                to_attr='prefetched_cleared_items'
             )
-            for record in records:
-                print(record)
+        )
+    )
 
-            for rec in records:
-                # Строим словарь под одну запись
+    # 6. Populate rows inside a transaction to ensure atomicity
+    with transaction.atomic():
+        for item_index, item in enumerate(invoice_items, start=1):
+            # Use the prefetched list to avoid extra queries
+            for rec in getattr(item, 'prefetched_cleared_items', []):
                 row = {
                     'GTDGA_O':    str(invoice.id),
-                    'TOVGTDNO_O': idx,
-                    'GTDGA':      item.declared_item.declaration_id.declaration_number,
-                    'TOVGTDNO':   item.declared_item.ordinal_number,
-                    'TOVCOUNT':   str(rec['quantity']),
+                    'TOVGTDNO_O': item_index,
+                    'GTDGA':      rec.declared_item_id.declaration.declaration_number,
+                    'TOVGTDNO':   rec.declared_item_id.ordinal_number,
+                    'TOVCOUNT':   str(rec.quantity),
                     'SUBCODE':    '',
                     'TNVD':       '',
                     'SUBCODE_O':  '',
@@ -80,6 +100,7 @@ def generate_norm_dbf(clearance_invoice_id: int, output_path: str, encoding: str
                 }
                 table.append(row)
 
-    # 5. Закрываем
+    # 7. Close the table to flush to disk
     table.close()
-    print(f"NORM.dbf успешно записан в {output_path}")
+
+    print(f"NORM.dbf successfully written to {output_path}")
