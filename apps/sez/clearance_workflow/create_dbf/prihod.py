@@ -1,5 +1,17 @@
+import os
+import logging
+import dbf
+from django.db import transaction
+from django.db.models import Prefetch
+
+from apps.sez.models import ClearanceInvoice, ClearanceInvoiceItems, ClearedItem
+from apps.declaration.models import Declaration
+
+logger = logging.getLogger(__name__)
+
+
 # Список деклараций
-PRIHOD_DECL = [
+PRIHOD_DECL_FIELDS = [
     ('G549',      'C',  18, 0),      # Номер декларации, Declaration.declaration_number
     ('G011',      'C',   2, 0),      # Пусто
     ('G012',      'C',   2, 0),      # Пусто
@@ -103,3 +115,126 @@ PRIHOD_DECL = [
     ('G012_1',    'C',   4, 0),      # Пусто
     ('NAMEECP',   'C',  32, 0),      # Пусто
 ]
+
+
+def generate_prihod_decl_dbf(
+    clearance_invoice_id: int,
+    output_path: str,
+    encoding: str = 'cp866'
+) -> None:
+    """
+    Generate a PRIHOD_DECL-format DBF file for a given ClearanceInvoice.
+
+    One row per unique Declaration referenced by the invoice items.
+    Schema defined by PRIHOD_DECL_FIELDS.
+
+    Args:
+        clearance_invoice_id (int): PK of the ClearanceInvoice.
+        output_path (str): Full file path where the .dbf should be written.
+        encoding (str, optional): Code page for the DBF. Defaults to 'cp866'.
+
+    Raises:
+        ValueError: If no ClearanceInvoice with the given ID exists.
+        ValueError: If an unsupported field type is found in PRIHOD_DECL_FIELDS.
+        OSError: If file deletion or writing fails.
+    """
+    logger.info(f"Starting PRIHOD_DECL DBF generation for invoice id={clearance_invoice_id}")
+
+    # 1. Fetch invoice or error out early
+    try:
+        invoice = ClearanceInvoice.objects.get(pk=clearance_invoice_id)
+        logger.info(f"Fetched ClearanceInvoice id={clearance_invoice_id}")
+    except ClearanceInvoice.DoesNotExist:
+        logger.error(f"ClearanceInvoice id={clearance_invoice_id} not found")
+        raise ValueError(f"ClearanceInvoice with id={clearance_invoice_id} not found")
+
+    # 2. Build DBF table spec string
+    specs = []
+    for name, ftype, length, dec in PRIHOD_DECL_FIELDS:
+        if ftype == 'C':
+            specs.append(f"{name} C({length})")
+        elif ftype == 'N':
+            specs.append(f"{name} N({length},{dec})")
+        elif ftype == 'L':
+            specs.append(f"{name} L")
+        elif ftype == 'D':
+            specs.append(f"{name} D")
+        else:
+            logger.error(f"Unsupported field type {ftype!r} in PRIHOD_DECL_FIELDS")
+            raise ValueError(f"Unsupported field type {ftype!r} in PRIHOD_DECL_FIELDS")
+    spec_line = "; ".join(specs)
+    logger.debug(f"DBF spec line built: {spec_line}")
+
+    # 3. Clean up existing file
+    if os.path.exists(output_path):
+        os.remove(output_path)
+        logger.info(f"Removed existing file at {output_path}")
+
+    # 4. Open DBF table for writing
+    try:
+        table = dbf.Table(output_path, spec_line, codepage=encoding)
+        table.open(dbf.READ_WRITE)
+        logger.info(f"Opened DBF table at {output_path}")
+    except Exception as e:
+        logger.exception(f"Failed to open DBF table at {output_path}: {e}")
+        raise
+
+    # 5. Fetch all related Declarations via invoice items
+    items = (
+        ClearedItem.objects
+        .filter(clearance_invoice_id=invoice.id)
+    )
+
+    # Unique declarations
+    decl_map = {}
+    for item in items:
+        decl = item.declared_item_id.declaration
+        if decl and decl.pk not in decl_map:
+            decl_map[decl.pk] = decl
+    declarations = list(decl_map.values())
+    logger.info(f"Found {len(declarations)} unique declarations for invoice id={clearance_invoice_id}")
+
+    # 6. Populate rows inside a transaction
+    row_count = 0
+    with transaction.atomic():
+        for decl in declarations:
+            num = decl.declaration_number.replace('/', '')
+            dop_nomer = f"d{num[:7]}"
+            nomer_gtd = f"{num[5]}{num[-5:]}"
+
+            row = {}
+            for name, ftype, *_ in PRIHOD_DECL_FIELDS:
+                if name == 'G549':
+                    value = decl.declaration_number
+                elif name == 'G013':
+                    value = '7'
+                elif name in ('G022', 'G082'):
+                    value = decl.sender or ''
+                elif name == 'G141':
+                    value = '300031652'
+                elif name == 'G142':
+                    value = 'РУПП "ВИТЯЗЬ"'
+                elif name == 'G143':
+                    value = 'РБ, 210605, Г.ВИТЕБСК, УЛ.П.БРОВКИ 13А'
+                elif name == 'G542':
+                    value = decl.declaration_date
+                elif name == 'DOP_NOMER':
+                    value = dop_nomer
+                elif name == 'NOMER_GTD':
+                    value = nomer_gtd
+                else:
+                    # empty for all other fields
+                    if ftype == 'C':
+                        value = ''
+                    else:
+                        value = None
+                row[name] = value
+
+            table.append(row)
+            row_count += 1
+
+    logger.info(f"Inserted {row_count} rows into DBF")
+
+    # 7. Close the table
+    table.close()
+    logger.info(f"Closed DBF table. PRIHOD_DECL.dbf written to {output_path}")
