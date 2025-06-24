@@ -106,6 +106,7 @@ def clear_model_items(
                 ClearedItem.objects.create(
                     product_id=model_code,
                     clearance_invoice=invoice_item.clearance_invoice,
+                    clearance_invoice_items=invoice_item,
                     declared_item_id=di,
                     quantity=to_clear,
                 )
