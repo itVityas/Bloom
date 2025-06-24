@@ -2,16 +2,28 @@ import os
 import tempfile
 
 from django.http import HttpResponse
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import IsAuthenticated
 
+from apps.sez.permissions import ClearanceInvoiceItemsPermission
 from apps.sez.serializers.create_dbf import DBFZipSerializer
 from apps.sez.clearance_workflow.create_dbf.generate_all_dbf import generate_all_dbf_zip
 
+
+@extend_schema(tags=['Clearance Workflow'])
+@extend_schema_view(
+    get=extend_schema(
+        summary='Get DBF ZIP for Clearance Invoice',
+        description='Permission: admin, cleared_item_writer',
+    ),
+)
 class ClearanceInvoiceDBFZipView(GenericAPIView):
     """
     GET /api/clearance-invoices/{clearance_invoice_id}/dbf-zip/
     """
+    permission_classes = (IsAuthenticated, ClearanceInvoiceItemsPermission,)
     serializer_class = DBFZipSerializer
 
     def get(self, request, clearance_invoice_id):
