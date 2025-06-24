@@ -4,6 +4,7 @@ from apps.sez.views.clearance_workflow.clearance_result import ClearanceResultLi
 from apps.sez.views.clearance_workflow.cleared_item_by_clearance import ClearedItemListAPIView
 from apps.sez.views.clearance_workflow.export_products import ClearanceInvoiceProductsExportView
 from apps.sez.views.clearance_workflow.full_clearance_workflow import FullClearanceWorkflowAPIView
+from apps.sez.views.create_dbf import ClearanceInvoiceDBFZipView
 from apps.sez.views.report_stz1 import ReportSTZ1View
 from apps.sez.views.report_clearanceinvoice import ReportClearanceInvoicePDFView
 from apps.sez.views.clearance_invoice import (
@@ -84,8 +85,13 @@ urlpatterns = [
 
     # Full clearance_workflow
     path('clearance/calculate/', FullClearanceWorkflowAPIView.as_view(), name='full-clearance-workflow'),
-    path('clearance/<int:invoice_id>/cleared-items/', ClearedItemListAPIView.as_view(), name='cleared-item-list'),
-    path('clearance/<int:invoice_id>/cleared-result/', ClearanceResultListAPIView.as_view(), name='cleared-result-list'),
-    path('clearance/<int:invoice_id>/products/', ClearanceInvoiceProductsExportView.as_view(), name='products-export')
+    path('clearance/<int:invoice_id>/cleared-items/', ClearedItemListAPIView.as_view(),
+         name='cleared-item-list'),
+    path('clearance/<int:invoice_id>/cleared-result/', ClearanceResultListAPIView.as_view(),
+         name='cleared-result-list'),
+    path('clearance/<int:invoice_id>/products/', ClearanceInvoiceProductsExportView.as_view(),
+         name='products-export'),
+    path('clearance-invoices/<int:clearance_invoice_id>/dbf-zip/', ClearanceInvoiceDBFZipView.as_view(),
+         name='clearance-invoice-dbf-zip'),
 
 ]
