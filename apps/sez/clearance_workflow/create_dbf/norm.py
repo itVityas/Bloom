@@ -1,15 +1,17 @@
 import os
+import logging
 import dbf
 from django.db import transaction
-from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Prefetch
 
 from apps.sez.models import ClearanceInvoice, ClearanceInvoiceItems, ClearedItem
 
+logger = logging.getLogger(__name__)
+
 # Field definitions for the NORM .dbf
 NORM_FIELDS = [
     ('GTDGA_O',   'C', 16, 0),      # Порядковый номер, ClearanceInvoice.id
-    ('TOVGTDNO_O','N', 11, 0),      # Порядковый номер модели в ClearanceInvoiceItems (Например есть 5 ClearanceInvoiceItems для ClearanceInvoice, нужно записать какой это по порядку 1,2,3,4,5)
+    ('TOVGTDNO_O','N', 11, 0),      # Порядковый номер модели в ClearanceInvoiceItems
     ('GTDGA',     'C', 50, 0),      # Номер декларации, Declaration.declaration_number
     ('TOVGTDNO',  'N', 11, 0),      # Номер товара в декларации, DeclaredItem.ordinal_number
     ('TOVCOUNT',  'C', 19, 0),      # Количество ClearedItem.quantity
@@ -19,7 +21,6 @@ NORM_FIELDS = [
     ('TNVD_O',    'C', 10, 0),      # Пусто
     ('GTDGD',     'D',  8, 0),      # Пусто
 ]
-
 
 def generate_norm_dbf(clearance_invoice_id: int, output_path: str, encoding: str = 'cp866') -> None:
     """
@@ -38,11 +39,14 @@ def generate_norm_dbf(clearance_invoice_id: int, output_path: str, encoding: str
         ValueError: If an unsupported field type is found in NORM_FIELDS.
         OSError: If file deletion or writing fails.
     """
+    logger.info(f"Starting NORM DBF generation for invoice id={clearance_invoice_id}")
+
     # 1. Fetch invoice or error out early
     try:
         invoice = ClearanceInvoice.objects.get(pk=clearance_invoice_id)
+        logger.info(f"Fetched ClearanceInvoice id={clearance_invoice_id}")
     except ClearanceInvoice.DoesNotExist:
-
+        logger.error(f"ClearanceInvoice id={clearance_invoice_id} not found")
         raise ValueError(f"ClearanceInvoice with id={clearance_invoice_id} not found")
 
     # 2. Build DBF table spec string
@@ -57,16 +61,23 @@ def generate_norm_dbf(clearance_invoice_id: int, output_path: str, encoding: str
         elif ftype == 'D':
             specs.append(f"{name} D")
         else:
+            logger.error(f"Unsupported field type {ftype!r} in NORM_FIELDS")
             raise ValueError(f"Unsupported field type {ftype!r} in NORM_FIELDS")
     spec_line = "; ".join(specs)
+    logger.debug(f"DBF spec line built: {spec_line}")
 
-    # 3. Remove existing file if present
     if os.path.exists(output_path):
         os.remove(output_path)
+        logger.info(f"Removed existing file at {output_path}")
 
     # 4. Open DBF table for writing
-    table = dbf.Table(output_path, spec_line, codepage=encoding)
-    table.open(dbf.READ_WRITE)
+    try:
+        table = dbf.Table(output_path, spec_line, codepage=encoding)
+        table.open(dbf.READ_WRITE)
+        logger.info(f"Opened DBF table at {output_path}")
+    except Exception as e:
+        logger.exception(f"Failed to open DBF table at {output_path}: {e}")
+        raise
 
     # 5. Query invoice items and prefetch all related cleared items + declarations
     invoice_items = (
@@ -80,11 +91,12 @@ def generate_norm_dbf(clearance_invoice_id: int, output_path: str, encoding: str
             )
         )
     )
+    logger.info(f"Prefetching related items for invoice id={clearance_invoice_id}")
 
     # 6. Populate rows inside a transaction to ensure atomicity
+    row_count = 0
     with transaction.atomic():
         for item_index, item in enumerate(invoice_items, start=1):
-            # Use the prefetched list to avoid extra queries
             for rec in getattr(item, 'prefetched_cleared_items', []):
                 row = {
                     'GTDGA_O':    str(invoice.id),
@@ -99,8 +111,9 @@ def generate_norm_dbf(clearance_invoice_id: int, output_path: str, encoding: str
                     'GTDGD':      None,
                 }
                 table.append(row)
+                row_count += 1
+    logger.info(f"Inserted {row_count} rows into DBF")
 
     # 7. Close the table to flush to disk
     table.close()
-
-    print(f"NORM.dbf successfully written to {output_path}")
+    logger.info(f"Closed DBF table. NORM.dbf written to {output_path}")
