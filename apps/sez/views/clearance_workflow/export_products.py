@@ -1,8 +1,9 @@
 # apps/sez/views/export_products.py
 from io import BytesIO
-from typing import Optional
 
 import openpyxl
+from openpyxl.styles import Alignment
+from openpyxl.utils import get_column_letter
 from django.http import HttpResponse
 from drf_spectacular.utils import extend_schema, OpenApiResponse
 from rest_framework.permissions import IsAuthenticated
@@ -26,7 +27,7 @@ class ClearanceInvoiceProductsExportView(APIView):
     """
     Export Products for a given ClearanceInvoice as an XLSX file.
 
-    CSV columns:
+    Excel columns:
     1) Product ID
     2) Model Short Name
     3) Barcode
@@ -57,6 +58,22 @@ class ClearanceInvoiceProductsExportView(APIView):
             model_short = product.model.name.short_name if product.model and product.model.name else ''
             barcode = product.barcode or ''
             ws.append([product_id, model_short, barcode])
+
+        # Adjust column widths and alignment
+        # Set wider columns
+        column_widths = {
+            1: 15,  # Product ID
+            2: 20,  # Model Short Name
+            3: 30,  # Barcode
+        }
+        for col_idx, width in column_widths.items():
+            col_letter = get_column_letter(col_idx)
+            ws.column_dimensions[col_letter].width = width
+
+        # Align all cells to left
+        for row in ws.iter_rows(min_row=1, max_row=ws.max_row, min_col=1, max_col=len(headers)):
+            for cell in row:
+                cell.alignment = Alignment(horizontal='left')
 
         # Save workbook to in-memory buffer
         buffer = BytesIO()
