@@ -2,10 +2,11 @@ from django.db.models import Sum
 
 from rest_framework import serializers
 from apps.arrival.models import Container, Content, Order
-from apps.invoice.models import InvoiceContainer
 from apps.arrival.serializers.content import ContentSerializer, ContentMultySerializer
 from apps.declaration.serializers.declaration import DeclarationSerializer
 from apps.arrival.serializers.lot import LotPostSerializer
+from apps.invoice.models import TrainDoc, InvoiceContainer
+from apps.invoice.utils.check_excel import find_sheet
 
 
 class InvoiceContainerSerializer(serializers.ModelSerializer):
@@ -106,6 +107,27 @@ class ContainerSetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Container
         fields = "__all__"
+
+    def update(self, instance, validated_data):
+        name = validated_data.get('name', None)
+        lot = validated_data.get('lot', None)
+        if lot or name:
+            try:
+                invoices = InvoiceContainer.objects.filter(container=instance)
+                traindoc = TrainDoc.objects.filter(lot=lot).first()
+                for inv in invoices:
+                    if traindoc:
+                        inv.sheet = find_sheet(
+                            invoice_number=inv.number,
+                            container_name=name,
+                            file=traindoc.file
+                        )
+                        inv.save()
+                    inv.sheet = None
+                    inv.save()
+            except Exception as e:
+                print(e)
+        return super().update(instance, validated_data)
 
 
 class ContainerAndDeclarationSerializer(serializers.ModelSerializer):
