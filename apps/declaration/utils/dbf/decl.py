@@ -69,7 +69,7 @@ def save_declaration_to_db(declarations_data):
 
     for data in declarations_data:
         if Declaration.objects.filter(declaration_id=data['declaration_id']).exists():
-            duplicate_ids.append(data['declaration_id'])
+            duplicate_ids.append(data['declaration_number'])
         else:
             declarations.append(Declaration(**data))
 
