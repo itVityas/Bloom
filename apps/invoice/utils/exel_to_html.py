@@ -1,4 +1,5 @@
 import os
+import re
 
 import pandas as pd
 from openpyxl import load_workbook
@@ -18,7 +19,17 @@ def excel_sheet_to_html(input_file, sheet_name, output_file, template):
         sheet = wb[sheet_name]
         data = []
         for row in sheet.iter_rows(values_only=True):
-            data.append([cell if cell is not None else "" for cell in row])
+            line = []
+            for cell in row:
+                if not cell:
+                    line.append("")
+                else:
+                    if re.match(r'^-?\d+(\.\d+)?$', str(cell)):
+                        line.append(f"{cell:.{2}f}")
+                        continue
+                    line.append(str(cell))
+            # data.append([str(cell) if cell is not None else "" for cell in row])
+            data.append(line)
 
         df = pd.DataFrame(data[1:], columns=data[0])
 
