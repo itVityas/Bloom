@@ -1,6 +1,6 @@
 import os
 
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, HttpResponse
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -25,12 +25,15 @@ class BaseLogDownloadView(GenericAPIView):
         if not os.path.exists(log_path):
             raise Http404(f"Log file not found: {self.log_filename}")
 
-        return FileResponse(
-            open(log_path, 'rb'),
-            as_attachment=True,
-            filename=self.log_filename,
-            content_type='text/plain',
-        )
+        try:
+            with open(log_path, 'rb') as f:
+                data = f.read()
+        except Exception as e:
+            raise Http404(f"Cannot read log file: {e}")
+
+        response = HttpResponse(data, content_type='text/plain')
+        response['Content-Disposition'] = f'attachment; filename="{self.log_filename}"'
+        return response
 
 @extend_schema(tags=['Logs'])
 @extend_schema_view(
