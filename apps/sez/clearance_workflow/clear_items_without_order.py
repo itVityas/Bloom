@@ -49,6 +49,7 @@ def clear_model_items(
 
     # 1) Fetch flat component tree with absolute quantities
     components = fetch_vznab_stock_flat_tree(model_code, None, quantity)
+    logger.debug(f'Fetched component tree for model {model_code}')
 
     # 2) Optional TV panel check
     if is_tv:
