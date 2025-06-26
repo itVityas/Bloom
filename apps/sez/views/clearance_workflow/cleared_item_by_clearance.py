@@ -32,5 +32,6 @@ class ClearedItemListAPIView(ListAPIView):
             ClearedItem.objects
             .filter(clearance_invoice_id=invoice_id)
             .select_related('declared_item_id__declaration')
-            .order_by('declared_item_id__declaration__declaration_date')
+            .order_by('declared_item_id__ordinal_number',
+                      'declared_item_id__declaration__declaration_date')
         )
