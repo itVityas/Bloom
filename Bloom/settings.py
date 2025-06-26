@@ -303,7 +303,7 @@ LOGGING = {
 
     'root': {
         'handlers': ['rotating_file'],
-        'level': 'INFO',
+        'level': 'DEBUG',
     },
 }
 
