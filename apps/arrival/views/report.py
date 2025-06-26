@@ -100,7 +100,12 @@ class ReportCSVView(APIView):
             col11 = ws.column_dimensions["K"]
             col11.width = 20
             col11.alignment = Alignment(wrap_text=True)
+
             contents = Content.objects.filter(container__order=order)
+            start_position = 6
+            if contents:
+                container_name = contents.first().container.name
+            i = 6
             for content in contents:
                 invoice = InvoiceContainer.objects.filter(
                     container=content.container).first()
@@ -113,11 +118,16 @@ class ReportCSVView(APIView):
                     # contract = invoice.contract
                     number = '1/' + invoice.number.split('/')[-1]
                     number += ' от ' + str(invoice.date)
+                if container_name != content.container.name:
+                    container_name = content.container.name
+                    if start_position != i:
+                        ws.merge_cells(f'D{start_position}:D{i}')
+                    start_position = i + 1
                 ws.append([
                     content.container.order.name,           # A
                     lot_name,                               # B
                     number,                                 # C
-                    content.container.name,                 # D
+                    container_name,                         # D
                     content.name,                           # E
                     content.count,                          # F
                     content.container.exit_date,            # G
@@ -126,8 +136,11 @@ class ReportCSVView(APIView):
                     content.container.state,                # J
                     content.container.notice,               # K
                 ])
+                i += 1
             if contents.count() > 0:
                 ws.merge_cells(f'A6:A{contents.count()+5}')
+                if i != start_position:
+                    ws.merge_cells(f'D{start_position}:D{i-1}')
 
         file_path = "tmp/orders.xlsx"
         wb.save(file_path)
