@@ -1,5 +1,6 @@
 from django.urls import path
 
+from apps.general.views.logs import LogDjangoDownloadView, LogOmegaDownloadView
 from apps.general.views.visits import (
     VisitsListCreateView, VisitsRetrieveUpdateDestroyView
 )
@@ -19,5 +20,10 @@ urlpatterns = [
     path('add-body/detailed/<int:pk>/', AddBodyRetrieveUpdateDestroyAPIView.as_view()),
     path('add-title/', AddTitleListAPIView.as_view()),
     path('add-title/create/', AddTitleCreateAPIView.as_view()),
-    path('add-title/detailed/<int:pk>/', AddTitleRetrieveUpdateDestroyAPIView.as_view())
+    path('add-title/detailed/<int:pk>/', AddTitleRetrieveUpdateDestroyAPIView.as_view()),
+
+    # Logs
+    path('logs/django_download/', LogDjangoDownloadView.as_view(), name='django-log-download'),
+    path('logs/omega_download/', LogOmegaDownloadView.as_view(), name='omega-log-download'),
+
 ]
