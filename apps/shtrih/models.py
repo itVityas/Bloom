@@ -170,3 +170,53 @@ class ModelColors(models.Model):
 
     def __str__(self):
         return f"{self.model_id} - {self.color_id}"
+
+
+class TypesOfWork(models.Model):
+    """
+    Type of work reference table for product components.
+    """
+    name = models.CharField(max_length=20, db_column='name')
+    order = models.SmallIntegerField(db_column='order')
+
+    class Meta:
+        managed = False
+        db_table = 'types_of_work'
+        ordering = ['id']
+
+
+class Workplaces(models.Model):
+    """
+    Workplace reference table for product components.
+    """
+    housing = models.CharField(max_length=3, db_column='housing')
+    module = models.ForeignKey(Modules, on_delete=models.CASCADE, db_column='module_id')
+    type_of_work = models.ForeignKey(TypesOfWork, on_delete=models.CASCADE, db_column='type_of_work_id')
+    computer_number = models.CharField(max_length=2, db_column='computer_number')
+    create_at = models.DateTimeField(db_column='create_at')
+    version = models.CharField(max_length=10, db_column='version')
+
+    class Meta:
+        managed = False
+        db_table = 'workplaces'
+        ordering = ['-id']
+
+    def __str__(self):
+        return f"{self.name}"
+
+
+class Protocols(models.Model):
+    """
+    Protocol reference table for product components.
+    """
+    product = models.ForeignKey(Products, on_delete=models.CASCADE, db_column='product_id')
+    workplace = models.ForeignKey(Workplaces, on_delete=models.CASCADE, db_column='workplace_id')
+    work_date = models.DateField(db_column='work_date')
+
+    class Meta:
+        managed = False
+        db_table = 'protocols'
+        ordering = ['-id']
+
+    def __str__(self):
+        return f"Protocol {self.number}-{self.digit}"
