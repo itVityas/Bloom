@@ -53,7 +53,7 @@ def fetch_vznab_stock_details(scp_unv: int) -> List[Dict[str, Optional[object]]]
 
         qs = (
             VzNab.objects.using('oracle_db')
-            .filter(spc_unv_id=scp_unv)
+            .filter(spc_unv_id=scp_unv, kdd=None)
             .select_related('item_unv')
             .annotate(
                 quantity=ExpressionWrapper(
