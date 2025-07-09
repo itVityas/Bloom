@@ -6,7 +6,7 @@ from drf_spectacular.utils import (
     extend_schema, extend_schema_view, OpenApiResponse, OpenApiParameter)
 
 from apps.shtrih.models import Protocols
-from apps.shtrih.serializers.protocols import ProtocolsSerializer
+from apps.shtrih.serializers.protocols import ProtocolsFullSerializer
 from apps.shtrih.permission import StrihPermission
 
 
@@ -25,7 +25,7 @@ from apps.shtrih.permission import StrihPermission
             )
         ],
         responses={
-            200: ProtocolsSerializer,
+            200: ProtocolsFullSerializer,
             400: OpenApiResponse(description='Bad request'),
             401: OpenApiResponse(description='Unauthorized'),
             403: OpenApiResponse(description='Forbidden'),
@@ -34,7 +34,7 @@ from apps.shtrih.permission import StrihPermission
     )
 )
 class DateFromBarcodeView(APIView):
-    serializer_class = ProtocolsSerializer
+    serializer_class = ProtocolsFullSerializer
     queryset = Protocols.objects.all()
     permission_classes = (IsAuthenticated, StrihPermission,)
 
@@ -45,4 +45,4 @@ class DateFromBarcodeView(APIView):
         protocols = Protocols.objects.filter(product__barcode=barcode)
         if not protocols:
             return Response({'error': 'barcode not found'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(ProtocolsSerializer(protocols, many=True).data, status=status.HTTP_200_OK)
+        return Response(ProtocolsFullSerializer(protocols, many=True).data, status=status.HTTP_200_OK)

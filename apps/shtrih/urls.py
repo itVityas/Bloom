@@ -21,5 +21,5 @@ urlpatterns = [
     path('strih/product_count_by_model_name_id/<int:pk>/', ProductCountByModelNameView.as_view()),
     path('strih/models', ModelListView.as_view()),
     path('strih/products', ProductListView.as_view()),
-    path('strih/barcode_date', DateFromBarcodeView.as_view()),
+    path('strih/barcode_date/', DateFromBarcodeView.as_view()),
 ]
