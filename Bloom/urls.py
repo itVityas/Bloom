@@ -51,6 +51,7 @@ urlpatterns = [
     path('api/v1/', include('apps.shtrih.urls')),
     path('api/v1/', include('apps.general.urls')),
     path('api/v1/', include('apps.onec.urls')),
+    path('api/v1/', include('apps.warehouse.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

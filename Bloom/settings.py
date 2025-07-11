@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'apps.omega',
     'apps.general',
     'apps.onec',
+    'apps.warehouse',
 ]
 
 MIDDLEWARE = [
