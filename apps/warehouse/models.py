@@ -1,10 +1,13 @@
 from django.db import models
 
 from apps.shtrih.models import Products
+from apps.account.models import User
 
 
 class warehouse(models.Model):
     name = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+    date = models.DateField(null=True, blank=True)
 
     class Meta:
         ordering = ['id']
@@ -48,6 +51,7 @@ class WarehouseProduct(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
     warehouse = models.ForeignKey(warehouse, on_delete=models.CASCADE)
     warehouse_action = models.ForeignKey(warehouse_action, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField(default=1)
     ttn_number = models.CharField(max_length=50, blank=True, null=True)
     create_at = models.DateTimeField(auto_now_add=True)
@@ -57,6 +61,7 @@ class WarehouseProduct(models.Model):
 class Palleting(models.Model):
     pallet = models.ForeignKey(Pallet, on_delete=models.CASCADE)
     warehouse_product = models.ForeignKey(WarehouseProduct, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
     create_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
