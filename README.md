@@ -41,7 +41,7 @@ CipherString = DEFAULT:@SECLEVEL=0
 + python3 manage.py createsuperuser
 + python3 manage.py runserver {ip:port|port}
 + ./manage.py migrate (apply migrations for DB, if you need)
-+ ./manage.py loaddata fixture/department.json (if you run at first)
++ ./manage.py loaddata fixture/role.json (if you run at first)
 + ./manage.py loaddata fixture/imns.json (if you run at first)
 + ./manage.py loaddata fixture/user.json (if you run at first)
 + ./manage.py runsever {ip:port} (start app)
@@ -64,4 +64,13 @@ DB_PORT=
 ORACLE_DB_NAME=
 ORACLE_DB_USER=
 ORACLE_DB_PASSWORD=
+
+API_USERNAME=
+API_PASSWORD=
+API_1C_URL_GTD=
 ```
+
+
+
+to upload DB table to json use
+python3 manage.py dumpdata account.Role --output=fixture/role.json
