@@ -11,11 +11,21 @@ from apps.account.serializers.user import UserUpdateSerializer
 class WarehouseProductPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = WarehouseProduct
-        fields = "__all__"
+        fields = [
+            'product',
+            'warehouse',
+            'warehouse_action',
+            'quantity',
+            'ttn_number'
+        ]
 
 
-class WarehouseProductGetSerializer(WarehouseProductPostSerializer):
+class WarehouseProductGetSerializer(serializers.ModelSerializer):
     product = ProductGetSerializer(read_only=True, many=False)
     warehouse = WarehouseSerializer(read_only=True, many=False)
     warehouse_action = WarehouseActionGetSerializer(read_only=True, many=False)
     user = UserUpdateSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = WarehouseProduct
+        fields = "__all__"

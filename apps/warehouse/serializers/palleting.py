@@ -11,11 +11,18 @@ from apps.account.serializers.user import UserUpdateSerializer
 class PalletingPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Palleting
-        fields = "__all__"
+        fields = [
+            'pallet',
+            'warehouse_product',
+        ]
 
 
-class PalletingGetSerializer(PalletingPostSerializer):
+class PalletingGetSerializer(serializers.ModelSerializer):
     pallet = PalletSerializer(read_only=True, many=False)
     warehouse_product = WarehouseProductGetSerializer(
         read_only=True, many=False)
     user = UserUpdateSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = Palleting
+        fields = "__all__"

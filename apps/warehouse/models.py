@@ -61,6 +61,9 @@ class WarehouseProduct(models.Model):
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ['-id']
+
 
 class Palleting(models.Model):
     pallet = models.ForeignKey(Pallet, on_delete=models.CASCADE)
