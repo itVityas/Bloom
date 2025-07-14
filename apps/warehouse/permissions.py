@@ -1,7 +1,7 @@
 from Bloom.permission import RoleBasedPermission
 
 
-class SGPPermission(RoleBasedPermission):
+class WarehousePermission(RoleBasedPermission):
     """
     Permission for arrival operations.
     - GET: Allowed for 'admin' and 'sgp_reader' and 'ban'.

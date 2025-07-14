@@ -42,8 +42,9 @@ CipherString = DEFAULT:@SECLEVEL=0
 + python3 manage.py runserver {ip:port|port}
 + ./manage.py migrate (apply migrations for DB, if you need)
 + ./manage.py loaddata fixture/role.json (if you run at first)
-+ ./manage.py loaddata fixture/imns.json (if you run at first)
-+ ./manage.py loaddata fixture/user.json (if you run at first)
++ ./manage.py loaddata fixture/type_of_work.json (if you run at first)
++ ./manage.py loaddata fixture/warehouse.json (if you run at first)
++ ./manage.py loaddata fixture/warehouse_action.json (if you run at first)
 + ./manage.py runsever {ip:port} (start app)
 
 
@@ -74,3 +75,6 @@ API_1C_URL_GTD=
 
 to upload DB table to json use
 python3 manage.py dumpdata account.Role --output=fixture/role.json
+python3 manage.py dumpdata warehouse.TypeOfWork --output=fixture/type_of_work.json
+python3 manage.py dumpdata warehouse.Warehouse --output=fixture/warehouse.json
+python3 manage.py dumpdata warehouse.WarehouseAction --output=fixture/warehouse_action.json

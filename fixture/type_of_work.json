@@ -1,0 +1,1 @@
+[{"model": "warehouse.typeofwork", "pk": 1, "fields": {"name": "Приход"}}, {"model": "warehouse.typeofwork", "pk": 2, "fields": {"name": "Паллетирование"}}, {"model": "warehouse.typeofwork", "pk": 3, "fields": {"name": "Отгрузка"}}]

@@ -4,7 +4,7 @@ from apps.shtrih.models import Products
 from apps.account.models import User
 
 
-class warehouse(models.Model):
+class Warehouse(models.Model):
     name = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
     date = models.DateField(null=True, blank=True)
@@ -16,7 +16,7 @@ class warehouse(models.Model):
         return f'{self.id}:{self.name}'
 
 
-class type_of_work(models.Model):
+class TypeOfWork(models.Model):
     name = models.CharField(max_length=100)
 
     class Meta:
@@ -26,9 +26,9 @@ class type_of_work(models.Model):
         return f'{self.id}:{self.name}'
 
 
-class warehouse_action(models.Model):
+class WarehouseAction(models.Model):
     name = models.CharField(max_length=100)
-    type_of_work = models.ForeignKey(type_of_work, on_delete=models.CASCADE)
+    type_of_work = models.ForeignKey(TypeOfWork, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['id']
@@ -48,9 +48,13 @@ class Pallet(models.Model):
 
 
 class WarehouseProduct(models.Model):
-    product = models.ForeignKey(Products, on_delete=models.CASCADE)
-    warehouse = models.ForeignKey(warehouse, on_delete=models.CASCADE)
-    warehouse_action = models.ForeignKey(warehouse_action, on_delete=models.CASCADE)
+    product = models.ForeignKey(
+        Products,
+        on_delete=models.CASCADE,
+        db_constraint=False)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
+    warehouse_action = models.ForeignKey(
+        WarehouseAction, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField(default=1)
     ttn_number = models.CharField(max_length=50, blank=True, null=True)
@@ -60,7 +64,8 @@ class WarehouseProduct(models.Model):
 
 class Palleting(models.Model):
     pallet = models.ForeignKey(Pallet, on_delete=models.CASCADE)
-    warehouse_product = models.ForeignKey(WarehouseProduct, on_delete=models.CASCADE)
+    warehouse_product = models.ForeignKey(
+        WarehouseProduct, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     create_at = models.DateTimeField(auto_now_add=True)
 
