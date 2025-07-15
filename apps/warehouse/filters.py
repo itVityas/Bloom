@@ -1,0 +1,52 @@
+import django_filters as filters
+
+from apps.warehouse.models import WarehouseProduct, Palleting
+
+
+class WarehouseProductFilter(filters.FilterSet):
+    is_active = filters.BooleanFilter(field_name='is_active')
+    quantity = filters.NumberFilter(field_name='quantity', lookup_expr='exact')
+    create_at = filters.DateFilter(field_name='create_at', lookup_expr='exact')
+    update_at = filters.DateFilter(field_name='update_at', lookup_expr='icontains')
+
+    ordering = filters.OrderingFilter(
+        fields=(
+            ('id', 'id'),
+            ('product', 'product_id'),
+            ('warehouse', 'warehouse_id'),
+            ('warehouse_action', 'warehouse_acton_id'),
+            ('update_at', 'update_at'),
+            ('create_at', 'create_at'),
+            ('quantity', 'quantity'),
+            ('user', 'user_id'),
+        ),
+    )
+
+    class Meta:
+        model = WarehouseProduct
+        fields = (
+            'is_active',
+            'quantity',
+            'create_at',
+            'update_at',
+        )
+
+
+class PalletingFilter(filters.FilterSet):
+    create_at = filters.DateFilter(field_name='create_at', lookup_expr='icontains')
+
+    ordering = filters.OrderingFilter(
+        fields=(
+            ('id', 'id'),
+            ('pallet', 'pallet_id'),
+            ('warehouse_product', 'warehouse_product_id'),
+            ('create_at', 'create_at'),
+            ('user', 'user_id'),
+        ),
+    )
+
+    class Meta:
+        model = Palleting
+        fields = (
+            'create_at',
+        )

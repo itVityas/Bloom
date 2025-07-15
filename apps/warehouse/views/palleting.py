@@ -15,6 +15,7 @@ from apps.warehouse.serializers.palleting import (
 )
 from apps.warehouse.permissions import WarehousePermission
 from Bloom.paginator import StandartResultPaginator
+from apps.warehouse.filters import PalletingFilter
 
 
 @extend_schema(tags=['Palleting'])
@@ -30,7 +31,7 @@ class PalletingListAPIView(ListAPIView):
     permission_classes = [IsAuthenticated, WarehousePermission]
     pagination_class = StandartResultPaginator
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['id', 'pallet',]
+    filterset_class = PalletingFilter
 
 
 @extend_schema(tags=['Palleting'])

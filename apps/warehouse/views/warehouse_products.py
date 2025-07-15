@@ -15,6 +15,7 @@ from apps.warehouse.serializers.warehouse_products import (
 )
 from apps.warehouse.permissions import WarehousePermission
 from Bloom.paginator import StandartResultPaginator
+from apps.warehouse.filters import WarehouseProductFilter
 
 
 @extend_schema(tags=["WarehouseProduct"])
@@ -30,7 +31,7 @@ class WarehouseProductListAPIView(ListAPIView):
     permission_classes = [IsAuthenticated, WarehousePermission]
     pagination_class = StandartResultPaginator
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['id', 'ttn_number', 'quantity']
+    filterset_class = WarehouseProductFilter
 
 
 @extend_schema(tags=["WarehouseProduct"])
