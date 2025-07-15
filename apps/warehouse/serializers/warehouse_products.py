@@ -6,6 +6,7 @@ from apps.warehouse.serializers.warehouse_action import (
     WarehouseActionGetSerializer)
 from apps.shtrih.serializers.products import ProductGetSerializer
 from apps.account.serializers.user import UserUpdateSerializer
+from apps.shtrih.models import Products
 
 
 class WarehouseProductPostSerializer(serializers.ModelSerializer):
@@ -15,8 +16,10 @@ class WarehouseProductPostSerializer(serializers.ModelSerializer):
             'product',
             'warehouse',
             'warehouse_action',
+            'warehouse_ttn',
             'quantity',
-            'ttn_number'
+            'ttn_number',
+            'date'
         ]
 
 
@@ -29,3 +32,39 @@ class WarehouseProductGetSerializer(serializers.ModelSerializer):
     class Meta:
         model = WarehouseProduct
         fields = "__all__"
+
+
+class WarehouseProductBarcodeSerializer(serializers.ModelSerializer):
+    barcode = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = WarehouseProduct
+        fields = [
+            'barcode',
+            'warehouse',
+            'warehouse_action',
+            'warehouse_ttn',
+            'quantity',
+            'ttn_number',
+            'date'
+        ]
+        extra_kwargs = {
+            'product': {'read_only': True},
+            'user': {'read_only': True}
+        }
+
+    def validate_barcode(self, value):
+        if not Products.objects.filter(barcode=value).exists():
+            raise serializers.ValidationError("Product with this barcode does not exist")
+        return value
+
+    def create(self, validated_data):
+        barcode = validated_data.pop('barcode')
+        product = Products.objects.get(barcode=barcode)
+
+        validated_data['user'] = self.context['request'].user
+
+        return WarehouseProduct.objects.create(
+            product=product,
+            **validated_data
+        )

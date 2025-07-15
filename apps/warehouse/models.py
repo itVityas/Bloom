@@ -72,6 +72,7 @@ class WarehouseProduct(models.Model):
         WarehouseTTN, on_delete=models.PROTECT, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
     ttn_number = models.CharField(max_length=50, blank=True, null=True)
+    date = models.DateField(null=True, blank=True)
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
 
