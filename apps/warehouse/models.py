@@ -47,6 +47,18 @@ class Pallet(models.Model):
         return f'{self.id}:{self.barcode}'
 
 
+class WarehouseTTN(models.Model):
+    ttn_number = models.CharField(max_length=50, primary_key=True)
+    is_close = models.BooleanField(default=False)
+    date = models. DateField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-ttn_number']
+
+    def __call__(self, *args, **kwds):
+        return f'{self.ttn_number}'
+
+
 class WarehouseProduct(models.Model):
     product = models.ForeignKey(
         Products,
@@ -56,6 +68,8 @@ class WarehouseProduct(models.Model):
     warehouse_action = models.ForeignKey(
         WarehouseAction, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
+    warehouse_ttn = models.ForeignKey(
+        WarehouseTTN, on_delete=models.PROTECT, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
     ttn_number = models.CharField(max_length=50, blank=True, null=True)
     create_at = models.DateTimeField(auto_now_add=True)

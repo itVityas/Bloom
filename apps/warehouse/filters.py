@@ -1,6 +1,6 @@
 import django_filters as filters
 
-from apps.warehouse.models import WarehouseProduct, Palleting
+from apps.warehouse.models import WarehouseProduct, Palleting, WarehouseTTN
 
 
 class WarehouseProductFilter(filters.FilterSet):
@@ -15,6 +15,7 @@ class WarehouseProductFilter(filters.FilterSet):
             ('product', 'product_id'),
             ('warehouse', 'warehouse_id'),
             ('warehouse_action', 'warehouse_acton_id'),
+            ('warehouse_ttn', 'warehouse_ttn'),
             ('update_at', 'update_at'),
             ('create_at', 'create_at'),
             ('quantity', 'quantity'),
@@ -49,4 +50,32 @@ class PalletingFilter(filters.FilterSet):
         model = Palleting
         fields = (
             'create_at',
+        )
+
+
+class WarehouseTTNFilter(filters.FilterSet):
+    number = filters.CharFilter(field_name='number', lookup_expr='iexact')
+    number_start = filters.CharFilter(field_name='number', lookup_expr='istartswith')
+    number_end = filters.CharFilter(field_name='number', lookup_expr='iendswith')
+    number_cont = filters.CharFilter(field_name='number', lookup_expr='icontains')
+    is_close = filters.BooleanFilter(field_name='is_close')
+    date = filters.DateFilter(field_name='date', lookup_expr='exact')
+
+    ordering = filters.OrderingFilter(
+        fields=(
+            ('number', 'number'),
+            ('is_close', 'is_close'),
+            ('date', 'date'),
+        ),
+    )
+
+    class Meta:
+        model = WarehouseTTN
+        fields = (
+            'number',
+            'number_start',
+            'number_end',
+            'number_cont',
+            'is_close',
+            'date',
         )

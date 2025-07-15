@@ -30,6 +30,10 @@ from apps.warehouse.views.palleting import (
     PalletingRetrieveAPIView,
     PalletingRetrieveUpdateDestroyAPIView
 )
+from apps.warehouse.views.warehouse_ttn import (
+    WarehouseTTNListCreateAPIView,
+    WarehouseTTNRetrieveUpdateDestroyAPIView
+)
 
 urlpatterns = [
     path('typeofwork/', TypeOfWorkListCreateView.as_view()),
@@ -50,4 +54,6 @@ urlpatterns = [
     path('palleting/list/', PalletingListAPIView.as_view()),
     path('palleting/detailed/<int:pk>/', PalletingRetrieveAPIView.as_view()),
     path('palleting/update/<int:pk>/', PalletingRetrieveUpdateDestroyAPIView.as_view()),
+    path('warehousettn/', WarehouseTTNListCreateAPIView.as_view()),
+    path('warehousettn/update/<int:pk>/', WarehouseTTNRetrieveUpdateDestroyAPIView.as_view()),
 ]
