@@ -62,6 +62,9 @@ class WarehouseProductBarcodeSerializer(serializers.ModelSerializer):
         barcode = validated_data.pop('barcode')
         product = Products.objects.get(barcode=barcode)
 
+        if not validated_data.get('quantity', None):
+            validated_data['quantity'] = product.quantity
+
         validated_data['user'] = self.context['request'].user
 
         return WarehouseProduct.objects.create(
