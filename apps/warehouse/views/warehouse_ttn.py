@@ -100,7 +100,8 @@ class WarehouseTTNByUserIdAPIView(APIView):
                 )
 
         warehoouse_product = WarehouseProduct.objects.filter(
-            user_id=user_id
+            user_id=user_id,
+            warehouse_ttn__isnull=False
             ).order_by('-create_at').first()
         if not warehoouse_product:
             return Response(
