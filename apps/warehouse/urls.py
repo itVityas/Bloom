@@ -33,7 +33,11 @@ from apps.warehouse.views.palleting import (
 )
 from apps.warehouse.views.warehouse_ttn import (
     WarehouseTTNListCreateAPIView,
-    WarehouseTTNRetrieveUpdateDestroyAPIView
+    WarehouseTTNRetrieveUpdateDestroyAPIView,
+    WarehouseTTNByUserIdAPIView
+)
+from apps.warehouse.views.warehouse_product_history import (
+    WarehouseProductHistoryListAPIView
 )
 
 urlpatterns = [
@@ -57,5 +61,7 @@ urlpatterns = [
     path('palleting/detailed/<int:pk>/', PalletingRetrieveAPIView.as_view()),
     path('palleting/update/<int:pk>/', PalletingRetrieveUpdateDestroyAPIView.as_view()),
     path('warehousettn/', WarehouseTTNListCreateAPIView.as_view()),
+    path('warehousettnbyuser/', WarehouseTTNByUserIdAPIView.as_view()),
     path('warehousettn/update/<int:pk>/', WarehouseTTNRetrieveUpdateDestroyAPIView.as_view()),
+    path('warehouseproducthistory/', WarehouseProductHistoryListAPIView.as_view()),
 ]

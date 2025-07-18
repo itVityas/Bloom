@@ -4,6 +4,7 @@ from apps.warehouse.models import WarehouseProduct
 from apps.warehouse.serializers.warehouse import WarehouseSerializer
 from apps.warehouse.serializers.warehouse_action import (
     WarehouseActionGetSerializer)
+from apps.warehouse.serializers.warehouse_ttn import WarehouseTTNSerializer
 from apps.shtrih.serializers.products import ProductGetSerializer
 from apps.account.serializers.user import UserUpdateSerializer
 from apps.shtrih.models import Products
@@ -28,6 +29,7 @@ class WarehouseProductGetSerializer(serializers.ModelSerializer):
     warehouse = WarehouseSerializer(read_only=True, many=False)
     warehouse_action = WarehouseActionGetSerializer(read_only=True, many=False)
     user = UserUpdateSerializer(read_only=True, many=False)
+    warehouse_ttn = WarehouseTTNSerializer(read_only=True, many=False)
 
     class Meta:
         model = WarehouseProduct

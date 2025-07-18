@@ -1,6 +1,11 @@
 import django_filters as filters
 
-from apps.warehouse.models import WarehouseProduct, Palleting, WarehouseTTN
+from apps.warehouse.models import (
+    WarehouseProduct,
+    Palleting,
+    WarehouseTTN,
+    WarehouseProductHistory
+)
 
 
 class WarehouseProductFilter(filters.FilterSet):
@@ -25,6 +30,17 @@ class WarehouseProductFilter(filters.FilterSet):
 
     class Meta:
         model = WarehouseProduct
+        fields = (
+            'is_active',
+            'quantity',
+            'create_at',
+            'update_at',
+        )
+
+
+class WarehouseProductHistoryFilter(WarehouseProductFilter):
+    class Meta:
+        model = WarehouseProductHistory
         fields = (
             'is_active',
             'quantity',

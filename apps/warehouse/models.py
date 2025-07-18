@@ -80,6 +80,29 @@ class WarehouseProduct(models.Model):
         ordering = ['-id']
 
 
+class WarehouseProductHistory(models.Model):
+    product = models.ForeignKey(
+        Products,
+        on_delete=models.CASCADE,
+        db_constraint=False)
+    warehouse_product = models.ForeignKey(
+        WarehouseProduct, on_delete=models.PROTECT)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
+    warehouse_action = models.ForeignKey(
+        WarehouseAction, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    warehouse_ttn = models.ForeignKey(
+        WarehouseTTN, on_delete=models.PROTECT, null=True, blank=True)
+    quantity = models.PositiveIntegerField(default=1)
+    ttn_number = models.CharField(max_length=50, blank=True, null=True)
+    date = models.DateField(null=True, blank=True)
+    create_at = models.DateTimeField()
+    update_at = models.DateTimeField()
+
+    class Meta:
+        ordering = ['-id']
+
+
 class Palleting(models.Model):
     pallet = models.ForeignKey(Pallet, on_delete=models.CASCADE)
     warehouse_product = models.ForeignKey(
