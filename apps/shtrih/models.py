@@ -219,4 +219,4 @@ class Protocols(models.Model):
         ordering = ['-id']
 
     def __str__(self):
-        return f"Protocol {self.number}-{self.digit}"
+        return f"Protocol {self.id}"
