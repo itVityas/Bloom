@@ -1,7 +1,7 @@
 from Bloom.permission import RoleBasedPermission
 
 
-class WarehousePermission(RoleBasedPermission):
+class Warehouse1CPermission(RoleBasedPermission):
     """
     Permission for arrival operations.
     - GET: Allowed for 'admin' and 'warehouse' and 'warehouse_writer'.
