@@ -5,7 +5,8 @@ from apps.onec.views.onec_ttn import (
     OneCTTNCreateAPIView,
     OneCTTNListAPIView,
     OneCTTNRetrieveAPIView,
-    OneCTTNRetrieveUpdateDestroyAPIView
+    OneCTTNRetrieveUpdateDestroyAPIView,
+    OneCTTNFullCreateAPIView
 )
 from apps.onec.views.onec_ttn_item import (
     OneCTTNItemCreateListView,
@@ -15,6 +16,7 @@ from apps.onec.views.onec_ttn_item import (
 urlpatterns = [
     path('1c/weight/', Weight1cView.as_view()),
     path('1c/onec_ttn/create/', OneCTTNCreateAPIView.as_view()),
+    path('1c/onec_ttn/full_create/', OneCTTNFullCreateAPIView.as_view()),
     path('1c/onec_ttn/update/<int:pk>/', OneCTTNRetrieveUpdateDestroyAPIView.as_view()),
     path('1c/onec_ttn/detailed/<int:pk>/', OneCTTNRetrieveAPIView.as_view()),
     path('1c/onec_ttn/list/', OneCTTNListAPIView.as_view()),

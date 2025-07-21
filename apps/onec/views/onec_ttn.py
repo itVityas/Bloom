@@ -11,7 +11,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from apps.onec.models import OneCTTN
 from apps.onec.serializers.onec_ttn import (
     OneCTTNGetSerializer,
-    OneCTTNPostSerializer
+    OneCTTNPostSerializer,
+    OneCTTNFullSerializer
 )
 from apps.onec.permissions import Warehouse1CPermission
 
@@ -79,4 +80,17 @@ class OneCTTNRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 class OneCTTNRetrieveAPIView(RetrieveAPIView):
     queryset = OneCTTN.objects.all()
     serializer_class = OneCTTNGetSerializer
+    permission_classes = [IsAuthenticated, Warehouse1CPermission]
+
+
+@extend_schema(tags=['OneCTTN'])
+@extend_schema_view(
+    post=extend_schema(
+        summary='create OneC TTN and list onecttnitems',
+        description='Permission: admin, warehouse_writer'
+        ),
+)
+class OneCTTNFullCreateAPIView(CreateAPIView):
+    queryset = OneCTTN.objects.all()
+    serializer_class = OneCTTNFullSerializer
     permission_classes = [IsAuthenticated, Warehouse1CPermission]
