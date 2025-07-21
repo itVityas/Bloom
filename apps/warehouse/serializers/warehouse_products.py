@@ -9,6 +9,7 @@ from apps.warehouse.serializers.warehouse_ttn import WarehouseTTNSerializer
 from apps.shtrih.serializers.products import ProductGetSerializer
 from apps.account.serializers.user import UserUpdateSerializer
 from apps.shtrih.models import Products
+from apps.warehouse.exceptions.barcode import ProductNotFound
 
 
 class WarehouseProductPostSerializer(serializers.ModelSerializer):
@@ -69,7 +70,7 @@ class WarehouseProductBarcodeSerializer(serializers.ModelSerializer):
 
     def validate_barcode(self, value):
         if not Products.objects.filter(barcode=value).exists():
-            raise serializers.ValidationError("Product with this barcode does not exist")
+            raise ProductNotFound()
         return value
 
     def create(self, validated_data):
