@@ -12,11 +12,15 @@ class OneCTTNPostSerializer(serializers.ModelSerializer):
 
 
 class OneCTTNGetSerializer(serializers.ModelSerializer):
-    items = OneCTTNItemSerializer(many=True, read_only=True)
+    items = serializers.SerializerMethodField()
 
     class Meta:
         model = OneCTTN
         fields = "__all__"
+
+    def get_items(self, obj):
+        items = OneCTTNItem.objects.filter(onec_ttn=obj)
+        return OneCTTNItemSerializer(items, many=True).data
 
 
 class OneCTTNFullSerializer(serializers.ModelSerializer):
@@ -31,9 +35,9 @@ class OneCTTNFullSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         items_data = validated_data.pop('items', None)
-        ttn = OneCTTN.objects.create(**validated_data)
+        ttn = OneCTTN.objects.update_or_create(**validated_data)
 
         for item in items_data:
-            OneCTTNItem.objects.create(onec_ttn=ttn, **item)
+            OneCTTNItem.objects.update_or_create(onec_ttn=ttn[0], **item)
 
-        return ttn
+        return ttn[0]
