@@ -2,6 +2,7 @@ from django.db import models
 
 from apps.shtrih.models import Products
 from apps.account.models import User
+from apps.onec.models import OneCTTN
 
 
 class Warehouse(models.Model):
@@ -47,32 +48,18 @@ class Pallet(models.Model):
         return f'{self.id}:{self.barcode}'
 
 
-class WarehouseTTN(models.Model):
-    ttn_number = models.CharField(max_length=50, primary_key=True)
-    is_close = models.BooleanField(default=False)
-    date = models. DateField(null=True, blank=True)
-
-    class Meta:
-        ordering = ['-ttn_number']
-
-    def __call__(self, *args, **kwds):
-        return f'{self.ttn_number}'
-
-
 class WarehouseProduct(models.Model):
     product = models.ForeignKey(
         Products,
         on_delete=models.CASCADE,
         db_constraint=False)
-    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
-    warehouse_action = models.ForeignKey(
-        WarehouseAction, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
-    warehouse_ttn = models.ForeignKey(
-        WarehouseTTN, on_delete=models.PROTECT, null=True, blank=True)
+    onec_ttn = models.ForeignKey(
+        OneCTTN,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True)
     quantity = models.PositiveIntegerField(default=1)
-    ttn_number = models.CharField(max_length=50, blank=True, null=True)
-    date = models.DateField(null=True, blank=True)
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
 
@@ -80,38 +67,34 @@ class WarehouseProduct(models.Model):
         ordering = ['-id']
 
 
-class WarehouseProductHistory(models.Model):
-    product = models.ForeignKey(
-        Products,
-        on_delete=models.CASCADE,
-        db_constraint=False)
-    warehouse_product = models.ForeignKey(
-        WarehouseProduct, on_delete=models.PROTECT)
-    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
-    warehouse_action = models.ForeignKey(
-        WarehouseAction, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
-    warehouse_ttn = models.ForeignKey(
-        WarehouseTTN, on_delete=models.PROTECT, null=True, blank=True)
-    quantity = models.PositiveIntegerField(default=1)
-    ttn_number = models.CharField(max_length=50, blank=True, null=True)
-    date = models.DateField(null=True, blank=True)
-    create_at = models.DateTimeField()
-    update_at = models.DateTimeField()
-
-    class Meta:
-        ordering = ['-id']
-
-
-class Palleting(models.Model):
-    pallet = models.ForeignKey(Pallet, on_delete=models.CASCADE)
-    warehouse_product = models.ForeignKey(
-        WarehouseProduct, on_delete=models.CASCADE)
+class WarehouseTTN(models.Model):
+    ttn_number = models.CharField(max_length=50, primary_key=True)
+    is_close = models.BooleanField(default=False)
+    date = models. DateField(null=True, blank=True)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.PROTECT)
+    warehouse_action = models.ForeignKey(WarehouseAction, on_delete=models.PROTECT)
+    pallet = models.ForeignKey(Pallet, on_delete=models.SET_NULL, null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-ttn_number']
+
+    def __str__(self):
+        return f'{self.ttn_number}'
+
+
+class WarehouseDo(models.Model):
+    warehouse_ttn = models.ForeignKey(WarehouseTTN, on_delete=models.PROTECT)
+    warehouse_product = models.ForeignKey(WarehouseProduct, on_delete=models.PROTECT)
+    quantity = models.PositiveIntegerField(default=1)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['-id']
 
     def __str__(self):
-        return f'{self.id}:{self.pallet}:{self.warehouse_product}'
+        return f'{self.id}'

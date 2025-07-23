@@ -11,7 +11,6 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from apps.warehouse.models import WarehouseProduct
-from apps.shtrih.models import Products
 from apps.warehouse.serializers.warehouse_products import (
     WarehouseProductGetSerializer,
     WarehouseProductPostSerializer,

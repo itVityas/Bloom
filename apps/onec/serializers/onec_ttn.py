@@ -18,7 +18,7 @@ class OneCTTNGetSerializer(serializers.ModelSerializer):
         model = OneCTTN
         fields = "__all__"
 
-    def get_items(self, obj):
+    def get_items(self, obj) -> dict:
         items = OneCTTNItem.objects.filter(onec_ttn=obj)
         return OneCTTNItemSerializer(items, many=True).data
 
