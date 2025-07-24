@@ -2,11 +2,8 @@ from rest_framework import serializers
 
 from apps.warehouse.models import (
     Pallet,
-    WarehouseTTN,
-    WarehouseDo
 )
-from apps.shtrih.models import Models
-from apps.warehouse.utils.len_word import LenWord
+from apps.warehouse.utils.generate_barcode import generate_barcode
 
 
 class PalletSerializer(serializers.ModelSerializer):
@@ -27,31 +24,12 @@ class PalletGenerateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         ttn_number = validated_data.pop('ttn_number', None)
-        warehouse_ttn = WarehouseTTN.objects.filter(ttn_number=ttn_number).first()
-        if not warehouse_ttn:
-            raise serializers.ValidationError('ТТН не найден')
+        if not ttn_number:
+            raise serializers.ValidationError('Не указан номер ТТН')
 
-        warehouse_do = WarehouseDo.objects.filter(warehouse_ttn=warehouse_ttn)
-        if not warehouse_do:
-            raise serializers.ValidationError('ТТН не найден')
-
-        col = warehouse_do.count()
-        col = LenWord(str(col), 3)  # we need col with 3 character
-
-        ttn_date = warehouse_ttn.date
-        month = ttn_date.month
-        month = LenWord(str(month), 2)  # we need month with 2 character
-        year = ttn_date.year
-        year = LenWord(str(year), 2)  # we need year with 2 character
-
-        model = Models.objects.filter(id=warehouse_do.first().warehouse_product.product.model.pk).first()
-        model = LenWord(str(model.code), 5)  # we need model with 5 character
-
-        ttn_number = LenWord(str(ttn_number), 8)  # we need ttn_number with 8 character
-
-        barcode = model + month + year + col + ttn_number
-        if len(barcode) < 18:
-            raise serializers.ValidationError('Неверный штрихкод')
+        barcode = generate_barcode(ttn_number=ttn_number)
+        if barcode.find('Error') != -1 or not isinstance(barcode, str):
+            raise serializers.ValidationError('Не удалось сгенерировать штрих-код' + barcode)
 
         return Pallet.objects.create(
             barcode=barcode

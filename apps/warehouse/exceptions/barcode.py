@@ -10,4 +10,10 @@ class ProductNotFound(APIException):
 class PaсkagingNotFound(APIException):
     status_code = 402
     default_detail = 'Product don`t pass paсkaging'
-    default_code = 'pфслфпштп_not_found'
+    default_code = 'Product_not_found'
+
+
+class WrongModel(APIException):
+    status_code = 402
+    default_detail = 'wrong model and barcode'
+    default_code = 'wrong_model'
