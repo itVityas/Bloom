@@ -53,7 +53,6 @@ class WarehouseProduct(models.Model):
         Products,
         on_delete=models.CASCADE,
         db_constraint=False)
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
     onec_ttn = models.ForeignKey(
         OneCTTN,
         on_delete=models.SET_NULL,

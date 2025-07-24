@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 from apps.warehouse.models import WarehouseProduct
 from apps.shtrih.serializers.products import ProductGetSerializer
-from apps.account.serializers.user import UserUpdateSerializer
 from apps.shtrih.models import Products, Protocols
 from apps.warehouse.exceptions.barcode import (
     ProductNotFound, PaсkagingNotFound)
@@ -21,7 +20,6 @@ class WarehouseProductPostSerializer(serializers.ModelSerializer):
 
 class WarehouseProductGetSerializer(serializers.ModelSerializer):
     product = ProductGetSerializer(read_only=True, many=False)
-    user = UserUpdateSerializer(read_only=True, many=False)
     onec_ttn = OneCTTNGetSerializer(read_only=True, many=False)
 
     class Meta:
