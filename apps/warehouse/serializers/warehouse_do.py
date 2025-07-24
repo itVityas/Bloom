@@ -7,7 +7,7 @@ from apps.warehouse.serializers.warehouse_ttn import WarehouseTTNGetSerializer
 
 class WarehouseDoGetSerializer(serializers.ModelSerializer):
     warehouse_ttn = WarehouseTTNGetSerializer(read_only=True)
-    warehouse_products = WarehouseProductGetSerializer(many=True, read_only=True)
+    warehouse_product = WarehouseProductGetSerializer(many=False, read_only=True)
 
     class Meta:
         model = WarehouseDo
