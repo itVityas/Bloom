@@ -16,7 +16,8 @@ from apps.warehouse.views.warehouse_action import (
 )
 from apps.warehouse.views.pallet import (
     PalletListCreateAPIView,
-    PalletRetrieveUpdateDestroyView
+    PalletRetrieveUpdateDestroyView,
+    PalletCreateByTTNAPIView
 )
 from apps.warehouse.views.warehouse_products import (
     WarehouseProductCreateAPIView,
@@ -50,6 +51,7 @@ urlpatterns = [
     path('warehouseaction/detailed/<int:pk>/', WarehouseActionRetrieveView.as_view()),
     path('pallet/', PalletListCreateAPIView.as_view()),
     path('pallet/<int:pk>/', PalletRetrieveUpdateDestroyView.as_view()),
+    path('pallet/create_by_ttn/', PalletCreateByTTNAPIView.as_view()),
     path('warehouseproduct/create/', WarehouseProductCreateAPIView.as_view()),
     path('warehouseproduct/list/', WarehouseProductListAPIView.as_view()),
     path('warehouseproduct/detailed/<int:pk>/', WarehouseProductRetrieveAPIView.as_view()),
