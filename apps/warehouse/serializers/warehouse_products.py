@@ -68,6 +68,7 @@ class WarehouseProductBarcodeSerializer(serializers.ModelSerializer):
         date = validated_data.pop('date', None)
         warehouse_id = validated_data.pop('warehouse_id', None)
         warehouse_action_id = validated_data.pop('warehouse_action_id', None)
+        quantity = validated_data.get("quantity", 1)
         user = self.context['request'].user
 
         if not number or not date or not warehouse_id or not warehouse_action_id:
@@ -104,6 +105,7 @@ class WarehouseProductBarcodeSerializer(serializers.ModelSerializer):
         WarehouseDo.objects.create(
             warehouse_product=warehouse_product,
             warehouse_ttn=warehouse_ttn,
-            user=user
+            user=user,
+            quantity=quantity
         )
         return warehouse_product
