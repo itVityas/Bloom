@@ -16,7 +16,7 @@ from drf_spectacular.utils import (
 from rest_framework.response import Response
 from rest_framework import status
 
-from apps.warehouse.models import WarehouseTTN
+from apps.warehouse.models import WarehouseTTN, WarehouseDo, WarehouseProduct
 from apps.warehouse.serializers.warehouse_ttn import (
     WarehouseTTNGetSerializer,
     WarehouseTTNPostSerializer
@@ -24,6 +24,7 @@ from apps.warehouse.serializers.warehouse_ttn import (
 from apps.warehouse.permissions import WarehousePermission
 from Bloom.paginator import StandartResultPaginator
 from apps.warehouse.filters import WarehouseTTNFilter
+from apps.warehouse.exceptions.warehouse_ttn import TTNNotFound
 
 
 @extend_schema(tags=['WarehouseTTN'])
@@ -81,6 +82,25 @@ class WarehouseTTNRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = WarehouseTTN.objects.all()
     serializer_class = WarehouseTTNPostSerializer
     permission_classes = [IsAuthenticated, WarehousePermission]
+
+    def get_object(self):
+        try:
+            return WarehouseTTN.objects.get(ttn_number=self.kwargs['ttn_number'])
+        except WarehouseTTN.DoesNotExist:
+            raise TTNNotFound()
+
+    def delete(self, request, ttn_number, *args, **kwargs):
+        ttn = WarehouseTTN.objects.filter(ttn_number=ttn_number).first()
+        if not ttn:
+            raise TTNNotFound()
+        warehouse_do = WarehouseDo.objects.filter(warehouse_ttn=ttn)
+        warehouse_products = WarehouseProduct.objects.filter(warehousedo__warehouse_ttn__ttn_number=ttn_number)
+        warehouse_do.delete()
+        for items in warehouse_products:
+            if not WarehouseDo.objects.filter(warehouse_product=items).exclude(warehouse_ttn__ttn_number=ttn_number):
+                items.delete()
+        ttn.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @extend_schema(tags=["WarehouseTTN"])
