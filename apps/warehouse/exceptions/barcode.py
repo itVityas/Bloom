@@ -20,6 +20,6 @@ class WrongModel(APIException):
 
 
 class BarcodeUsed(APIException):
-    status_code = 400
+    status_code = 409
     default_detail = 'Product with this barcode is used in enother warehouse do'
     default_code = 'product_used'
