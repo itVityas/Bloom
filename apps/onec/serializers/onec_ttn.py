@@ -30,6 +30,7 @@ class OneCTTNFullSerializer(serializers.ModelSerializer):
         model = OneCTTN
         fields = [
             'number',
+            'series',
             'items',
         ]
 

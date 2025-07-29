@@ -3,6 +3,7 @@ from django.db import models
 
 class OneCTTN(models.Model):
     number = models.CharField(max_length=50)
+    series = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
         ordering = ['-id']
