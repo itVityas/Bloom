@@ -15,6 +15,7 @@ from apps.onec.serializers.onec_ttn import (
     OneCTTNFullSerializer
 )
 from apps.onec.permissions import Warehouse1CPermission
+from apps.onec.filters import OneCTTNFilter
 
 
 @extend_schema(tags=['OneCTTN'])
@@ -29,7 +30,7 @@ class OneCTTNListAPIView(ListAPIView):
     serializer_class = OneCTTNGetSerializer
     permission_classes = [IsAuthenticated, Warehouse1CPermission]
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['id', 'number']
+    filterset_class = OneCTTNFilter
 
 
 @extend_schema(tags=["OneCTTN"])
