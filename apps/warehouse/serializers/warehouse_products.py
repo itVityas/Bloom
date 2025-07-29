@@ -8,7 +8,7 @@ from apps.warehouse.models import (
 from apps.shtrih.serializers.products import ProductGetSerializer
 from apps.shtrih.models import Products, Protocols
 from apps.warehouse.exceptions.barcode import (
-    ProductNotFound, PaсkagingNotFound, BarcodeUsed)
+    ProductNotFound, PaсkagingNotFound)
 from apps.onec.serializers.onec_ttn import OneCTTNGetSerializer
 
 
@@ -97,9 +97,6 @@ class WarehouseProductBarcodeSerializer(serializers.ModelSerializer):
         if not validated_data.get('quantity', None):
             validated_data['quantity'] = product.quantity
         quantity = validated_data.get("quantity", 1)
-
-        if WarehouseProduct.objects.filter(product=product).exists():
-            raise BarcodeUsed()
 
         warehouse_product = WarehouseProduct.objects.create(
             product=product,
