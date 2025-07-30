@@ -111,6 +111,7 @@ class WarehouseDoPalletSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError('Не удалось сгенерировать штрих-код' + pallet_barcode)
             pallet = Pallet.objects.create(barcode=pallet_barcode)
             warehouse_ttn.pallet = pallet
+            warehouse_ttn.is_close = True
             warehouse_ttn.save()
 
         return warehouse_do
