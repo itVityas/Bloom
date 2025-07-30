@@ -53,12 +53,8 @@ class WarehouseProduct(models.Model):
         Products,
         on_delete=models.CASCADE,
         db_constraint=False)
-    onec_ttn = models.ForeignKey(
-        OneCTTN,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True)
     quantity = models.PositiveIntegerField(default=1)
+    is_shipment = models.BooleanField(default=False)
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
 
@@ -86,6 +82,22 @@ class WarehouseTTN(models.Model):
 
 class WarehouseDo(models.Model):
     warehouse_ttn = models.ForeignKey(WarehouseTTN, on_delete=models.PROTECT)
+    warehouse_product = models.ForeignKey(WarehouseProduct, on_delete=models.PROTECT)
+    quantity = models.PositiveIntegerField(default=1)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-id']
+
+    def __str__(self):
+        return f'{self.id}'
+
+
+class Shipment(models.Model):
+    onec_ttn = models.ForeignKey(OneCTTN, on_delete=models.PROTECT)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.PROTECT)
     warehouse_product = models.ForeignKey(WarehouseProduct, on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField(default=1)
     user = models.ForeignKey(User, on_delete=models.PROTECT)

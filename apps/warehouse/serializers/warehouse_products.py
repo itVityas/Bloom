@@ -9,7 +9,6 @@ from apps.shtrih.serializers.products import ProductGetSerializer
 from apps.shtrih.models import Products, Protocols
 from apps.warehouse.exceptions.barcode import (
     ProductNotFound, PaсkagingNotFound)
-from apps.onec.serializers.onec_ttn import OneCTTNGetSerializer
 
 
 class WarehouseProductPostSerializer(serializers.ModelSerializer):
@@ -18,13 +17,11 @@ class WarehouseProductPostSerializer(serializers.ModelSerializer):
         fields = [
             'product',
             'quantity',
-            'onec_ttn',
         ]
 
 
 class WarehouseProductGetSerializer(serializers.ModelSerializer):
     product = ProductGetSerializer(read_only=True, many=False)
-    onec_ttn = OneCTTNGetSerializer(read_only=True, many=False)
 
     class Meta:
         model = WarehouseProduct
@@ -44,7 +41,6 @@ class WarehouseProductBarcodeSerializer(serializers.ModelSerializer):
         fields = [
             'barcode',
             'quantity',
-            'onec_ttn',
             'check_packaging',
             'number',
             'date',
