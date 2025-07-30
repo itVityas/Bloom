@@ -19,7 +19,8 @@ from rest_framework import status
 from apps.warehouse.models import WarehouseTTN, WarehouseDo, WarehouseProduct
 from apps.warehouse.serializers.warehouse_ttn import (
     WarehouseTTNGetSerializer,
-    WarehouseTTNPostSerializer
+    WarehouseTTNPostSerializer,
+    WarehouseTTNProductSerializer
 )
 from apps.warehouse.permissions import WarehousePermission
 from Bloom.paginator import StandartResultPaginator
@@ -115,6 +116,12 @@ class WarehouseTTNRetrieveAPIView(RetrieveAPIView):
     serializer_class = WarehouseTTNGetSerializer
     permission_classes = [IsAuthenticated, WarehousePermission]
 
+    def get_object(self):
+        try:
+            return WarehouseTTN.objects.get(ttn_number=self.kwargs['ttn_number'])
+        except WarehouseTTN.DoesNotExist:
+            raise TTNNotFound()
+
 
 @extend_schema(tags=['WarehouseTTN'])
 @extend_schema_view(
@@ -159,3 +166,22 @@ class WarehouseTTNByUserIdAPIView(APIView):
                 self.serializer_class(warehouse_ttn).data,
                 status=status.HTTP_200_OK
             )
+
+
+@extend_schema(tags=['WarehouseTTN'])
+@extend_schema_view(
+    get=extend_schema(
+        summary='Get WarehouseTTN products by ttn_number',
+        description='Permission: admin, warehouse, warehouse_writer',
+    ),
+)
+class WarehouseTTNProductsAPIView(RetrieveAPIView):
+    permission_classes = [IsAuthenticated, WarehousePermission]
+    serializer_class = WarehouseTTNProductSerializer
+    queryset = WarehouseTTN.objects.all()
+
+    def get_object(self):
+        try:
+            return WarehouseTTN.objects.get(ttn_number=self.kwargs['ttn_number'])
+        except WarehouseTTN.DoesNotExist:
+            raise TTNNotFound()
