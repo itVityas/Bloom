@@ -40,6 +40,6 @@ class WarehouseTTNProductSerializer(serializers.ModelSerializer):
         model = WarehouseTTN
         fields = '__all__'
 
-    def get_products(self, obj):
+    def get_products(self, obj) -> list:
         warehouse_products = WarehouseProduct.objects.filter(warehousedo__warehouse_ttn=obj)
         return WarehouseProductGetSerializer(warehouse_products, many=True).data

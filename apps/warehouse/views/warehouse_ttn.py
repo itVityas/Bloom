@@ -185,3 +185,48 @@ class WarehouseTTNProductsAPIView(RetrieveAPIView):
             return WarehouseTTN.objects.get(ttn_number=self.kwargs['ttn_number'])
         except WarehouseTTN.DoesNotExist:
             raise TTNNotFound()
+
+
+@extend_schema(tags=['WarehouseTTN'])
+@extend_schema_view(
+    get=extend_schema(
+        summary='Get latest WarehouseTTN with products by user_id',
+        description='Permission: admin, warehouse, warehouse_writer',
+        parameters=[
+            OpenApiParameter(
+                name='user_id',
+                description='User ID',
+                required=True,
+                type=int
+            )
+        ],
+        responses={
+            200: WarehouseTTNGetSerializer,
+            404: OpenApiResponse(description='WarehouseTTN not found')
+        },
+    ),
+)
+class WarehouseTTNProductsByUserIdAPIView(APIView):
+    permission_classes = [IsAuthenticated, WarehousePermission]
+    serializer_class = WarehouseTTNProductSerializer
+
+    def get(self, request):
+        user_id = request.query_params.get('user_id')
+        if not user_id:
+            return Response(
+                {'error': 'user_id is required'},
+                status=status.HTTP_400_BAD_REQUEST
+                )
+
+        warehouse_ttn = WarehouseTTN.objects.filter(
+            user_id=user_id,
+            ).order_by('-create_at').first()
+        if not warehouse_ttn:
+            return Response(
+                {'error': 'WarehouseProduct not found'},
+                status=status.HTTP_404_NOT_FOUND)
+
+        return Response(
+                self.serializer_class(warehouse_ttn).data,
+                status=status.HTTP_200_OK
+            )
