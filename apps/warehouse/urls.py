@@ -46,7 +46,8 @@ from apps.warehouse.views.shipment import (
     ShipmentCreateAPIView,
     ShipmentListAPIView,
     ShipmentRetrieveUpdateDestroyAPIView,
-    ShipmentRetrieveAPIView
+    ShipmentRetrieveAPIView,
+    ShipmentBarcodeRetrieveAPIView
 )
 
 urlpatterns = [
@@ -82,4 +83,5 @@ urlpatterns = [
     path('shipment/list/', ShipmentListAPIView.as_view()),
     path('shipment/detailed/<int:pk>/', ShipmentRetrieveAPIView.as_view()),
     path('shipment/update/<int:pk>/', ShipmentRetrieveUpdateDestroyAPIView.as_view()),
+    path('shipment/barcode/', ShipmentBarcodeRetrieveAPIView.as_view()),
 ]
