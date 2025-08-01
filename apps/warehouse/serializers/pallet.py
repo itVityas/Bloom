@@ -4,6 +4,7 @@ from apps.warehouse.models import (
     Pallet,
 )
 from apps.warehouse.utils.generate_barcode import generate_barcode
+from apps.warehouse.models import WarehouseTTN
 
 
 class PalletSerializer(serializers.ModelSerializer):
@@ -34,6 +35,12 @@ class PalletGenerateSerializer(serializers.ModelSerializer):
         pallet = Pallet.objects.filter(barcode=barcode).first()
         if pallet:
             return pallet
+
+        warehouse_ttn = WarehouseTTN.objects.filter(ttn_number=ttn_number).first()
+        if not warehouse_ttn:
+            raise serializers.ValidationError('ТТН не найден')
+        warehouse_ttn.is_close = True
+        warehouse_ttn.save()
 
         return Pallet.objects.create(
             barcode=barcode
