@@ -31,6 +31,10 @@ class PalletGenerateSerializer(serializers.ModelSerializer):
         if barcode.find('Error') != -1 or not isinstance(barcode, str):
             raise serializers.ValidationError('Не удалось сгенерировать штрих-код' + barcode)
 
+        pallet = Pallet.objects.filter(barcode=barcode).first()
+        if pallet:
+            return pallet
+
         return Pallet.objects.create(
             barcode=barcode
         )
