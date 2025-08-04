@@ -38,7 +38,7 @@ class PalletGenerateSerializer(serializers.ModelSerializer):
 
         warehouse_ttn = WarehouseTTN.objects.filter(ttn_number=ttn_number).first()
         if not warehouse_ttn:
-            raise serializers.ValidationError('ТТН не найден')
+            raise serializers.ValidationError('ТТН не найден ')
         warehouse_ttn.is_close = True
         warehouse_ttn.save()
 
