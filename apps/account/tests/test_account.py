@@ -24,6 +24,7 @@ class UserCRUDTests(APITestCase):
         self.detail_url = reverse('user-detail', args=[self.user.id])
         self.create_url = reverse('register')
         self.change_password_url = reverse('change_user_password')
+        self.update_user = reverse('user-update', args=[self.user.id])
 
     def test_user_list(self):
         self.client.force_authenticate(user=self.admin)
@@ -57,4 +58,18 @@ class UserCRUDTests(APITestCase):
             'password2': 'ASDqwe12#'
         }
         response = self.client.patch(self.change_password_url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_user_update(self):
+        self.client.force_authenticate(user=self.admin)
+        data = {
+            'username': 'testuser',
+            'fio': 'New User',
+            'departmant': 'IT',
+            'position': 'Developer',
+            'room': '101'
+        }
+        response = self.client.put(self.update_user, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.patch(self.update_user, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
