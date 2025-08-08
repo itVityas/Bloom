@@ -30,3 +30,7 @@ class RoleCRUDTest(APITestCase):
         data = {'name': 'Updated Role'}
         response = self.client.put(self.update_url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_delete_role(self):
+        response = self.client.delete(self.update_url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
