@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase, APIClient
 from django.urls import reverse
 from rest_framework import status
 
-from apps.account.models import User
+from apps.account.models import User, Role, UserRoles
 
 
 class UserCRUDTests(APITestCase):
@@ -72,4 +72,13 @@ class UserCRUDTests(APITestCase):
         response = self.client.put(self.update_user, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = self.client.patch(self.update_user, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_user_role_delete(self):
+        self.client.force_authenticate(user=self.admin)
+        role = Role.objects.create(name='testrole', description='testrole')
+        UserRoles.objects.create(user=self.user, role=role)
+        userroledelete = reverse('userroledelete')
+        userroledelete += f'?user={self.user.id}&role={role.id}'
+        response = self.client.delete(userroledelete)
         self.assertEqual(response.status_code, status.HTTP_200_OK)

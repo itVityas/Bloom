@@ -97,6 +97,7 @@ class UserRoleDeleteView(GenericAPIView):
         id_role = request.query_params.get('role', None)
         id_user = request.query_params.get('user', None)
         if not id_role or not id_user:
+            print(id_role, id_user)
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         UserRoles.objects.filter(
