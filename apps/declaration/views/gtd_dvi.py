@@ -68,10 +68,12 @@ class GTDDVIFileUploadView(APIView):
                 for chunk in dbf_file.chunks():
                     tmp_dbf.write(chunk)
                 tmp_dbf_path = tmp_dbf.name
-            with dbf.Table(tmp_dbf_path) as table:
-                records = list(table)
+                print(tmp_dbf_path)
 
-            decl_list = [dbf_to_dict(record) for record in records]
+            table = dbf.Table(tmp_dbf_path)
+            table.open()
+            decl_list = [dbf_to_dict(record) for record in table]
+            table.close()
 
             count = 0
             declaration_number = ''
@@ -121,7 +123,7 @@ class GTDDVIFileUploadView(APIView):
                 try:
                     if not declaration:
                         continue
-                    print(decl['NOM_GTD'])
+                    # print(decl['NOM_GTD'])
                     DeclaredItem.objects.create(
                         declaration=declaration[0],
                         factory_code=None,
