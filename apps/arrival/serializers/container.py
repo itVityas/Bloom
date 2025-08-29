@@ -196,3 +196,17 @@ class ContainerAndContantSetSerializer(serializers.ModelSerializer):
         for content_data in contents_data:
             Content.objects.create(container=container, **content_data)
         return container
+
+
+class ContainerMassUpdateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for mass updating the state of containers.
+    """
+    class Meta:
+        model = Container
+        fields = [
+            'id',
+            'state',
+            'location',
+            'suppose_date',
+        ]

@@ -1,7 +1,12 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.generics import (
-    ListAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView, RetrieveAPIView, get_object_or_404
+    ListAPIView,
+    CreateAPIView,
+    UpdateAPIView,
+    DestroyAPIView,
+    RetrieveAPIView,
+    get_object_or_404
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -15,7 +20,8 @@ from apps.arrival.serializers.container import (
     ContainerSetSerializer,
     ContainerAndDeclarationSerializer,
     ContainerBindSerializer,
-    ContainerAndContantSetSerializer
+    ContainerAndContantSetSerializer,
+    ContainerMassUpdateSerializer,
 )
 
 
@@ -164,3 +170,24 @@ class ContainerAndContentCreateView(CreateAPIView):
     permission_classes = (IsAuthenticated, ContainerPermission)
     serializer_class = ContainerAndContantSetSerializer
     queryset = Container.objects.all()
+
+
+@extend_schema(tags=['Containers'])
+@extend_schema_view(
+    patch=extend_schema(
+        summary='Partial update list container and content',
+        description='Permission: admin, container_writer',
+    ),
+)
+class ContainerListUpdateView(APIView):
+    permission_classes = (IsAuthenticated, ContainerPermission)
+    serializer_class = ContainerMassUpdateSerializer
+    queryset = Container.objects.all()
+
+    def patch(self, request):
+        for container_data in request.data:
+            container_ser = ContainerMassUpdateSerializer(data=container_data)
+            if container_ser.is_valid():
+                container = Container.objects.filter(id=container_data.get('id', None)).first()
+                container_ser.update(container, container_data)
+        return Response({'status': 'updated'})

@@ -13,7 +13,8 @@ from apps.arrival.views.container import (
     ContainerAndDeclarationView,
     ContainerAndDeclarationDetailView,
     BindContainersToOrderAPIView,
-    ContainerAndContentCreateView
+    ContainerAndContentCreateView,
+    ContainerListUpdateView
 )
 from apps.arrival.views.report import ReportCSVView
 from apps.arrival.views.lot import (
@@ -50,6 +51,7 @@ urlpatterns = [
          name='container-and-declaration-detail'),
     path('container/assign/', BindContainersToOrderAPIView.as_view()),
     path('container_and_content/create/', ContainerAndContentCreateView.as_view()),
+    path('container/listupdate/', ContainerListUpdateView.as_view()),
 
     # Content endpoints
     path('content/', ContentListView.as_view()),
