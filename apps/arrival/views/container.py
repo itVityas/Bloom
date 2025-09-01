@@ -185,9 +185,11 @@ class ContainerListUpdateView(APIView):
     queryset = Container.objects.all()
 
     def patch(self, request):
+        list_container = []
         for container_data in request.data:
             container_ser = ContainerMassUpdateSerializer(data=container_data)
             if container_ser.is_valid():
                 container = Container.objects.filter(id=container_data.get('id', None)).first()
                 container_ser.update(container, container_data)
-        return Response({'status': 'updated'})
+                list_container.append(container)
+        return Response(ContainerSetSerializer(list_container, many=True).data)
