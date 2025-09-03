@@ -10,6 +10,7 @@ import dbf
 from apps.declaration.serializers.declaration import DeclarationFileUploadSerializer
 from apps.declaration.utils.dbf.util import clean_str
 from apps.declaration.models import Declaration, DeclaredItem
+from apps.omega.models import Stockobj
 
 
 def dbf_to_dict(record):
@@ -81,6 +82,8 @@ class GTDDVIFileUploadView(APIView):
                 available_items = float(decl['PRIXOD'])-float(decl['RASXOD'])
                 if available_items == 0:
                     continue
+                if decl['PRIZ_UDAL'] == 'd':
+                    continue
                 if declaration_number != decl['NOM_GTD']:
                     try:
                         declaration = Declaration.objects.get_or_create(
@@ -124,11 +127,12 @@ class GTDDVIFileUploadView(APIView):
                     if not declaration:
                         continue
                     # print(decl['NOM_GTD'])
+                    stock_obj = Stockobj.objects.using('oracle_db').filter(code=decl['KM_GTD']).first()
                     DeclaredItem.objects.create(
                         declaration=declaration[0],
                         factory_code=None,
                         is_selected=None,
-                        name='old',
+                        name=stock_obj.name,
                         ordinal_number=decl['NOM_TOV'],
                         country_code='old',
                         alpha_country_code='old',
