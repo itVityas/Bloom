@@ -127,7 +127,7 @@ class GTDDVIFileUploadView(APIView):
                     if not declaration:
                         continue
                     # print(decl['NOM_GTD'])
-                    stock_obj = Stockobj.objects.using('oracle_db').filter(code=decl['KM_GTD']).first()
+                    stock_obj = Stockobj.objects.using('oracle_db').filter(nomsign=decl['KM_GTD']).first()
                     DeclaredItem.objects.create(
                         declaration=declaration[0],
                         factory_code=None,
