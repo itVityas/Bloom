@@ -22,12 +22,12 @@ def create_invoice(traindoc) -> None:
             for idx, cell in enumerate(row):
                 cell_value = str(cell)
 
-                if cell_value == '№:' or cell_value == 'Specification №':
+                if cell_value in ['№:', 'Specification №']:
                     number = row[idx + 1]
                 elif any(keyword in cell_value for keyword in ['Date / Дата:', 'Date', 'Дата']):
                     date = row[idx + 1]
-                    if date == '':
-                        date = sheet.cell(row=row_count, column=idx).value
+                    if date is None or date == '':
+                        date = sheet.cell(row=row_count+2, column=idx+1).value
                 elif cell_value.lower() in list_containers:
                     container = containers.filter(name=cell_value).first()
                     check_container = True
