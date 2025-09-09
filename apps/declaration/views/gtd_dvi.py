@@ -80,7 +80,7 @@ class GTDDVIFileUploadView(APIView):
             declaration_number = ''
             for decl in decl_list:
                 available_items = float(decl['PRIXOD'])-float(decl['RASXOD'])
-                if available_items == 0:
+                if available_items <= 0:
                     continue
                 if decl['PRIZ_UDAL'] == 'd':
                     continue
@@ -105,7 +105,7 @@ class GTDDVIFileUploadView(APIView):
                             payment_type_code='old',
                             provision_date=datetime.date.today(),
                             paid_payment_details_count=0,
-                            declaration_id=decl['NOM_GTD'].split('/')[-1],
+                            declaration_id=str(decl['GOD']+decl['NOM_GTD'].split('/')[-1])[-10:],
                             declaration_number=decl['NOM_GTD'],
                             permit_number='old',
                             country_name='old',
@@ -116,7 +116,10 @@ class GTDDVIFileUploadView(APIView):
                             outgoing_number='old',
                             dollar_rate=0,
                             euro_rate=0,
-                            declaration_date=datetime.date(year=int(decl['GOD']), month=int(decl['MES']), day=int(decl['DEN'])),
+                            declaration_date=datetime.date(
+                                year=int(decl['GOD']),
+                                month=int(decl['MES']),
+                                day=int(decl['DEN'])),
                             permit_code='old',
                         )
                         declaration_number = decl['NOM_GTD']
@@ -155,7 +158,7 @@ class GTDDVIFileUploadView(APIView):
                         measurement_code='old',
                         measurement=decl['EI'],
                         valuation_method='',
-                        available_quantity=available_items,
+                        available_quantity=round(available_items, 3),
                         item_code_1c=int(decl['KM_GTD'])
                     )
                 except Exception as e:
