@@ -9,6 +9,8 @@ class Warehouse(models.Model):
     name = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
     date = models.DateField(null=True, blank=True)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['id']
@@ -19,6 +21,8 @@ class Warehouse(models.Model):
 
 class TypeOfWork(models.Model):
     name = models.CharField(max_length=100)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['id']
@@ -30,6 +34,8 @@ class TypeOfWork(models.Model):
 class WarehouseAction(models.Model):
     name = models.CharField(max_length=100)
     type_of_work = models.ForeignKey(TypeOfWork, on_delete=models.CASCADE)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['id']
@@ -40,6 +46,8 @@ class WarehouseAction(models.Model):
 
 class Pallet(models.Model):
     barcode = models.CharField(max_length=50)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['-id']
