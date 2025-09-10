@@ -52,7 +52,7 @@ class Declaration(models.Model):
     # GBN / Count of records in GB.dbf file
     paid_payment_details_count = models.SmallIntegerField()
     # DECL_ID / Unique declaration ID from customs
-    declaration_id = models.IntegerField(unique=True)
+    declaration_id = models.BigIntegerField(unique=True)
     # NOM_REG / Declaration number (registration number)
     declaration_number = models.CharField(max_length=18)
     # GA / Permit number or certificate number
@@ -167,7 +167,7 @@ class G313(models.Model):
         Declaration,
         on_delete=models.CASCADE,
         related_name="G313",
-        to_field="declaration_id"
+        to_field="declaration_id",
     )
     g32 = models.IntegerField(null=True, blank=True)
     g313i = models.IntegerField(null=True, blank=True)
@@ -201,7 +201,7 @@ class G44(models.Model):
         Declaration,
         on_delete=models.CASCADE,
         related_name='g44',
-        to_field='declaration_id'
+        to_field='declaration_id',
     )
     g32 = models.IntegerField(null=True, blank=True)
     g44kd = models.CharField(max_length=50, null=True, blank=True)

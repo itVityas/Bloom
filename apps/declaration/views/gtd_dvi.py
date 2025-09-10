@@ -78,7 +78,7 @@ class GTDDVIFileUploadView(APIView):
 
             count = 0
             declaration_number = ''
-            for decl in decl_list:
+            for decl in decl_list[::-1]:
                 available_items = float(decl['PRIXOD'])-float(decl['RASXOD'])
                 if available_items <= 0:
                     continue
@@ -105,7 +105,7 @@ class GTDDVIFileUploadView(APIView):
                             payment_type_code='old',
                             provision_date=datetime.date.today(),
                             paid_payment_details_count=0,
-                            declaration_id=str(decl['GOD']+decl['NOM_GTD'].split('/')[-1])[-10:],
+                            declaration_id=decl['GOD']+decl['NOM_GTD'].split('/')[-1],
                             declaration_number=decl['NOM_GTD'],
                             permit_number='old',
                             country_name='old',
