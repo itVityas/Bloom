@@ -169,3 +169,5 @@ apps/omega/models.txt
 
 media/*
 !media
+logs/django.log*
+logs/omega.log*
