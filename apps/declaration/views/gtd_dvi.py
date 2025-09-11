@@ -11,6 +11,7 @@ from apps.declaration.serializers.declaration import DeclarationFileUploadSerial
 from apps.declaration.utils.dbf.util import clean_str
 from apps.declaration.models import Declaration, DeclaredItem
 from apps.omega.models import Stockobj
+from apps.declaration.utils.get_1c import get_1c_declaration_data
 
 
 def dbf_to_dict(record):
@@ -130,6 +131,11 @@ class GTDDVIFileUploadView(APIView):
                     if not declaration:
                         continue
                     # print(decl['NOM_GTD'])
+                    onec_data = get_1c_declaration_data(decl['NOM_GTD'], decl['GOD']+decl['MES']+decl['DEN'])
+                    custom_cost = 0
+                    for i in onec_data:
+                        if i.get('НоменклатураЗаводскойКод', '01') == decl['KM_GTD']:
+                            custom_cost = i.get('Цена', 0)
                     stock_obj = Stockobj.objects.using('oracle_db').filter(nomsign=decl['KM_GTD']).first()
                     DeclaredItem.objects.create(
                         declaration=declaration[0],
@@ -153,7 +159,7 @@ class GTDDVIFileUploadView(APIView):
                         net_weight=0,
                         previous_customs_regime_code='',
                         g373='old',
-                        customs_cost=0,
+                        customs_cost=custom_cost,
                         items_quantity=float(decl['PRIXOD']),
                         measurement_code='old',
                         measurement=decl['EI'],

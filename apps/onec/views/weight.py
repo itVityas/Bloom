@@ -9,6 +9,8 @@ from drf_spectacular.utils import (
 
 from django.conf import settings
 
+from apps.onec.data.urls import weight_url
+
 
 @extend_schema(tags=['1c'])
 @extend_schema_view(
@@ -54,7 +56,7 @@ class Weight1cView(APIView):
         if not model_name:
             return Response({'error': 'Missing required parameters'}, status=status.HTTP_400_BAD_REQUEST)
 
-        url = f'http://192.168.2.2/OLYA/hs/bloom/weight?model={model_name}'
+        url = weight_url + f'?model={model_name}'
         response = requests.get(
             url,
             auth=(settings.API_USERNAME, settings.API_PASSWORD),
