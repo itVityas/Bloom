@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'apps.general',
     'apps.onec',
     'apps.warehouse',
+    'apps.sreport',
 ]
 
 MIDDLEWARE = [
