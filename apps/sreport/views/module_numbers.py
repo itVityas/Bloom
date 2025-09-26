@@ -6,6 +6,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiResp
 from apps.sreport.serializers.module_numbers import ModuleNumbersSerializer
 from apps.shtrih.serializers.module import ModulesSerializer
 from apps.shtrih.models import Modules
+from Bloom.paginator import StandartResultPaginator
 
 
 @extend_schema(tags=['Report'])
@@ -19,6 +20,7 @@ from apps.shtrih.models import Modules
 )
 class ModuleNumbersView(APIView):
     serializer_class = ModuleNumbersSerializer
+    pagination_class = StandartResultPaginator
 
     def post(self, request):
         serializer = ModuleNumbersSerializer(data=request.data)
@@ -28,12 +30,15 @@ class ModuleNumbersView(APIView):
 
             if not is_segregation_needed and not is_other_production_module_needed:
                 queryset = Modules.objects.all()
+            elif is_segregation_needed:
+                queryset = Modules.objects.exclude(workplaces__type_of_work__id=6).distinct()
+            else:
+                queryset = Modules.objects.filter(workplaces__type_of_work__id=6).distinct()
 
-            res_serializer = ModulesSerializer(queryset, many=True)
-            return Response(
-                res_serializer.data,
-                status=status.HTTP_200_OK
-            )
+            paginator = StandartResultPaginator()
+            page = paginator.paginate_queryset(queryset, request, view=self)
+            res_serializer = ModulesSerializer(page, many=True)
+            return paginator.get_paginated_response(res_serializer.data)
         return Response(
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
