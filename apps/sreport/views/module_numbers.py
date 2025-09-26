@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiResponse
+from rest_framework.permissions import IsAuthenticated
 
 from apps.sreport.serializers.module_numbers import ModuleNumbersSerializer
 from apps.shtrih.serializers.module import ModulesSerializer
@@ -13,7 +14,9 @@ from Bloom.paginator import StandartResultPaginator
 @extend_schema_view(
     post=extend_schema(
         summary='**Get module numbers**',
-        description='Get module numbers',
+        description='''
+        is_segregation_needed - без прочей продукции,
+        is_other_production_module_needed - только прочая продукция''',
         responses={200: ModulesSerializer,
                    400: OpenApiResponse(description='Bad request')}
     )
@@ -21,6 +24,7 @@ from Bloom.paginator import StandartResultPaginator
 class ModuleNumbersView(APIView):
     serializer_class = ModuleNumbersSerializer
     pagination_class = StandartResultPaginator
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = ModuleNumbersSerializer(data=request.data)
