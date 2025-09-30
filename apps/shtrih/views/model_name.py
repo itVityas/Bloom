@@ -10,6 +10,7 @@ from apps.shtrih.models import ModelNames, Models, Products
 from apps.shtrih.serializers.model_name import ModelNamesSerializer, CountSerializer
 from apps.shtrih.permission import StrihPermission
 from Bloom.paginator import StandartResultPaginator
+from apps.shtrih.filterset import ModelNamesFilter
 
 
 @extend_schema(tags=['Shtrih'])
@@ -35,7 +36,7 @@ class ModelNameListView(ListAPIView):
     permission_classes = (IsAuthenticated, StrihPermission)
     pagination_class = StandartResultPaginator
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('id', 'name', 'short_name')
+    filterset_class = ModelNamesFilter
 
 
 @extend_schema(tags=['Shtrih'])
