@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        @page {
+            size: A4 landscape; /* Указываем размер и ориентацию */
+            margin: 1cm; /* Отступы */
+        }
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+        }
+        th{
+            font-weight: normal;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 2px; 
+            text-align: center; 
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <p><b><u>Поставщик: Открытое акционерное общество "Витязь" г.Витебск</u></b></p>
+        <p><b>Адрес: {{ttn.load}}</b></p>
+        <p><b>Р/сч: BY14SLAN30122136700710000000 в Региональная Дирекция №2000 ЗАО Банк ВТБ (Беларусь) код SLANBY22</b></p>
+        <br>
+        <p>Город: Витебск</p>
+        <p>Идентификационный номер поставщика (ИНН): {{ttn.shipper_unp}}</p>
+        <p>Код по ОКЭД:</p>
+        <p>Код по ОКПО:</p>
+        <p>Грузоотправитель и его адрес: {{ttn.shipper}}</p>
+        <p>Страна происхождения: Беларусь</p>
+        <p>Грузополучатель и его адрес: {{ttn.consignee}}</p>
+        <p>К товарной накладной № {{ttn.uuid}} от {{date}}г.</p>
+        <br>
+    </div>
+    <div style="text-align: center;">
+        <p style="font-size: 14px;"><b>Счет-фактура № {{ttn.uuid}} от {{date}}г.</b></p>
+        <br>
+        <p><b>Договор №{{ttn.document}}</b></p>
+        <br>
+    </div>
+    <div>
+        <p><b><u>Плательщик: {{ttn.consignee}}</u></b></p>
+        <p><b>Адрес: {{ttn.unload}}</b></p>
+        <p><b>Р/сч: в код, к/c:</b></p>
+        <p>Город: ВИТЕБСК</p>
+        <p>Идентификационный номер поставщика (ИНН): {{ttn.consignee_unp}}</p>
+        <p>Код по ОКЭД:</p>
+        <p>Код по ОКПО:</p>
+        <p>Дополнение (условия оплаты по договору, способ отправления): {{ttn.notice}}</p>
+    </div>
+    <div>
+    <table class="mainTable" border="1" bordercolor="black" cols="11" cellpadding="1" style="border-collapse: collapse;width: 100%;font-size: 10px;">
+        <tr>
+            <td>
+                №
+            </td>
+            <td>
+                Товары (работы, услуги)
+            </td>
+            <td>
+                Един. изм.
+            </td>
+            <td>
+                Количество
+            </td>
+            <td>
+                Цена BYN
+            </td>
+            <td>
+                Сумма BYN
+            </td>
+            <td>
+                Ставка НДС, %
+            </td>
+            <td>
+                Сумма НДС, BYN
+            </td>
+            <td>
+                Всего с НДС, BYN
+            </td>
+            <td>
+                Вес нетто на ед-цу товара, кг
+            </td>
+            <td>
+                Вес нетто всего, кг
+            </td>
+            <td>
+                Вес брутто всего, кг
+            </td>
+            <td>
+                Страна происхождения
+            </td>
+            <td>
+                Номер груз. тамож. декл.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                1
+            </td>
+            <td>
+                2
+            </td>
+            <td>
+                3
+            </td>
+            <td>
+                4
+            </td>
+            <td>
+                5
+            </td>
+            <td>
+                6
+            </td>
+            <td>
+                7
+            </td>
+            <td>
+                8
+            </td>
+            <td>
+                9
+            </td>
+            <td>
+                10
+            </td>
+            <td>
+                11
+            </td>
+            <td>
+                12
+            </td>
+            <td>
+                13
+            </td>
+            <td>
+                14
+            </td>
+        </tr>
+
+        {% for item in items %}
+        <tr>
+            <td>
+                {{ forloop.counter }}
+            </td>
+            <td>
+                {{item.model_name.name}}
+            </td>
+            <td>
+                {{item.measure}}
+            </td>
+            <td>
+                {{item.quantity}}
+            </td>
+            <td>
+                {{item.price_pcs}}
+            </td>
+            <td>
+                {{item.price}}
+            </td>
+            <td>
+                {% if item.nds != 0 %}
+                    {{item.nds}}
+                {% else %}
+                    Без НДС
+                {% endif %}
+            </td>
+            <td>
+                {% if item.nds_sum != 0 %}
+                    {{item.nds_sum}}
+                {% endif %}
+            </td>
+            <td>
+                {{item.full_price}}
+            </td>
+            <td>
+                {{item.weight}}
+            </td>
+            <td>
+                {{item.weight}}
+            </td>
+            <td>
+                {{item.weight}}
+            </td> 
+            <td>
+                Беларусь
+            </td> 
+            <td>
+            </td> 
+        </tr>
+        {% endfor %}
+
+        <tr>
+            <td>
+                <b>Итого</b>
+            </td>
+            <td>
+            </td>
+            <td>
+                <b>х</b>
+            </td>
+            <td>
+                <b>{{quantity}}</b>
+            </td>
+            <td>
+                <b>x</b>
+            </td>
+            <td>
+                <b>{{price}}</b>
+            </td>
+            <td>
+                <b>x</b>
+            </td>
+            <td>
+                
+            </td>
+            <td>
+                <b>{{full_price}}</b>
+            </td>
+            <td>
+                
+            </td>
+            <td>
+                <b>{{weight}}</b>
+            </td>
+            <td>
+                
+            </td> 
+            <td>
+            </td> 
+            <td>
+            </td> 
+        </tr>
+    </table>
+    </div>
+    <div>
+        <p><b>Всего к оплате на сумму с НДС: {{full_price}} BYN</b></p>
+        <br>
+        <br>
+        <p>Руководитель предприятия ___________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Главный бухгалтер __________________</p>
+    </div>
+</body>
+</html>

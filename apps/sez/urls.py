@@ -39,11 +39,13 @@ from apps.sez.views.inner_ttn_items import (
     InnerTTNItemsCreateView,
     InnerTTNItemsRetrieveUpdateDestroyAPIView,
 )
+from apps.sez.views.invoice_ttn import InvoiceTTNToPDFView
 
 urlpatterns = [
     # Reports
     path('reportstz1/', ReportSTZ1View.as_view()),
     path('reportclearancepdf/', ReportClearanceInvoicePDFView.as_view()),
+    path('reportinvoicettnpdf/<int:pk>/', InvoiceTTNToPDFView.as_view()),
 
     # ClearanceInvoice endpoints
     path('clearance_invoice/', ClearanceInvoiceListCreateAPIView.as_view(), name='clearance-invoice-list'),
