@@ -51,8 +51,6 @@ class DataForMainDocView(APIView):
                 queryset = queryset.exclude(product__model__production_code=400)
             else:
                 queryset = queryset.filter(product__model__production_code=400)
-            if receive_serializer.validated_data['is_order_by_model']:
-                queryset = queryset.order_by('product__model__name__short_name')
 
             paginator = StandartResultPaginator()
             page = paginator.paginate_queryset(queryset, request, view=self)
