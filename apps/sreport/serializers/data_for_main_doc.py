@@ -18,7 +18,7 @@ class DataForMainDocResponseSerializer(serializers.Serializer):
     model_name = serializers.CharField()
     variant_code = serializers.CharField()
     module = serializers.IntegerField()
-    designation = serializers.CharField()
+    designation = serializers.CharField()   # Обозначение letter_part + numeric_part + execution_part
     assembly = serializers.IntegerField()
     extract = serializers.IntegerField()
     packaging = serializers.IntegerField()
