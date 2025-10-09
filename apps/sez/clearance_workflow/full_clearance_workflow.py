@@ -48,7 +48,7 @@ def execute_full_clearance_workflow(invoice_id: int) -> None:
             f"Invoice #{invoice_id} was already calculated at {invoice.date_calc}"
         )
 
-    # 3) Process each invoice item
+    # 3) Process each invoice item Список нерастоможенных items
     items_qs = ClearanceInvoiceItems.objects.filter(
         clearance_invoice_id=invoice_id,
         declared_item__isnull=True
@@ -57,6 +57,8 @@ def execute_full_clearance_workflow(invoice_id: int) -> None:
     with transaction.atomic():
         all_products = []
         for invoice_item in items_qs:
+            # возвращает - "model_id": int - "model_display": str - "count": int - "unvcode": int is_tv: bool
+            # и список products в n количестве со самых старых
             used_models, product_list = process_products_for_invoice_item(invoice_item.id)
 
             for m in used_models:
@@ -68,7 +70,8 @@ def execute_full_clearance_workflow(invoice_id: int) -> None:
                 )
 
                 if all(not item.get('plan') for item in results):
-                    raise ModelClearanceEmptyError(f'Для модели {m.get('unvcode')} не найдено ни одного материала в декларации')
+                    raise ModelClearanceEmptyError(
+                        f'Для модели {m.get('unvcode')} не найдено ни одного материала в декларации')
 
                 for res in results:
                     ClearanceResult.objects.create(

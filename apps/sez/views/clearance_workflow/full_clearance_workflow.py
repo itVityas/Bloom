@@ -56,6 +56,7 @@ class FullClearanceWorkflowAPIView(APIView):
         - allocate components
         - clear declared items
         - mark products as cleared
+        Начало расстаможки
 
         Request body:
             {

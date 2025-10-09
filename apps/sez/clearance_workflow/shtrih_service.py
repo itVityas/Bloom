@@ -18,7 +18,7 @@ class NotEnoughProductsError(Exception):
 
 def process_products_for_invoice_item(
     invoice_item_id: int,
-) -> Tuple[List[Dict[str, Any]], List[Products]] or None:
+) -> Tuple[List[Dict[str, Any]], List[Products]]:
     """
     1) Given the PK of a ClearanceInvoiceItems, load its related Models via the
        M2M `models_unv` (through ClearanceInvoiceItemModels).
@@ -36,6 +36,7 @@ def process_products_for_invoice_item(
          - "model_display": str
          - "count": int
          - "unvcode": int
+         - "is_tv": bool
 
     Args:
         invoice_item_id (int): PK of the ClearanceInvoiceItems to process.
@@ -66,7 +67,7 @@ def process_products_for_invoice_item(
 
     # Build a mapping model_id → display string
     model_display_map: Dict[int, str] = {
-        m.id: f"{m.letter_part}{m.numeric_part}{m.execution_part or ''}"
+        m.id: f"{m.letter_part}{m.numeric_part}{m.execution_part or ''}"  # СКЖИ
         for m in related_models_qs
     }
     # Build a mapping model_id → is_tv flag (True if production_code == 400)
