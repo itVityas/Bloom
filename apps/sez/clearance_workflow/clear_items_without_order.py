@@ -8,6 +8,7 @@ from apps.sez.clearance_workflow.vznab_stock_service import (
     fetch_vznab_stock_flat_tree, PanelError
 )
 from apps.sez.models import ClearedItem, ClearanceInvoiceItems
+from apps.shtrih.models import Consignments
 
 logger = logging.getLogger(__name__)
 
@@ -98,6 +99,18 @@ def clear_model_items(
                 to_clear = min(available, remaining)
                 if not product_name:
                     product_name = di.name
+
+                # Получает панель из consignments
+                if str(di.item_code_1c).startswith("638111111"):
+                    consignment = Consignments.objects.filter(products__id=model_code).first()
+                    decl_panel = None
+                    if consignment:
+                        decl_panel = DeclaredItem.objects.filter(
+                            declaration__declaration_number=consignment.declaration_number,
+                            ordinal_number=consignment.G32
+                        ).first()
+                    if decl_panel and decl_panel.available_quantity > to_clear:
+                        di = decl_panel
 
                 # Update available_quantity
                 di.available_quantity = available - to_clear

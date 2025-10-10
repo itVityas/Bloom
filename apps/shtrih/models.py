@@ -78,6 +78,7 @@ class Consignments(models.Model):
     used_quantity = models.IntegerField()
     declaration_number = models.CharField(max_length=50)
     declaration_date = models.DateTimeField()
+    G32 = models.SmallIntegerField()
 
     class Meta:
         managed = False

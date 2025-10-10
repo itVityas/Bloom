@@ -86,6 +86,7 @@ urlpatterns = [
     path('innerttn_items/<int:pk>/', InnerTTNItemsRetrieveUpdateDestroyAPIView.as_view()),
 
     # Full clearance_workflow
+    # рассчет расстаможки
     path('clearance/calculate/', FullClearanceWorkflowAPIView.as_view(), name='full-clearance-workflow'),
     path('clearance/<int:invoice_id>/cleared-items/', ClearedItemListAPIView.as_view(),
          name='cleared-item-list'),
