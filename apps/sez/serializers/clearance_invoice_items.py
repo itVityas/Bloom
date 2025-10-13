@@ -70,11 +70,14 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
     def get_real_amount(self, obj) -> float:
         declaration_item = obj.declared_item
         if not declaration_item:
-            count = Products.objects.filter(
-                cleared__isnull=True,
-                model__name__id=obj.model_name_id.id
-            ).values('barcode').distinct().count()
-            return count
+            try:
+                count = Products.objects.filter(
+                    cleared__isnull=True,
+                    model__name__id=obj.model_name_id.id
+                ).values('barcode').distinct().count()
+                return count
+            except Exception:
+                return 0
 
         cleared_items_subquery = ClearedItem.objects.filter(
             declared_item_id=OuterRef('id')
