@@ -49,9 +49,9 @@ class FullClearanceWorkflowView(APIView):
         serializer = ClearanceCalculateInputSerializer(data=request.data)
         if serializer.is_valid():
             invoice_id = serializer.validated_data['invoice_id']
-            order_id = serializer.validated_data.get('order_id')
-            is_gifted = serializer.validated_data.get('is_gifted')
-            only_panel = serializer.validated_data.get('only_panel')
+            order_id = serializer.validated_data.get('order_id', None)
+            is_gifted = serializer.validated_data.get('is_gifted', False)
+            only_panel = serializer.validated_data.get('only_panel', False)
             try:
                 return Response({'message': 'Успешный расчет'}, status=status.HTTP_200_OK)
             except Exception as e:

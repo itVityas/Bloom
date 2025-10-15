@@ -24,5 +24,4 @@ def clear_invoice_calculate(invoice_id: int):
 
         ClearedItem.objects.filter(clearance_invoice_items__clearance_invoice_id=invoice_id).delete()
         ClearanceUncleared.objects.filter(invoice_item__clearance_invoice_id=invoice_id).delete()
-        ClearanceInvoiceItems.objects.filter(clearance_invoice_id=invoice_id).delete()
         ClearanceInvoice.objects.filter(pk=invoice_id).update(date_calc=None, cleared=False)
