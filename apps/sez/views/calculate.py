@@ -10,8 +10,10 @@ from apps.sez.serializers.full_clearance_workflow import (
 )
 from apps.sez.permissions import STZPermission
 from apps.sez.clearance_workflow.calculate.clear import clear_invoice_calculate
+from apps.sez.clearance_workflow.calculate.calculate import begin_calculation
 from apps.sez.exceptions import (
-    InvoiceNotFoundException
+    InvoiceNotFoundException,
+    InvoiceAlreadyClearedException,
 )
 
 
@@ -53,7 +55,12 @@ class FullClearanceWorkflowView(APIView):
             is_gifted = serializer.validated_data.get('is_gifted', False)
             only_panel = serializer.validated_data.get('only_panel', False)
             try:
+                begin_calculation(invoice_id, order_id, is_gifted, only_panel)
                 return Response({'message': 'Успешный расчет'}, status=status.HTTP_200_OK)
+            except InvoiceNotFoundException:
+                return Response({'error': 'Накладная не найдена'}, status=status.HTTP_404_NOT_FOUND)
+            except InvoiceAlreadyClearedException:
+                return Response({'error': 'Накладная уже рассчитана'}, status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

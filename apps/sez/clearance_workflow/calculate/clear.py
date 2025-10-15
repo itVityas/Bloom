@@ -8,6 +8,11 @@ from apps.sez.exceptions import InvoiceNotFoundException
 
 
 def clear_invoice_calculate(invoice_id: int):
+    '''
+    Очищаем рассчет по invoice_id
+    Очищаем Products, количество в declared_item, удаляем ClearedItem и ClearanceUncleared,
+    удаляем поля с рассчетом в ClearanceInvoice
+    '''
     invoice = ClearanceInvoice.objects.filter(id=invoice_id)
     if not invoice.exists():
         raise InvoiceNotFoundException()
