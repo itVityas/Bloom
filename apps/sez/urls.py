@@ -32,6 +32,7 @@ from apps.sez.views.inner_ttn_items import (
     InnerTTNItemsRetrieveUpdateDestroyAPIView,
 )
 from apps.sez.views.invoice_ttn import InvoiceTTNToPDFView
+from apps.sez.views.calculate import FullClearanceWorkflowView
 
 urlpatterns = [
     # Reports
@@ -71,23 +72,8 @@ urlpatterns = [
     path('innerttn_items/create/', InnerTTNItemsCreateView.as_view()),
     path('innerttn_items/<int:pk>/', InnerTTNItemsRetrieveUpdateDestroyAPIView.as_view()),
 
-    # Full clearance_workflow
-<<<<<<< HEAD
-    # рассчет расстаможки
-=======
-<<<<<<< Updated upstream
->>>>>>> develop
-    path('clearance/calculate/', FullClearanceWorkflowAPIView.as_view(), name='full-clearance-workflow'),
-    path('clearance/<int:invoice_id>/cleared-items/', ClearedItemListAPIView.as_view(),
-         name='cleared-item-list'),
-    path('clearance/<int:invoice_id>/cleared-result/', ClearanceResultListAPIView.as_view(),
-         name='cleared-result-list'),
-    path('clearance/<int:invoice_id>/products/', ClearanceInvoiceProductsExportView.as_view(),
-         name='products-export'),
-=======
-    # рассчет расстаможки
->>>>>>> Stashed changes
+    # расстаможка clearance custom
     path('clearance-invoices/<int:clearance_invoice_id>/dbf-zip/', ClearanceInvoiceDBFZipView.as_view(),
          name='clearance-invoice-dbf-zip'),
-
+    path('clearance/calculate/', FullClearanceWorkflowView.as_view(), name='full-clearance-workflow'),
 ]
