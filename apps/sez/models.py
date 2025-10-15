@@ -31,32 +31,6 @@ class ClearanceInvoice(models.Model):
         ordering = ['id']
 
 
-class ClearanceInvoiceItemModels(models.Model):
-    """
-    Junction model linking ClearanceInvoiceItems to Models.
-
-    Represents which specific models are included in each invoice item.
-    """
-    clearance_invoice_item = models.ForeignKey(
-        'ClearanceInvoiceItems',
-        on_delete=models.CASCADE,
-        related_name='model_links'
-    )
-    model = models.ForeignKey(
-        'shtrih.Models',
-        on_delete=models.CASCADE,
-        related_name='invoice_item_links',
-        db_constraint=False
-    )
-
-    class Meta:
-        db_table = 'clearance_invoice_item_models'
-        unique_together = ('clearance_invoice_item', 'model')
-
-    def __str__(self):
-        return f"ClearanceInvoiceItemModels #{self.pk}"
-
-
 class ClearanceInvoiceItems(models.Model):
     """
     Line items within a clearance invoice.
@@ -84,11 +58,6 @@ class ClearanceInvoiceItems(models.Model):
         related_name='clearance_invoice_items',
     )
     quantity = models.FloatField()
-    models = models.ManyToManyField(
-        'shtrih.Models',
-        through='ClearanceInvoiceItemModels',
-        related_name='clearance_invoice_items'
-    )
 
     def __str__(self):
         return f"InvoiceItem #{self.pk} (Invoice #{self.clearance_invoice_id})"
@@ -99,21 +68,8 @@ class ClearanceInvoiceItems(models.Model):
 
 class ClearedItem(models.Model):
     """
-    Tracks individual products that have been cleared through customs.
-
-    Links products to their clearance invoices and declaration items.
+    clearance items than are cleared and they declaration
     """
-    product_id = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-    clearance_invoice = models.ForeignKey(
-        ClearanceInvoice,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='cleared_items'
-    )
     clearance_invoice_items = models.ForeignKey(
         ClearanceInvoiceItems,
         null=True,
@@ -201,11 +157,11 @@ class InnerTTNItems(models.Model):
         ordering = ['id']
 
 
-class ClearanceResult(models.Model):
+class ClearanceUncleared(models.Model):
     """
     Tracks results of customs clearance attempts.
 
-    Records successful and failed clearance attempts with reasons.
+    Records failed clearance attempts with reasons.
     """
     invoice_item = models.ForeignKey(
         'ClearanceInvoiceItems',

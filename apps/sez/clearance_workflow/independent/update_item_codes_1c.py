@@ -7,6 +7,7 @@ from apps.declaration.models import Declaration, DeclaredItem
 
 logger = logging.getLogger(__name__)
 
+
 def update_item_codes_1c():
     """
     Fetch missing item_code_1c values for declared items from the 1С API and update the database.
