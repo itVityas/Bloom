@@ -1,9 +1,5 @@
 from django.urls import path
 
-from apps.sez.views.clearance_workflow.clearance_result import ClearanceResultListAPIView
-from apps.sez.views.clearance_workflow.cleared_item_by_clearance import ClearedItemListAPIView
-from apps.sez.views.clearance_workflow.export_products import ClearanceInvoiceProductsExportView
-from apps.sez.views.clearance_workflow.full_clearance_workflow import FullClearanceWorkflowAPIView
 from apps.sez.views.create_dbf import ClearanceInvoiceDBFZipView
 from apps.sez.views.report_stz1 import ReportSTZ1View
 from apps.sez.views.report_clearanceinvoice import ReportClearanceInvoicePDFView
@@ -12,10 +8,6 @@ from apps.sez.views.clearance_invoice import (
     ClearanceInvoiceListCreateAPIView,
     GetFullClearanceInvoiceView,
     GetFullClearancesInvoiceListView,
-)
-from apps.sez.views.clearance_invoice_items import (
-    ClearanceInvoiceItemDetailedView,
-    ClearanceInvoiceItemListCreateAPIView,
 )
 from apps.sez.views.cleared_item import (
     ClearedItemDetailedView,
@@ -53,12 +45,6 @@ urlpatterns = [
     path('clearance_invoice/full/', GetFullClearancesInvoiceListView.as_view()),
     path('clearance_invoice/reportdelete/<int:pk>/', ReportDeleteView.as_view()),
 
-    # ClearanceInvoiceItems endpoints
-    path('clearance_invoice_items/', ClearanceInvoiceItemListCreateAPIView.as_view(),
-         name='clearance-invoice-item-list'),
-    path('clearance_invoice_items/detailed/<int:pk>/', ClearanceInvoiceItemDetailedView.as_view(),
-         name='clearance-invoice-item-detail'),
-
     # ClearedItem endpoints
     path('cleared_item/', ClearedItemListCreateAPIView.as_view(), name='cleared-item-list'),
     path('cleared_item/detailed/<int:pk>/', ClearedItemDetailedView.as_view(), name='cleared-item-detail'),
@@ -84,6 +70,7 @@ urlpatterns = [
     path('innerttn_items/<int:pk>/', InnerTTNItemsRetrieveUpdateDestroyAPIView.as_view()),
 
     # Full clearance_workflow
+<<<<<<< Updated upstream
     path('clearance/calculate/', FullClearanceWorkflowAPIView.as_view(), name='full-clearance-workflow'),
     path('clearance/<int:invoice_id>/cleared-items/', ClearedItemListAPIView.as_view(),
          name='cleared-item-list'),
@@ -91,6 +78,9 @@ urlpatterns = [
          name='cleared-result-list'),
     path('clearance/<int:invoice_id>/products/', ClearanceInvoiceProductsExportView.as_view(),
          name='products-export'),
+=======
+    # рассчет расстаможки
+>>>>>>> Stashed changes
     path('clearance-invoices/<int:clearance_invoice_id>/dbf-zip/', ClearanceInvoiceDBFZipView.as_view(),
          name='clearance-invoice-dbf-zip'),
 
