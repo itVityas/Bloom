@@ -7,3 +7,11 @@ class InvoiceNotFoundException(ValidationError):
 
 class InvoiceAlreadyClearedException(ValidationError):
     default_detail = 'Clearance invoice already cleared'
+
+
+class ProductsNotEnoughException(ValidationError):
+    default_detail = 'Not enough products for clearance'
+
+
+class InternalException(ValidationError):
+    default_detail = 'Internal error'

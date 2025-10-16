@@ -14,6 +14,8 @@ from apps.sez.clearance_workflow.calculate.calculate import begin_calculation
 from apps.sez.exceptions import (
     InvoiceNotFoundException,
     InvoiceAlreadyClearedException,
+    ProductsNotEnoughException,
+    InternalException,
 )
 
 
@@ -61,6 +63,11 @@ class FullClearanceWorkflowView(APIView):
                 return Response({'error': 'Накладная не найдена'}, status=status.HTTP_404_NOT_FOUND)
             except InvoiceAlreadyClearedException:
                 return Response({'error': 'Накладная уже рассчитана'}, status=status.HTTP_400_BAD_REQUEST)
+            except ProductsNotEnoughException:
+                return Response({'error': str(ProductsNotEnoughException)},
+                                status=status.HTTP_409_CONFLICT)
+            except InternalException:
+                return Response({'error': str(InternalException)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             except Exception as e:
                 return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
