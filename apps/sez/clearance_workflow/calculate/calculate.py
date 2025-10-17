@@ -1,18 +1,20 @@
-from typing import Dict, Tuple, List, Any
+from typing import Dict, Tuple, List, Any, Optional
 
-from django.db.models import Sum
+from django.db.models import Sum, F, FloatField, ExpressionWrapper, Subquery, OuterRef
 from django.db import transaction
 
 from apps.sez.models import ClearanceInvoice, ClearanceInvoiceItems
 from apps.shtrih.models import Products, Models, Consignments
 from apps.declaration.models import Declaration
-from apps.omega.models import Stockobj
+from apps.omega.models import VzNab, Stockobj, VzNorm
 from apps.sez.clearance_workflow.calculate.update_item_codes_1c import update_item_codes_1c
+from apps.sez.clearance_workflow.calculate.omega_fetch import fetch_vznab_stock_flat_tree
 from apps.sez.exceptions import (
     InvoiceNotFoundException,
     InvoiceAlreadyClearedException,
     ProductsNotEnoughException,
     InternalException,
+    OracleException,
 )
 
 
@@ -113,6 +115,7 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_id: int, is_gifte
         is_tv = False
 
     # Омега, получаем unv_code из stockobj через signs (СКЖИ)
+    # unv_code = код изделия
     signs = list({model_display_map[mid] for mid in models_quantity})
     stockobjs = (
         Stockobj.objects
@@ -134,3 +137,6 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_id: int, is_gifte
         })
 
     return results, products_list
+
+
+

@@ -15,3 +15,7 @@ class ProductsNotEnoughException(ValidationError):
 
 class InternalException(ValidationError):
     default_detail = 'Internal error'
+
+
+class OracleException(ValidationError):
+    default_detail = 'Oracle error'
