@@ -1,21 +1,139 @@
-from typing import Dict, Tuple, List, Any, Optional
+from typing import Dict, Tuple, List, Any
 
-from django.db.models import Sum, F, FloatField, ExpressionWrapper, Subquery, OuterRef
+from django.db.models import Sum
 from django.db import transaction
+from django.utils import timezone
 
-from apps.sez.models import ClearanceInvoice, ClearanceInvoiceItems
-from apps.shtrih.models import Products, Models, Consignments
-from apps.declaration.models import Declaration
-from apps.omega.models import VzNab, Stockobj, VzNorm
+from apps.sez.models import (
+    ClearanceInvoice,
+    ClearanceInvoiceItems,
+    ClearedItem,
+    ClearanceUncleared
+)
+from apps.shtrih.models import Products, Models
+from apps.declaration.models import Declaration, DeclaredItem
+from apps.omega.models import Stockobj
 from apps.sez.clearance_workflow.calculate.update_item_codes_1c import update_item_codes_1c
-from apps.sez.clearance_workflow.calculate.omega_fetch import fetch_vznab_stock_flat_tree
+from apps.sez.clearance_workflow.calculate.omega_fetch import component_flat_list
 from apps.sez.exceptions import (
     InvoiceNotFoundException,
     InvoiceAlreadyClearedException,
     ProductsNotEnoughException,
     InternalException,
-    OracleException,
+    PanelException,
 )
+
+
+def clear_model_items(
+                        invoice_item: ClearanceInvoiceItems,
+                        model_code: int,
+                        quantity: float,
+                        is_tv: bool,
+                        gifted: bool,
+                        only_panel: bool) -> List[Dict[str, Any]]:
+    '''
+    Args:
+        invoice_item (ClearanceInvoiceItems):
+            Object of the ClearanceInvoiceItems triggering this clearance; used to set ClearedItem.clearance_invoice.
+        model_code (int):
+            UNV code of the root specification to clear.
+        quantity (float):
+            Total quantity of the root model to clear (will be multiplied through component tree).
+        is_tv (bool):
+            If True, verifies that at least one component represents a TV panel (nomsign starts
+            with '638111111'); otherwise raises PanelError. Defaults to False.
+        gifted (bool): false - use not gifted, true use only gifted declaration items
+        only_panel (bool): false use all components, true use only panel (need is_tv true)
+
+    Returns:
+        List[Dict[str, Any]]: A list of results per component, each dictionary containing:
+            - name (str): DeclaredItem.name of the cleared product.
+            - requested (float): Total quantity requested to clear for this component.
+            - plan (List[Dict[str, float]]): Breakdown of cleared quantities by declaration.
+            - not_cleared (float): Quantity that could not be cleared due to insufficient stock.
+
+    Raises:
+        PanelError: If is_tv=True and no TV panel component is found in the breakdown.
+    '''
+    components = component_flat_list(model_code, None, quantity)
+
+    # find in TV components panel or Exception
+    if is_tv:
+        if not any(
+            isinstance(item.get("nomsign"), str) and item["nomsign"].startswith("638111111")
+            for item in components
+        ):
+            raise PanelException(f"Panel components not found for TV model {model_code}")
+
+    # clear each component against DeclaredItem stocks
+    for item in components:
+        nomsign = item.get('nomsign', None)
+        if nomsign:
+            continue
+
+        if only_panel and is_tv:
+            if not isinstance(item.get("nomsign"), str) or not item["nomsign"].startswith("638111111"):
+                continue
+
+        try:
+            code_1c = int(nomsign)
+        except (TypeError, ValueError):
+            continue
+
+        requested_qty = item.get('absolute_quantity', 0.0)
+        if requested_qty <= 0:
+            continue
+
+        di_qs = (
+                DeclaredItem.objects.select_for_update()
+                .select_related("declaration")
+                .filter(item_code_1c=code_1c, available_quantity__gt=0.0, declaration__gifted=gifted)
+                .order_by('item_code_1c', "declaration__declaration_date")
+            )
+
+        remaining = requested_qty
+
+        for di in di_qs:
+            available = di.available_quantity or 0.0
+            if available <= 0:
+                continue
+
+            to_clear = min(available, remaining)
+
+            # Update available_quantity
+            di.available_quantity = available - to_clear
+            di.save(update_fields=["available_quantity"])
+
+            # Record clearance
+            ClearedItem.objects.create(
+                clearance_invoice_items=invoice_item,
+                declared_item_id=di,
+                quantity=to_clear,
+            )
+
+            remaining -= to_clear
+            if remaining <= 0:
+                break
+
+        if di_qs.count() == 0 and remaining > 0:
+            ClearanceUncleared.objects.create(
+                invoice_item=invoice_item,
+                name=nomsign,
+                request_quantity=requested_qty,
+                uncleared_quantity=requested_qty,
+                reason="No matching declaration items",
+            )
+            continue
+
+        if remaining > 0:
+            ClearanceUncleared.objects.create(
+                invoice_item=invoice_item,
+                name=nomsign,
+                request_quantity=requested_qty,
+                uncleared_quantity=remaining,
+                reason="Not enough stock",
+            )
+            continue
 
 
 def begin_calculation(invoice_id: int, order_id: int, is_gifted: bool, only_panel: bool):
@@ -36,13 +154,30 @@ def begin_calculation(invoice_id: int, order_id: int, is_gifted: bool, only_pane
         clearance_invoice=invoice, declared_item__isnull=True)
 
     with transaction.atomic():
-        all_products = []
         for item in invoice_items:
             # возвращает - "model_id": int - "model_display": str (СКЖИ)- "count": int - "unvcode": int is_tv: bool
             # и список products в n количестве со самых старых
             used_models, product_list = process_product(item, order_id, is_gifted)
 
-            all_products.extend(product_list)
+            for m in used_models:
+                clear_model_items(
+                    invoice_item=item,
+                    model_code=m.get('unvcode'),
+                    quantity=m.get('count'),
+                    is_tv=m.get('is_tv'),
+                    gifted=is_gifted,
+                    only_panel=only_panel
+                )
+
+            # обновляем запись в продуктах
+            for product in product_list:
+                product.cleared = invoice_id
+                product.save(update_fields=['cleared'])
+
+        # помечаем инвойс как рассчитанный
+        invoice.cleared = True
+        invoice.date_calc = timezone.now()
+        invoice.save()
 
 
 def process_product(invoice_item: ClearanceInvoiceItems, order_id: int, is_gifted: bool) -> Tuple:
@@ -70,7 +205,8 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_id: int, is_gifte
     # Получаем список products с фильтрацией по условиям
     products = Products.objects.filter(model__name__id=invoice_item, cleared__isnull=True)
     if order_id:
-        # get list of decl in order: [('07260/52003398',), ('07260/52001406',), ('07260/52001405',), ('07260/52001449',), ('07260/52001402',)]
+        # get list of decl in order: [('07260/52003398',), ('07260/52001406',),
+        # ('07260/52001405',), ('07260/52001449',), ('07260/52001402',)]
         declaration_numbers = Declaration.objects.filter(
             container__order__id=order_id).values_list('declaration_number')
         products = products.filter(consignment__declaration_number__in=declaration_numbers)
@@ -137,6 +273,3 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_id: int, is_gifte
         })
 
     return results, products_list
-
-
-

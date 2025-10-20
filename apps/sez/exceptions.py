@@ -19,3 +19,7 @@ class InternalException(ValidationError):
 
 class OracleException(ValidationError):
     default_detail = 'Oracle error'
+
+
+class PanelException(ValidationError):
+    default_detail = 'No panel component find in tv'

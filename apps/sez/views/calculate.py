@@ -17,6 +17,7 @@ from apps.sez.exceptions import (
     ProductsNotEnoughException,
     InternalException,
     OracleException,
+    PanelException,
 )
 
 
@@ -71,6 +72,8 @@ class FullClearanceWorkflowView(APIView):
                 return Response({'error': str(InternalException)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             except OracleException:
                 return Response({'error': str(OracleException)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            except PanelException:
+                return Response({'error': str(PanelException)}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
             except Exception as e:
                 return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

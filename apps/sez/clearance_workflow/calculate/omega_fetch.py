@@ -146,6 +146,24 @@ def component_flat_list(
                         depth: Optional[int] = None,
                         count: float = 1.0
                         ) -> List[Dict[str, Optional[object]]]:
+    '''
+    flat and group list of components
+
+    Args:
+        root_scp_unv (int): UNV code of the root specification
+        max_depth (Optional[int]): Maximum recursion depth. None means unlimited
+        count (int): Number of items for calculation total count
+
+    Returns:
+        List[Dict]: Each dict has keys:
+            - scp_unv: int
+            - item_sign: str
+            - item_unv: int
+            - quantity: float
+            - name: str
+            - nomsign: str | None
+            - absolute_quantity: float
+    '''
     flat_list = fetch_vznab_stock_flat_tree(scp_unv, depth, count)
     for i in range(len(flat_list)-1):
         if flat_list[i] is None or flat_list == []:
