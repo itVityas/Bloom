@@ -1,5 +1,6 @@
 from django.urls import path
 
+from apps.sez.views.clearance_result import ClearanceResultListAPIView
 from apps.sez.views.create_dbf import ClearanceInvoiceDBFZipView
 from apps.sez.views.report_stz1 import ReportSTZ1View
 from apps.sez.views.cleared_item_by_clearance import ClearedItemListAPIView
@@ -82,4 +83,6 @@ urlpatterns = [
          name='cleared-item-list'),
     path('clearance/<int:invoice_id>/products/', ClearanceInvoiceProductsExportView.as_view(),
          name='products-export'),
+    path('clearance/<int:invoice_id>/cleared-result/', ClearanceResultListAPIView.as_view(),
+         name='cleared-result-list'),
 ]
