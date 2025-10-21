@@ -68,7 +68,7 @@ def clear_model_items(
     # clear each component against DeclaredItem stocks
     for item in components:
         nomsign = item.get('nomsign', None)
-        if nomsign:
+        if not nomsign:
             continue
 
         if only_panel and is_tv:
@@ -171,7 +171,7 @@ def begin_calculation(invoice_id: int, order_id: int, is_gifted: bool, only_pane
 
             # обновляем запись в продуктах
             for product in product_list:
-                product.cleared = invoice_id
+                product.cleared = invoice
                 product.save(update_fields=['cleared'])
 
         # помечаем инвойс как рассчитанный
@@ -203,7 +203,7 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_id: int, is_gifte
         )
     '''
     # Получаем список products с фильтрацией по условиям
-    products = Products.objects.filter(model__name__id=invoice_item, cleared__isnull=True)
+    products = Products.objects.filter(model__name__id=invoice_item.model_name_id.id, cleared__isnull=True)
     if order_id:
         # get list of decl in order: [('07260/52003398',), ('07260/52001406',),
         # ('07260/52001405',), ('07260/52001449',), ('07260/52001402',)]
@@ -222,6 +222,7 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_id: int, is_gifte
     # Ошибка нехватки количества товаров
     request_quantity = invoice_item.quantity
     products_quantity = products.aggregate(total_quantity=Sum('quantity'))['total_quantity']
+    products_quantity = products_quantity or 0.0
     if request_quantity > products_quantity:
         raise ProductsNotEnoughException(
             f'Недостаточно товаров для списания. Требуется: {request_quantity}, есть: {products_quantity}'
