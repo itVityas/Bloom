@@ -3,6 +3,7 @@ from django.urls import path
 from apps.sez.views.create_dbf import ClearanceInvoiceDBFZipView
 from apps.sez.views.report_stz1 import ReportSTZ1View
 from apps.sez.views.cleared_item_by_clearance import ClearedItemListAPIView
+from apps.sez.views.export_products import ClearanceInvoiceProductsExportView
 from apps.sez.views.report_clearanceinvoice import ReportClearanceInvoicePDFView
 from apps.sez.views.clearance_invoice import (
     ClearanceInvoiceDetailedView,
@@ -79,4 +80,6 @@ urlpatterns = [
     path('clearance/calculate/', FullClearanceWorkflowView.as_view(), name='full-clearance-workflow'),
     path('clearance/<int:invoice_id>/cleared-items/', ClearedItemListAPIView.as_view(),
          name='cleared-item-list'),
+    path('clearance/<int:invoice_id>/products/', ClearanceInvoiceProductsExportView.as_view(),
+         name='products-export'),
 ]
