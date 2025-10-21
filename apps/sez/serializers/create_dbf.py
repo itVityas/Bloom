@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from apps.sez.models import ClearanceInvoice
 
+
 class DBFZipSerializer(serializers.Serializer):
     clearance_invoice_id = serializers.IntegerField()
 

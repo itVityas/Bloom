@@ -22,6 +22,7 @@ NORM_FIELDS = [
     ('GTDGD',     'D',  8, 0),      # Пусто
 ]
 
+
 def generate_norm_dbf(clearance_invoice_id: int, output_path: str, encoding: str = 'cp866') -> None:
     """
     Generate a NORM-format DBF file for a given ClearanceInvoice.
