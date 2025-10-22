@@ -2,6 +2,7 @@ from django.db import models
 from datetime import datetime
 
 from apps.shtrih.models import ModelNames
+from apps.arrival.models import Order
 
 
 class ClearanceInvoice(models.Model):
@@ -23,6 +24,14 @@ class ClearanceInvoice(models.Model):
     create_at = models.DateTimeField(default=datetime.now)
     date_payments = models.DateTimeField(blank=True, null=True)
     date_calc = models.DateTimeField(blank=True, null=True)
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    is_gifted = models.BooleanField(default=False)
+    only_panel = models.BooleanField(default=False)
 
     def __str__(self):
         return f"ClearanceInvoice #{self.pk}"

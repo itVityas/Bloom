@@ -27,15 +27,3 @@ class ClearanceCalculateInputSerializer(serializers.Serializer):
     invoice_id = serializers.IntegerField(
         help_text="ID of the ClearanceInvoice to process."
     )
-    order_id = serializers.IntegerField(
-        required=False,
-        help_text="ID of the Order to process."
-    )
-    is_gifted = serializers.BooleanField(
-        default=False,
-        help_text="Whether the order is gifted."
-    )
-    only_panel = serializers.BooleanField(
-        default=False,
-        help_text="Whether to process only the panel."
-    )

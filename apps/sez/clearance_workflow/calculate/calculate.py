@@ -136,7 +136,7 @@ def clear_model_items(
             continue
 
 
-def begin_calculation(invoice_id: int, order_id: int, is_gifted: bool, only_panel: bool):
+def begin_calculation(invoice_id: int):
     '''
     Начинаем рассчет по invoice_id
     '''
@@ -146,6 +146,10 @@ def begin_calculation(invoice_id: int, order_id: int, is_gifted: bool, only_pane
         raise InvoiceNotFoundException()
     if invoice.cleared:
         raise InvoiceAlreadyClearedException()
+
+    order_id = invoice.order.id if invoice.order else None
+    is_gifted = invoice.is_gifted
+    only_panel = invoice.only_panel
 
     # обновляем пустые declared_item.item_code_1c
     update_item_codes_1c()
