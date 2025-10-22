@@ -30,7 +30,8 @@ def clear_model_items(
                         quantity: float,
                         is_tv: bool,
                         gifted: bool,
-                        only_panel: bool) -> List[Dict[str, Any]]:
+                        only_panel: bool,
+                        order_id: int = None) -> List[Dict[str, Any]]:
     '''
     Args:
         invoice_item (ClearanceInvoiceItems):
@@ -84,12 +85,23 @@ def clear_model_items(
         if requested_qty <= 0:
             continue
 
-        di_qs = (
-                DeclaredItem.objects.select_for_update()
-                .select_related("declaration")
-                .filter(item_code_1c=code_1c, available_quantity__gt=0.0, declaration__gifted=gifted)
-                .order_by('item_code_1c', "declaration__declaration_date")
-            )
+        if order_id:
+            declaration_numbers = Declaration.objects.filter(
+                container__order__id=order_id).values_list('declaration_number')
+            di_qs = (
+                    DeclaredItem.objects.select_for_update()
+                    .select_related("declaration")
+                    .filter(item_code_1c=code_1c, available_quantity__gt=0.0,
+                            declaration__gifted=gifted, declaration__declaration_number__in=declaration_numbers)
+                    .order_by('item_code_1c', "declaration__declaration_date")
+                )
+        else:
+            di_qs = (
+                    DeclaredItem.objects.select_for_update()
+                    .select_related("declaration")
+                    .filter(item_code_1c=code_1c, available_quantity__gt=0.0, declaration__gifted=gifted)
+                    .order_by('item_code_1c', "declaration__declaration_date")
+                )
 
         remaining = requested_qty
 
@@ -170,7 +182,8 @@ def begin_calculation(invoice_id: int):
                     quantity=m.get('count'),
                     is_tv=m.get('is_tv'),
                     gifted=is_gifted,
-                    only_panel=only_panel
+                    only_panel=only_panel,
+                    order_id=order_id
                 )
 
             # обновляем запись в продуктах
