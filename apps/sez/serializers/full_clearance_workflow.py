@@ -9,7 +9,6 @@ class ClearanceDeleteInputSerializer(serializers.Serializer):
 
     Fields:
         invoice_id (int): ID of the ClearanceInvoice to process
-        is_tv (bool): Whether to enforce TV‑panel checks
     """
     invoice_id = serializers.IntegerField(
         help_text="ID of the ClearanceInvoice to process."
@@ -22,7 +21,6 @@ class ClearanceCalculateInputSerializer(serializers.Serializer):
 
     Fields:
         invoice_id (int): ID of the ClearanceInvoice to process
-        is_tv (bool): Whether to enforce TV‑panel checks
     """
     invoice_id = serializers.IntegerField(
         help_text="ID of the ClearanceInvoice to process."

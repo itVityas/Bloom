@@ -10,7 +10,7 @@ from apps.sez.models import (
     ClearedItem,
     ClearanceUncleared
 )
-from apps.shtrih.models import Products, Models
+from apps.shtrih.models import Products, Models, ProductTransitions
 from apps.declaration.models import Declaration, DeclaredItem
 from apps.omega.models import Stockobj
 from apps.sez.clearance_workflow.calculate.update_item_codes_1c import update_item_codes_1c
@@ -207,6 +207,7 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_id: int, is_gifte
         )
     '''
     # Получаем список products с фильтрацией по условиям
+    process_transitions_list = ProductTransitions.objects.all().values_list('old_product')
     products = Products.objects.filter(model__name__id=invoice_item.model_name_id.id, cleared__isnull=True)
     if order_id:
         # get list of decl in order: [('07260/52003398',), ('07260/52001406',),
@@ -221,6 +222,7 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_id: int, is_gifte
         declaration_numbers = Declaration.objects.filter(
             gifted=False).values_list('declaration_number')
         products = products.filter(consignment__declaration_number__in=declaration_numbers)
+    products = products.exclude(pk__in=process_transitions_list)
     products = products.order_by('id')
 
     # Ошибка нехватки количества товаров
