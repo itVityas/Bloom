@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from apps.sez.models import ClearanceInvoice, ClearanceInvoiceItems
 from apps.sez.serializers.clearance_invoice_items import ClearanceInvoiceItemsFullSerializer
+from apps.arrival.serializers.order import OrderSerializer
 
 
 class ClearanceInvoiceSerializer(serializers.ModelSerializer):
@@ -18,6 +19,7 @@ class FullClearanceInvoiceSerializer(serializers.ModelSerializer):
     Serializer for the ClearanceInvoice model with nested ClearanceInvoiceItems.
     """
     items = serializers.SerializerMethodField()
+    order = OrderSerializer(read_only=True)
 
     class Meta:
         model = ClearanceInvoice
@@ -32,6 +34,9 @@ class FullClearanceInvoiceSerializer(serializers.ModelSerializer):
             'create_at',
             'date_payments',
             'date_calc',
+            'order',
+            'is_gifted',
+            'only_panel',
             'items',
         ]
 
