@@ -167,7 +167,7 @@ def begin_calculation(invoice_id: int):
     update_item_codes_1c()
 
     invoice_items = ClearanceInvoiceItems.objects.filter(
-        clearance_invoice=invoice, declared_item__isnull=True)
+        clearance_invoice=invoice, model_name_id__isnull=False)
 
     with transaction.atomic():
         for item in invoice_items:
@@ -190,6 +190,13 @@ def begin_calculation(invoice_id: int):
             for product in product_list:
                 product.cleared = invoice
                 product.save(update_fields=['cleared'])
+
+        invoice_item_decl = ClearanceInvoiceItems.objects.filter(clearance_invoice=invoice, declared_item__isnull=False)
+        for item in invoice_item_decl:
+            if item.quantity > item.declared_item.available_quantity:
+                raise ProductsNotEnoughException(f"Product {item.declared_item.name} not enough quantity")
+            item.declared_item.available_quantity = item.declared_item.available_quantity - item.quantity
+            item.declared_item.save(update_fields=['available_quantity'])
 
         # помечаем инвойс как рассчитанный
         invoice.cleared = True
