@@ -190,4 +190,38 @@ class VzNab(models.Model):
         managed = False
         db_table = 'vz_nab'
         db_table_comment = 'Импорт спецификаций для витязя (от нас к ним)'
-        
+
+
+class AdmissibleSubst(models.Model):
+    code = models.IntegerField(primary_key=True, db_column='CODE')
+    substfor = models.IntegerField(db_column='SUBSTFOR')
+    subst = models.IntegerField(db_column='SUBST')
+    both_flag = models.IntegerField(db_column='BOTH_FLAG')
+    # koef = models.IntegerField(db_column='KOEF')
+    # apply = models.IntegerField(db_column='APPLY', blank=True, null=True)
+    # usercode = models.IntegerField(db_column='USERCODE')
+    # userinsertdate = models.DateField(db_column='USEREINSERTDATE')
+    # usereditdate = models.DateField(db_column='UESEREDITDATE', null=True, blank=True)
+    datefrom = models.DateField(db_column='DATEFROM')
+    dateto = models.DateField(db_column='DATETO', blank=True, null=True)
+    # doccode = models.IntegerField(db_column='DOCCODE', blank=True, null=True)
+    # doctype = models.IntegerField(db_column='DOCTYPE', blank=True, null=True)
+    # notice = models.CharField(max_length=60, db_column='NOTICE', blank=True, null=True)
+    # substdoc = models.CharField(max_length=255, db_column='SUBSTDOC', blank=True, null=True)
+    # substdocdate = models.DateField(db_column='SUBSTDOCDATE', blank=True, null=True)
+    # cl_group = models.IntegerField(db_column='CL_GROUP', blank=True, null=True)
+    # inclusion = models.IntegerField(db_column='INCLUSION', blank=True, null=True)
+    # substfor_meas = models.IntegerField(db_column='SUBSTFOR_MEAS', blank=True, null=True)
+    # subst_meas = models.IntegerField(db_column='SUBST_MEAS', blank=True, null=True)
+    # division = models.IntegerField(db_column='DIVISION', blank=True, null=True)
+    # use_in_lc = models.IntegerField(db_column='USE_IN_LC', default=1)
+    # use_in_bo_prod = models.IntegerField(db_column='USE_IN_BO_PROD', blank=True, null=True)
+    # subst_norm = models.IntegerField(db_column='SUBST_NORM', default=1)
+
+    class Meta:
+        managed = False
+        db_table = 'ADMISSIBLE_SUBST'
+        db_table_comment = 'Аналоги'
+
+    def __str__(self):
+        return f'{self.code}: {self.substfor} -> {self.subst}'
