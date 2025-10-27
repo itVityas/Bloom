@@ -14,7 +14,7 @@ from apps.shtrih.models import Products, Models, ProductTransitions
 from apps.declaration.models import Declaration, DeclaredItem
 from apps.omega.models import Stockobj
 from apps.sez.clearance_workflow.calculate.update_item_codes_1c import update_item_codes_1c
-from apps.sez.clearance_workflow.calculate.omega_fetch import component_flat_list
+from apps.sez.clearance_workflow.calculate.omega_fetch import component_flat_list, fetch_analog_details
 from apps.sez.exceptions import (
     InvoiceNotFoundException,
     InvoiceAlreadyClearedException,
@@ -68,6 +68,7 @@ def clear_model_items(
 
     # clear each component against DeclaredItem stocks
     for item in components:
+        item['clear'] = False
         nomsign = item.get('nomsign', None)
         if not nomsign:
             continue
@@ -125,27 +126,90 @@ def clear_model_items(
 
             remaining -= to_clear
             if remaining <= 0:
+                item['clear'] = True
                 break
 
-        if di_qs.count() == 0 and remaining > 0:
+    # работа с аналогами
+    for item in components:
+        if item.get('clear', True):
+            continue
+
+        nomsign = item.get('nomsign', None)
+        if not nomsign:
+            continue
+
+        if only_panel and is_tv:
+            if not isinstance(item.get("nomsign"), str) or not item["nomsign"].startswith("638111111"):
+                continue
+
+        requested_qty = item.get('absolute_quantity', 0.0)
+        if requested_qty <= 0:
+            continue
+
+        remaining = requested_qty
+
+        analogs = fetch_analog_details(nomsign)
+        for analog in analogs:
+            try:
+                code_1c = int(analog.get('nomsign', None))
+            except (TypeError, ValueError):
+                continue
+
+            if order_id:
+                declaration_numbers = Declaration.objects.filter(
+                    container__order__id=order_id).values_list('declaration_number')
+                di_qs = (
+                        DeclaredItem.objects.select_for_update()
+                        .select_related("declaration")
+                        .filter(item_code_1c=code_1c, available_quantity__gt=0.0,
+                                declaration__gifted=gifted, declaration__declaration_number__in=declaration_numbers)
+                        .order_by('item_code_1c', "declaration__declaration_date")
+                    )
+            else:
+                di_qs = (
+                        DeclaredItem.objects.select_for_update()
+                        .select_related("declaration")
+                        .filter(item_code_1c=code_1c, available_quantity__gt=0.0, declaration__gifted=gifted)
+                        .order_by('item_code_1c', "declaration__declaration_date")
+                    )
+
+            is_find = False
+            for di in di_qs:
+                available = di.available_quantity or 0.0
+                if available <= 0:
+                    continue
+
+                to_clear = min(available, remaining)
+
+                # Update available_quantity
+                di.available_quantity = available - to_clear
+                di.save(update_fields=["available_quantity"])
+
+                # Record clearance
+                ClearedItem.objects.create(
+                    clearance_invoice_items=invoice_item,
+                    declared_item_id=di,
+                    quantity=to_clear,
+                )
+
+                remaining -= to_clear
+                if remaining <= 0:
+                    item['clear'] = True
+                    is_find = True
+                    break
+
+            if is_find:
+                break
+
+    for item in components:
+        if not item['clear'] and item.get('nomsign'):
             ClearanceUncleared.objects.create(
                 invoice_item=invoice_item,
-                name=nomsign,
+                name=item.get('nomsign') + ': ' + item.get('name', ''),
                 request_quantity=requested_qty,
                 uncleared_quantity=requested_qty,
                 reason="No matching declaration items",
             )
-            continue
-
-        if remaining > 0:
-            ClearanceUncleared.objects.create(
-                invoice_item=invoice_item,
-                name=nomsign,
-                request_quantity=requested_qty,
-                uncleared_quantity=remaining,
-                reason="Not enough stock",
-            )
-            continue
 
 
 def begin_calculation(invoice_id: int):

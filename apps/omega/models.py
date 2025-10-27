@@ -194,10 +194,10 @@ class VzNab(models.Model):
 
 class AdmissibleSubst(models.Model):
     code = models.IntegerField(primary_key=True, db_column='CODE')
-    substfor = models.IntegerField(db_column='SUBSTFOR')
-    subst = models.IntegerField(db_column='SUBST')
+    substfor = models.ForeignKey(Stockobj, models.CASCADE, related_name='substfor', db_column='SUBSTFOR')
+    subst = models.ForeignKey(Stockobj, models.CASCADE, related_name='subst', db_column='SUBST')
     both_flag = models.IntegerField(db_column='BOTH_FLAG')
-    # koef = models.IntegerField(db_column='KOEF')
+    koef = models.IntegerField(db_column='KOEF')
     # apply = models.IntegerField(db_column='APPLY', blank=True, null=True)
     # usercode = models.IntegerField(db_column='USERCODE')
     # userinsertdate = models.DateField(db_column='USEREINSERTDATE')

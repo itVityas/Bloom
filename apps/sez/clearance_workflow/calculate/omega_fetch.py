@@ -1,11 +1,70 @@
 from typing import Dict, List, Optional
 
-from django.db.models import F, FloatField, ExpressionWrapper, Subquery, OuterRef
+from django.db.models import F, FloatField, ExpressionWrapper, Subquery, OuterRef, Q
+from django.utils import timezone
 
-from apps.omega.models import VzNab, Stockobj, VzNorm
+from apps.omega.models import VzNab, Stockobj, VzNorm, AdmissibleSubst
 from apps.sez.exceptions import (
     OracleException,
 )
+
+
+def fetch_analog_details(nomsign: str) -> List[Dict[str, Optional[object]]]:
+    """Fetch analog data from AdmissibleSubst.
+
+    Args:
+        scp_unv (int): Primary key of Konstrobj for specification (field VzNab.spc_unv).
+
+    Returns:
+        List[Dict]: List of records with keys:
+            - item_sign: str
+            - koef: float (cntnum / cntdenom)
+            - name: str (Stockobj.name)
+            - nomsign: str (Stockobj.nomsign)
+
+    Raises:
+        OracleException: On database errors.
+    """
+    try:
+        curent_date = timezone.now().date()
+        stockobj = Stockobj.objects.using('oracle_db').filter(nomsign=nomsign).first()
+        analogs = AdmissibleSubst.objects.using('oracle_db').filter(
+            Q(dateto__gte=curent_date) | Q(dateto__isnull=True),
+            Q(datefrom__lte=curent_date) | Q(datefrom__isnull=True),
+            subst=stockobj,
+        )
+        analogs_from = AdmissibleSubst.objects.using('oracle_db').filter(
+            Q(dateto__gte=curent_date) | Q(dateto__isnull=True),
+            Q(datefrom__lte=curent_date) | Q(datefrom__isnull=True),
+            substfor=stockobj,
+            both_flag=1,
+        )
+
+        result = list()
+        for analog in analogs:
+            result.append(
+                {
+                    'item_sign': analog.substfor.sign,
+                    'koef': analog.koef,
+                    'name': analog.substfor.name,
+                    'nomsign': analog.substfor.nomsign,
+                }
+            )
+
+        for analog in analogs_from:
+            result.append(
+                {
+                    'item_sign': analog.subst.sign,
+                    'koef': analog.koef,
+                    'name': analog.subst.name,
+                    'nomsign': analog.subst.nomsign,
+                }
+            )
+
+        return result
+
+    except Exception as exc:
+        raise OracleException(f"Database error: {exc}")
 
 
 def fetch_vznab_stock_details(scp_unv: int) -> List[Dict[str, Optional[object]]]:
