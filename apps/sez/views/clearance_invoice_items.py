@@ -31,6 +31,14 @@ class ClearanceInvoiceItemListCreateAPIView(ListCreateAPIView):
 
     def perform_create(self, serializer):
         invoice_item = serializer.save()
+        logger.info(f'Created clearance invoice item: {invoice_item.id}')
+        if invoice_item.declared_item:
+            if invoice_item.declared_item.quantity < invoice_item.quantity:
+                logger.warning(f'Quantity of declared item {invoice_item.declared_item.id} is less than quantity of clearance invoice item {invoice_item.id}')
+                invoice_item.delete()
+                raise ValueError(f'Quantity of declared item {invoice_item.declared_item.id} is less than quantity of clearance invoice item {invoice_item.id}')
+            invoice_item.declared_item.quantity = invoice_item.declared_item.quantity - invoice_item.quantity
+            invoice_item.declared_item.save(update_fields=['quantity'])
 
 
 @extend_schema(tags=['ClearanceInvoiceItems'])
