@@ -88,7 +88,7 @@ def clear_model_items(
 
         if order_id:
             declaration_numbers = Declaration.objects.filter(
-                container__order__id=order_id).values_list('declaration_number')
+                container__order__id=order_id, is_use=True).values_list('declaration_number')
             di_qs = (
                     DeclaredItem.objects.select_for_update()
                     .select_related("declaration")
@@ -157,7 +157,7 @@ def clear_model_items(
 
             if order_id:
                 declaration_numbers = Declaration.objects.filter(
-                    container__order__id=order_id).values_list('declaration_number')
+                    container__order__id=order_id, is_use=True).values_list('declaration_number')
                 di_qs = (
                         DeclaredItem.objects.select_for_update()
                         .select_related("declaration")
@@ -297,10 +297,10 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_id: int, is_gifte
         # get list of decl in order: [('07260/52003398',), ('07260/52001406',),
         # ('07260/52001405',), ('07260/52001449',), ('07260/52001402',)]
         declaration_numbers = Declaration.objects.filter(
-            container__order__id=order_id).values_list('declaration_number')
+            container__order__id=order_id, is_use=True).values_list('declaration_number')
         products = products.filter(consignment__declaration_number__in=declaration_numbers)
     if is_gifted:
-        declaration_numbers = Declaration.objects.filter(gifted=True).values_list('declaration_number')
+        declaration_numbers = Declaration.objects.filter(gifted=True, is_use=True).values_list('declaration_number')
         products = products.filter(consignment__declaration_number__in=declaration_numbers)
     else:
         declaration_numbers = Declaration.objects.filter(
