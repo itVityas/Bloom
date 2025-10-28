@@ -79,6 +79,8 @@ class Declaration(models.Model):
     permit_code = models.CharField(max_length=10)
     # Additional fields
     gifted = models.BooleanField(default=False)
+    # use this declaration in calculations
+    is_use = models.BooleanField(default=True)
 
     class Meta:
         ordering = ['-id']
