@@ -69,7 +69,7 @@ class ClearanceInvoiceItems(models.Model):
     quantity = models.FloatField()
 
     def __str__(self):
-        return f"InvoiceItem #{self.pk} (Invoice #{self.clearance_invoice_id})"
+        return f"InvoiceItem #{self.pk} (Invoice #{self.clearance_invoice.id})"
 
     class Meta:
         ordering = ['id']
@@ -96,7 +96,7 @@ class ClearedItem(models.Model):
     quantity = models.FloatField()
 
     def __str__(self):
-        return f"ClearedItem #{self.pk} (Invoice #{self.clearance_invoice_id})"
+        return f"ClearedItem #{self.pk} (Invoice #{self.clearance_invoice_items})"
 
     class Meta:
         ordering = ['id']
