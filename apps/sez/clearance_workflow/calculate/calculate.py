@@ -10,7 +10,7 @@ from apps.sez.models import (
     ClearedItem,
     ClearanceUncleared
 )
-from apps.shtrih.models import Products, Models, ProductTransitions
+from apps.shtrih.models import Products, Models, ProductTransitions, Consignments
 from apps.declaration.models import Declaration, DeclaredItem
 from apps.omega.models import Stockobj
 from apps.sez.clearance_workflow.calculate.update_item_codes_1c import update_item_codes_1c
@@ -26,6 +26,7 @@ from apps.sez.exceptions import (
 
 def clear_model_items(
                         invoice_item: ClearanceInvoiceItems,
+                        model_id: int,
                         model_code: int,
                         quantity: float,
                         is_tv: bool,
@@ -36,6 +37,8 @@ def clear_model_items(
     Args:
         invoice_item (ClearanceInvoiceItems):
             Object of the ClearanceInvoiceItems triggering this clearance; used to set ClearedItem.clearance_invoice.
+        model_id (int):
+            models.id
         model_code (int):
             UNV code of the root specification to clear.
         quantity (float):
@@ -106,12 +109,25 @@ def clear_model_items(
 
         remaining = requested_qty
 
-        for di in di_qs:
+        for i in di_qs:
+            di = i
             available = di.available_quantity or 0.0
             if available <= 0:
                 continue
 
             to_clear = min(available, remaining)
+
+            # Получает панель из consignments
+            if str(di.item_code_1c).startswith("638111111"):
+                consignment = Consignments.objects.filter(products__model__id=model_id).first()
+                decl_panel = None
+                if consignment:
+                    decl_panel = di_qs.filter(
+                        declaration__declaration_number=consignment.declaration_number,
+                        ordinal_number=consignment.G32
+                    ).first()
+                if decl_panel and decl_panel.available_quantity > 0:
+                    di = decl_panel
 
             # Update available_quantity
             di.available_quantity = available - to_clear
@@ -174,12 +190,25 @@ def clear_model_items(
                     )
 
             is_find = False
-            for di in di_qs:
+            for i in di_qs:
+                di = i
                 available = di.available_quantity or 0.0
                 if available <= 0:
                     continue
 
                 to_clear = min(available, remaining)
+
+                # Получает панель из consignments
+                if str(di.item_code_1c).startswith("638111111"):
+                    consignment = Consignments.objects.filter(products__model__id=model_id).first()
+                    decl_panel = None
+                    if consignment:
+                        decl_panel = di_qs.filter(
+                            declaration__declaration_number=consignment.declaration_number,
+                            ordinal_number=consignment.G32
+                        ).first()
+                    if decl_panel and decl_panel.available_quantity > 0:
+                        di = decl_panel
 
                 # Update available_quantity
                 di.available_quantity = available - to_clear
@@ -242,6 +271,7 @@ def begin_calculation(invoice_id: int):
             for m in used_models:
                 clear_model_items(
                     invoice_item=item,
+                    model_id=m.get('model_id'),
                     model_code=m.get('unvcode'),
                     quantity=m.get('count'),
                     is_tv=m.get('is_tv'),
