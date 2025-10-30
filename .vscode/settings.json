@@ -1,6 +1,0 @@
-{
-    "flake8.args": [
-        "--max-line-length=120"
-    ],
-    "python.REPL.enableREPLSmartSend": false
-}
