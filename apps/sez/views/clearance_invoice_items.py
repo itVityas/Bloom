@@ -6,7 +6,6 @@ import logging
 from apps.sez.models import ClearanceInvoiceItems
 from apps.sez.permissions import ClearanceInvoiceItemsPermission
 from apps.sez.serializers.clearance_invoice_items import ClearanceInvoiceItemsSerializer
-from apps.sez.clearance_workflow.independent.unv_models import attach_unv_models_to_invoice_item
 
 logger = logging.getLogger(__name__)
 
@@ -32,15 +31,14 @@ class ClearanceInvoiceItemListCreateAPIView(ListCreateAPIView):
 
     def perform_create(self, serializer):
         invoice_item = serializer.save()
-
-        if invoice_item.declared_item is None:
-            try:
-                attach_unv_models_to_invoice_item(invoice_item.id)
-            except Exception as exc:
-                logger.error(
-                    f"Error attaching UNV models to InvoiceItem #{invoice_item.id}: {exc}"
-                )
-
+        logger.info(f'Created clearance invoice item: {invoice_item.id}')
+        if invoice_item.declared_item:
+            if invoice_item.declared_item.quantity < invoice_item.quantity:
+                logger.warning(f'Quantity of declared item {invoice_item.declared_item.id} is less than quantity of clearance invoice item {invoice_item.id}')
+                invoice_item.delete()
+                raise ValueError(f'Quantity of declared item {invoice_item.declared_item.id} is less than quantity of clearance invoice item {invoice_item.id}')
+            invoice_item.declared_item.quantity = invoice_item.declared_item.quantity - invoice_item.quantity
+            invoice_item.declared_item.save(update_fields=['quantity'])
 
 
 @extend_schema(tags=['ClearanceInvoiceItems'])

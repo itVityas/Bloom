@@ -182,7 +182,7 @@ def generate_prihod_decl_dbf(
     # 5. Fetch all related Declarations via invoice items
     items = (
         ClearedItem.objects
-        .filter(clearance_invoice_id=invoice.id)
+        .filter(clearance_invoice_items__clearance_invoice__id=invoice.id)
     )
 
     # Unique declarations

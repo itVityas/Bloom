@@ -4,9 +4,9 @@ from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from Bloom.paginator import StandartResultPaginator
-from apps.sez.models import ClearanceResult
+from apps.sez.models import ClearanceUncleared
 from apps.sez.permissions import ClearanceInvoiceItemsPermission
-from apps.sez.serializers.clearance_result import ClearanceResultSerializer
+from apps.sez.serializers.clearance_result import ClearanceUnclearedSerializer
 
 
 @extend_schema(tags=['Clearance Workflow'])
@@ -21,13 +21,13 @@ class ClearanceResultListAPIView(ListAPIView):
     List all ClearedItem entries for a given ClearanceResult.
     """
     permission_classes = (IsAuthenticated, ClearanceInvoiceItemsPermission,)
-    serializer_class = ClearanceResultSerializer
+    serializer_class = ClearanceUnclearedSerializer
     pagination_class = StandartResultPaginator
     filter_backends = [DjangoFilterBackend,]
 
     def get_queryset(self):
         invoice_id = self.kwargs.get('invoice_id')
-        return ClearanceResult.objects.filter(
+        return ClearanceUncleared.objects.filter(
             invoice_item__clearance_invoice_id=invoice_id,
             uncleared_quantity__gt=0
         ).order_by('invoice_item')

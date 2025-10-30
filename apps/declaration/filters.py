@@ -26,6 +26,8 @@ class DeclarationFilter(filters.FilterSet):
     start_order = filters.CharFilter(method='filter_start_order')
     end_order = filters.CharFilter(method='filter_end_order')
     cont_order = filters.CharFilter(method='filter_cont_order')
+    order_id = filters.CharFilter(method='filter_order_id', lookup_expr='exact')
+    is_use = filters.BooleanFilter(field_name='is_use', lookup_expr='exact')
 
     ordering = filters.OrderingFilter(
         fields=(
@@ -64,6 +66,8 @@ class DeclarationFilter(filters.FilterSet):
             'start_order',
             'end_order',
             'cont_order',
+            'order_id',
+            'is_use',
         ]
 
     def filter_container(self, queryset, name, value):
@@ -80,6 +84,11 @@ class DeclarationFilter(filters.FilterSet):
 
     def filter_cont_container(self, queryset, name, value):
         return queryset.filter(container__name__icontains=value).distinct()
+
+    def filter_order_id(self, queryset, name, value):
+        if value == 'null' or value is None:
+            return queryset.filter(container__order__isnull=True)
+        return queryset.filter(container__order__id=value).distinct()
 
     def filter_order(self, queryset, name, value):
         return queryset.filter(container__order__name__iexact=value).distinct()

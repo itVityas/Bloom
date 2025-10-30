@@ -223,3 +223,31 @@ class Protocols(models.Model):
 
     def __str__(self):
         return f"Protocol {self.id}"
+
+
+class ProductTransitions(models.Model):
+    """
+    Table that contain change product barcode
+    """
+    old_product = models.OneToOneField(
+        Products,
+        on_delete=models.CASCADE,
+        db_column='old_product_id',
+        related_name='old_product_transitions',
+        primary_key=True,
+    )
+    new_product = models.ForeignKey(
+        Products,
+        on_delete=models.CASCADE,
+        db_column='new_product_id',
+        related_name='new_product_transitions'
+    )
+    # action = models.ForeignKey()
+
+    class Meta:
+        managed = False
+        db_table = 'product_transitions'
+        auto_created = False
+
+    def __str__(self):
+        return f"Transition {self.old_product} {self.new_product}"
