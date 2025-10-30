@@ -1,3 +1,5 @@
+import logging
+
 from django.db import transaction
 from django.db.models import F
 
@@ -5,6 +7,8 @@ from apps.sez.models import (
     ClearanceInvoice, ClearanceInvoiceItems, ClearedItem, ClearanceUncleared)
 from apps.shtrih.models import Products
 from apps.sez.exceptions import InvoiceNotFoundException
+
+logger = logging.getLogger(__name__)
 
 
 def clear_invoice_calculate(invoice_id: int):
@@ -15,8 +19,10 @@ def clear_invoice_calculate(invoice_id: int):
     '''
     invoice = ClearanceInvoice.objects.filter(id=invoice_id)
     if not invoice.exists():
+        logger.error(f'Invoice {invoice_id} not found')
         raise InvoiceNotFoundException()
 
+    logger.info(f'Start clearing invoice {invoice_id}')
     with transaction.atomic():
         Products.objects.filter(cleared=invoice_id).update(cleared=None)
         invoice_items = ClearanceInvoiceItems.objects.filter(
@@ -34,3 +40,4 @@ def clear_invoice_calculate(invoice_id: int):
         cleared_items.delete()
         ClearanceUncleared.objects.filter(invoice_item__clearance_invoice_id=invoice_id).delete()
         ClearanceInvoice.objects.filter(pk=invoice_id).update(date_calc=None, cleared=False)
+        logger.info(f'Invoice {invoice_id} cleared')

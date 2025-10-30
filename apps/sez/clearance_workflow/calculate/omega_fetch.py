@@ -1,4 +1,5 @@
 from typing import Dict, List, Optional
+import logging
 
 from django.db.models import F, FloatField, ExpressionWrapper, Subquery, OuterRef, Q
 from django.utils import timezone
@@ -7,6 +8,9 @@ from apps.omega.models import VzNab, Stockobj, VzNorm, AdmissibleSubst
 from apps.sez.exceptions import (
     OracleException,
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 def fetch_analog_details(nomsign: str) -> List[Dict[str, Optional[object]]]:
@@ -26,6 +30,7 @@ def fetch_analog_details(nomsign: str) -> List[Dict[str, Optional[object]]]:
         OracleException: On database errors.
     """
     try:
+        logger.debug(f"Fetching analog details for nomsign: {nomsign}")
         curent_date = timezone.now().date()
         stockobj = Stockobj.objects.using('oracle_db').filter(nomsign=nomsign).first()
         analogs = AdmissibleSubst.objects.using('oracle_db').filter(
@@ -64,6 +69,7 @@ def fetch_analog_details(nomsign: str) -> List[Dict[str, Optional[object]]]:
         return result
 
     except Exception as exc:
+        logger.error(f"Database error in analogs: {exc}")
         raise OracleException(f"Database error: {exc}")
 
 
@@ -87,6 +93,7 @@ def fetch_vznab_stock_details(scp_unv: int) -> List[Dict[str, Optional[object]]]
         OracleException: On database errors.
     """
     try:
+        logger.debug(f"Fetching vznab stock details for scp_unv: {scp_unv}")
         stock_nomsign_sq = Subquery(
             Stockobj.objects.using('oracle_db')
             .filter(unvcode=OuterRef('item_unv__unvcode'))
@@ -121,6 +128,7 @@ def fetch_vznab_stock_details(scp_unv: int) -> List[Dict[str, Optional[object]]]
         return results
 
     except Exception as exc:
+        logger.error(f"Database error in vznab stock details: {exc}")
         raise OracleException(f"Database error: {exc}")
 
 

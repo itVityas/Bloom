@@ -1,4 +1,5 @@
 from typing import Dict, Tuple, List, Any
+import logging
 
 from django.db.models import Sum
 from django.db import transaction
@@ -22,6 +23,9 @@ from apps.sez.exceptions import (
     InternalException,
     PanelException,
 )
+
+
+logging = logging.getLogger(__name__)
 
 
 def clear_model_items(
@@ -67,6 +71,7 @@ def clear_model_items(
             isinstance(item.get("nomsign"), str) and item["nomsign"].startswith("638111111")
             for item in components
         ):
+            logging.error(f"Panel components not found for TV model {model_code}")
             raise PanelException(f"Panel components not found for TV model {model_code}")
 
     # clear each component against DeclaredItem stocks
@@ -248,8 +253,10 @@ def begin_calculation(invoice_id: int):
     # проверка invoice
     invoice = ClearanceInvoice.objects.filter(id=invoice_id).first()
     if not invoice:
+        logging.error(f'Invoice {invoice_id} not found')
         raise InvoiceNotFoundException()
     if invoice.cleared:
+        logging.error(f'Invoice {invoice_id} already cleared')
         raise InvoiceAlreadyClearedException()
 
     order_id = invoice.order.id if invoice.order else None
@@ -288,6 +295,7 @@ def begin_calculation(invoice_id: int):
         invoice_item_decl = ClearanceInvoiceItems.objects.filter(clearance_invoice=invoice, declared_item__isnull=False)
         for item in invoice_item_decl:
             if item.quantity > item.declared_item.available_quantity:
+                logging.error(f"Product {item.declared_item.name} not enough quantity")
                 raise ProductsNotEnoughException(f"Product {item.declared_item.name} not enough quantity")
             item.declared_item.available_quantity = item.declared_item.available_quantity - item.quantity
             item.declared_item.save(update_fields=['available_quantity'])
@@ -321,6 +329,7 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_id: int, is_gifte
         )
     '''
     # Получаем список products с фильтрацией по условиям
+    logging.info(f'Start process_product with invoice:{invoice_item.id} order_id:{order_id} is_gifted:{is_gifted}')
     process_transitions_list = ProductTransitions.objects.all().values_list('old_product')
     products = Products.objects.filter(model__name__id=invoice_item.model_name_id.id, cleared__isnull=True)
     if order_id:
@@ -344,6 +353,7 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_id: int, is_gifte
     products_quantity = products.aggregate(total_quantity=Sum('quantity'))['total_quantity']
     products_quantity = products_quantity or 0.0
     if request_quantity > products_quantity:
+        logging.error(f'Not enough goods to write off. need {request_quantity}, have: {products_quantity}')
         raise ProductsNotEnoughException(
             f'Недостаточно товаров для списания. Требуется: {request_quantity}, есть: {products_quantity}'
         )
@@ -362,6 +372,7 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_id: int, is_gifte
         'id', 'letter_part', 'numeric_part', 'execution_part', 'production_code'
     )
     if not models:
+        logging.error(f'Not found models in products_list: {products_list}')
         raise InternalException('Не найдены модели в products_list')
     model_display_map: Dict[int, str] = {
         m.id: f"{m.letter_part}{m.numeric_part}{m.execution_part or ''}"  # СКЖИ
