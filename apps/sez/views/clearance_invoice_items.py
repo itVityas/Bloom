@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.exceptions import ValidationError
 from rest_framework import status
+from django.db.models import F
 
 from apps.sez.models import ClearanceInvoiceItems
 from apps.sez.permissions import ClearanceInvoiceItemsPermission
@@ -36,16 +37,16 @@ class ClearanceInvoiceItemListCreateAPIView(ListCreateAPIView):
         invoice_item = serializer.save()
         logger.info(f'Created clearance invoice item: {invoice_item.id}')
         if invoice_item.declared_item:
-            if not invoice_item.declared_item.quantity:
-                mess = f'Quantity of declared item {invoice_item.declared_item.id} is 0'
+            if not invoice_item.declared_item.available_quantity:
+                mess = f'available_quantity of declared item {invoice_item.declared_item.id} is 0'
                 logger.warning(mess)
                 invoice_item.delete()
                 raise ValidationError(
                     {'error': mess},
                     code=status.HTTP_400_BAD_REQUEST
                 )
-            if invoice_item.declared_item.quantity < invoice_item.quantity:
-                mess = f'Quantity of declared item {invoice_item.declared_item.id} ' +\
+            if invoice_item.declared_item.available_quantity < invoice_item.quantity:
+                mess = f'available_quantity of declared item {invoice_item.declared_item.id} ' +\
                     'is less than quantity of clearance invoice item {invoice_item.id}'
                 logger.warning(mess)
                 invoice_item.delete()
@@ -53,7 +54,7 @@ class ClearanceInvoiceItemListCreateAPIView(ListCreateAPIView):
                     {'error': mess},
                     code=status.HTTP_400_BAD_REQUEST
                 )
-            invoice_item.declared_item.quantity = invoice_item.declared_item.quantity - invoice_item.quantity
+            invoice_item.declared_item.available_quantity = F('available_quantity') - invoice_item.quantity
             invoice_item.declared_item.save(update_fields=['quantity'])
 
 
