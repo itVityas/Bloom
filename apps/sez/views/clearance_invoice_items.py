@@ -10,6 +10,7 @@ from django.db.models import F
 from apps.sez.models import ClearanceInvoiceItems
 from apps.sez.permissions import ClearanceInvoiceItemsPermission
 from apps.sez.serializers.clearance_invoice_items import ClearanceInvoiceItemsSerializer
+from rest_framework.response import Response
 
 logger = logging.getLogger(__name__)
 
@@ -84,3 +85,12 @@ class ClearanceInvoiceItemDetailedView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, ClearanceInvoiceItemsPermission)
     serializer_class = ClearanceInvoiceItemsSerializer
     queryset = ClearanceInvoiceItems.objects.all()
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        logger.info(f'Deleting clearance invoice item: {instance.id}')
+        if instance.declared_item:
+            instance.declared_item.available_quantity = F('available_quantity') + instance.quantity
+            instance.declared_item.save(update_fields=['available_quantity'])
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
