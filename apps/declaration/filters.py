@@ -28,6 +28,7 @@ class DeclarationFilter(filters.FilterSet):
     cont_order = filters.CharFilter(method='filter_cont_order')
     order_id = filters.CharFilter(method='filter_order_id', lookup_expr='exact')
     is_use = filters.BooleanFilter(field_name='is_use', lookup_expr='exact')
+    available = filters.NumberFilter(method='filter_available')
 
     ordering = filters.OrderingFilter(
         fields=(
@@ -68,6 +69,7 @@ class DeclarationFilter(filters.FilterSet):
             'cont_order',
             'order_id',
             'is_use',
+            'available',
         ]
 
     def filter_container(self, queryset, name, value):
@@ -101,3 +103,6 @@ class DeclarationFilter(filters.FilterSet):
 
     def filter_cont_order(self, queryset, name, value):
         return queryset.filter(container__order__name__icontains=value).distinct()
+
+    def filter_available(self, queryset, name, value):
+        return queryset.filter(declared_items__available_quantity__gte=value).distinct()
