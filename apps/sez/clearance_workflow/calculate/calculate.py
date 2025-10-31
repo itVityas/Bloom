@@ -25,7 +25,7 @@ from apps.sez.exceptions import (
 )
 
 
-logging = logging.getLogger(__name__)
+logging = logging.getLogger('apps.omega')
 
 
 def clear_model_items(

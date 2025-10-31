@@ -8,7 +8,7 @@ from apps.sez.models import (
 from apps.shtrih.models import Products
 from apps.sez.exceptions import InvoiceNotFoundException
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('apps.omega')
 
 
 def clear_invoice_calculate(invoice_id: int):

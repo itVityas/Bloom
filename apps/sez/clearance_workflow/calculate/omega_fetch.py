@@ -10,7 +10,7 @@ from apps.sez.exceptions import (
 )
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('apps.omega')
 
 
 def fetch_analog_details(nomsign: str) -> List[Dict[str, Optional[object]]]:

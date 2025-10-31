@@ -5,7 +5,7 @@ from django.conf import settings
 from apps.declaration.models import Declaration, DeclaredItem
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('apps.omega')
 
 
 def update_item_codes_1c():

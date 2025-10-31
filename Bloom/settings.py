@@ -297,7 +297,7 @@ LOGGING = {
 
     'loggers': {
         'apps.omega': {
-            'handlers': ['omega_file', 'omega_console'],
+            'handlers': ['omega_file'],
             'level': 'DEBUG',
             'propagate': False,
         },
