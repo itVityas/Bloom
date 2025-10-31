@@ -13,6 +13,7 @@ from apps.declaration.serializers.declared_item import (
     DeclaredItemSerializer, DeclaredItemFileUploadSerializer
 )
 from apps.declaration.utils.dbf.tovar import process_tovar_dbf_file
+from apps.declaration.filters import DeclarationItemFilter
 
 
 @extend_schema(tags=['DeclaredItem'])
@@ -32,7 +33,7 @@ class DeclaredItemListCreateAPIView(ListCreateAPIView):
     serializer_class = DeclaredItemSerializer
     queryset = DeclaredItem.objects.all()
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('ordinal_number', 'declaration_id')
+    filterset_class = DeclarationItemFilter
     pagination_class = None
 
     def get_serializer_class(self):

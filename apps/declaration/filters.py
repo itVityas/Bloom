@@ -1,5 +1,5 @@
 import django_filters as filters
-from apps.declaration.models import Declaration
+from apps.declaration.models import Declaration, DeclaredItem
 
 
 class DeclarationFilter(filters.FilterSet):
@@ -106,3 +106,35 @@ class DeclarationFilter(filters.FilterSet):
 
     def filter_available(self, queryset, name, value):
         return queryset.filter(declared_items__available_quantity__gte=value).distinct()
+
+
+class DeclarationItemFilter(filters.FilterSet):
+    declaration_item_id = filters.NumberFilter(field_name='id', lookup_expr='exact')
+    declaration_id = filters.NumberFilter(field_name='declaration__id', lookup_expr='exact')
+    declaration_number = filters.CharFilter(
+        field_name='declaration__declaration_number',
+        lookup_expr='iexact')
+    start_declaration_number = filters.CharFilter(
+        field_name='declaration__declaration_number',
+        lookup_expr='istartswith')
+    end_declaration_number = filters.CharFilter(
+        field_name='declaration__declaration_number',
+        lookup_expr='iendswith')
+    cont_declaration_number = filters.CharFilter(
+        field_name='declaration__declaration_number',
+        lookup_expr='icontains')
+    available = filters.NumberFilter(field_name='available_quantity', lookup_expr='gte')
+    ordinal_number = filters.NumberFilter(field_name='ordinal_number', lookup_expr='exact')
+
+    class Meta:
+        model = DeclaredItem
+        fields = [
+            'declaration_item_id',
+            'declaration_id',
+            'declaration_number',
+            'start_declaration_number',
+            'end_declaration_number',
+            'cont_declaration_number',
+            'available',
+            'ordinal_number',
+        ]
