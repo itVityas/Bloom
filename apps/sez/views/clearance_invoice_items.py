@@ -1,7 +1,10 @@
+import logging
+
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
-import logging
+from rest_framework.exceptions import ValidationError
+from rest_framework import status
 
 from apps.sez.models import ClearanceInvoiceItems
 from apps.sez.permissions import ClearanceInvoiceItemsPermission
@@ -37,13 +40,19 @@ class ClearanceInvoiceItemListCreateAPIView(ListCreateAPIView):
                 mess = f'Quantity of declared item {invoice_item.declared_item.id} is 0'
                 logger.warning(mess)
                 invoice_item.delete()
-                raise ValueError(mess)
+                raise ValidationError(
+                    {'error': mess},
+                    code=status.HTTP_400_BAD_REQUEST
+                )
             if invoice_item.declared_item.quantity < invoice_item.quantity:
                 mess = f'Quantity of declared item {invoice_item.declared_item.id} ' +\
                     'is less than quantity of clearance invoice item {invoice_item.id}'
                 logger.warning(mess)
                 invoice_item.delete()
-                raise ValueError(mess)
+                raise ValidationError(
+                    {'error': mess},
+                    code=status.HTTP_400_BAD_REQUEST
+                )
             invoice_item.declared_item.quantity = invoice_item.declared_item.quantity - invoice_item.quantity
             invoice_item.declared_item.save(update_fields=['quantity'])
 
