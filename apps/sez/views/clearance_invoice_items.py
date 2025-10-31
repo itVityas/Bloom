@@ -55,7 +55,7 @@ class ClearanceInvoiceItemListCreateAPIView(ListCreateAPIView):
                     code=status.HTTP_400_BAD_REQUEST
                 )
             invoice_item.declared_item.available_quantity = F('available_quantity') - invoice_item.quantity
-            invoice_item.declared_item.save(update_fields=['quantity'])
+            invoice_item.declared_item.save(update_fields=['available_quantity'])
 
 
 @extend_schema(tags=['ClearanceInvoiceItems'])
