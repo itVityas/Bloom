@@ -34,13 +34,16 @@ class ClearanceInvoiceItemListCreateAPIView(ListCreateAPIView):
         logger.info(f'Created clearance invoice item: {invoice_item.id}')
         if invoice_item.declared_item:
             if not invoice_item.declared_item.quantity:
-                logger.warning(f'Quantity of declared item {invoice_item.declared_item.id} is 0')
+                mess = f'Quantity of declared item {invoice_item.declared_item.id} is 0'
+                logger.warning(mess)
                 invoice_item.delete()
-                raise ValueError(f'Quantity of declared item {invoice_item.declared_item.id} is 0')
+                raise ValueError(mess)
             if invoice_item.declared_item.quantity < invoice_item.quantity:
-                logger.warning(f'Quantity of declared item {invoice_item.declared_item.id} is less than quantity of clearance invoice item {invoice_item.id}')
+                mess = f'Quantity of declared item {invoice_item.declared_item.id} ' +\
+                    'is less than quantity of clearance invoice item {invoice_item.id}'
+                logger.warning(mess)
                 invoice_item.delete()
-                raise ValueError(f'Quantity of declared item {invoice_item.declared_item.id} is less than quantity of clearance invoice item {invoice_item.id}')
+                raise ValueError(mess)
             invoice_item.declared_item.quantity = invoice_item.declared_item.quantity - invoice_item.quantity
             invoice_item.declared_item.save(update_fields=['quantity'])
 
