@@ -64,6 +64,7 @@ def clear_model_items(
         PanelError: If is_tv=True and no TV panel component is found in the breakdown.
     '''
     components = component_flat_list(model_code, None, quantity)
+    has_panel = False
 
     # find in TV components panel or Exception
     if is_tv:
@@ -133,6 +134,7 @@ def clear_model_items(
                     ).first()
                 if decl_panel and decl_panel.available_quantity > 0:
                     di = decl_panel
+                has_panel = True
 
             # Update available_quantity
             di.available_quantity = available - to_clear
@@ -214,6 +216,7 @@ def clear_model_items(
                         ).first()
                     if decl_panel and decl_panel.available_quantity > 0:
                         di = decl_panel
+                    has_panel = True
 
                 # Update available_quantity
                 di.available_quantity = available - to_clear
@@ -234,6 +237,10 @@ def clear_model_items(
 
             if is_find:
                 break
+
+    if is_tv and not has_panel:
+        logging.error(f"Panel components not found for TV model {model_code}")
+        raise PanelException(f"Panel components not found for TV model {model_code}")
 
     for item in components:
         if not item['clear'] and item.get('nomsign'):
