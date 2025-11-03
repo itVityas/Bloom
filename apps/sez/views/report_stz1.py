@@ -49,10 +49,10 @@ class ReportSTZ1View(APIView):
         invoices = ClearanceInvoice.objects.filter(id__in=list_invoices)
 
         for i_invoice in invoices:
-            cleared_items = ClearedItem.objects.filter(clearance_invoice=i_invoice) \
+            cleared_items = ClearedItem.objects.filter(clearance_invoice_items__clearance_invoice=i_invoice) \
                 .select_related('declared_item_id__declaration') \
                 .order_by('declared_item_id__declaration__declaration_date')
-            invoices.cleared_items = cleared_items
+            i_invoice.cleared_items = cleared_items
 
         context = {
             "invoices": invoices,
