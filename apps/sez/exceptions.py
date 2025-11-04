@@ -2,24 +2,66 @@ from rest_framework.exceptions import ValidationError
 
 
 class InvoiceNotFoundException(ValidationError):
-    default_detail = 'Clearance invoice not found'
+    def __init__(self, detail=None, code=None):
+        if not detail:
+            detail = 'Clearance invoice not found'
+        self.detail = detail
+        self.code = code
+
+    def __str__(self):
+        return self.detail
 
 
 class InvoiceAlreadyClearedException(ValidationError):
-    default_detail = 'Clearance invoice already cleared'
+    def __init__(self, detail=None, code=None):
+        if not detail:
+            detail = 'Clearance invoice already cleared'
+        self.detail = detail
+        self.code = code
+
+    def __str__(self):
+        return self.detail
 
 
 class ProductsNotEnoughException(ValidationError):
-    default_detail = 'Not enough products for clearance'
+    def __init__(self, detail=None, code=None):
+        if not detail:
+            detail = 'Not enough products for clearance'
+        self.detail = detail
+        self.code = code
+
+    def __str__(self):
+        return self.detail
 
 
 class InternalException(ValidationError):
-    default_detail = 'Internal error'
+    def __init__(self, detail=None, code=None):
+        if not detail:
+            detail = 'Internal error'
+        self.detail = detail
+        self.code = code
+
+    def __str__(self):
+        return self.detail
 
 
 class OracleException(ValidationError):
-    default_detail = 'Oracle error'
+    def __init__(self, detail=None, code=None):
+        if not detail:
+            detail = 'Oracle error'
+        self.detail = detail
+        self.code = code
+
+    def __str__(self):
+        return self.detail
 
 
 class PanelException(ValidationError):
-    default_detail = 'No panel component find in tv'
+    def __init__(self, detail=None, code=None):
+        if not detail:
+            detail = 'No panel component find in tv'
+        self.detail = detail
+        self.code = code
+
+    def __str__(self):
+        return self.detail

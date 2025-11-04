@@ -58,21 +58,21 @@ class FullClearanceWorkflowView(APIView):
             try:
                 begin_calculation(invoice_id)
                 return Response({'message': 'Успешный расчет'}, status=status.HTTP_200_OK)
-            except InvoiceNotFoundException:
-                return Response({'error': 'Накладная не найдена'}, status=status.HTTP_404_NOT_FOUND)
-            except InvoiceAlreadyClearedException:
-                return Response({'error': 'Накладная уже рассчитана'}, status=status.HTTP_400_BAD_REQUEST)
-            except ProductsNotEnoughException:
-                return Response({'error': str(ProductsNotEnoughException)},
+            except InvoiceNotFoundException as ex:
+                return Response({'error': str(ex)}, status=status.HTTP_404_NOT_FOUND)
+            except InvoiceAlreadyClearedException as ex:
+                return Response({'error': str(ex)}, status=status.HTTP_400_BAD_REQUEST)
+            except ProductsNotEnoughException as ex:
+                return Response({'error': str(ex)},
                                 status=status.HTTP_409_CONFLICT)
-            except InternalException:
-                return Response({'error': str(InternalException)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            except OracleException:
-                return Response({'error': str(OracleException)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            except PanelException:
-                return Response({'error': str(PanelException)}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
-            except Exception as e:
-                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            except InternalException as ex:
+                return Response({'error': str(ex)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            except OracleException as ex:
+                return Response({'error': str(ex)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            except PanelException as ex:
+                return Response({'error': str(ex)}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+            except Exception as ex:
+                return Response({'error': str(ex)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request):
