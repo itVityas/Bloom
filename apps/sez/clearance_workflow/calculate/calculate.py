@@ -386,7 +386,7 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_id: int, is_gifte
         for m in models
     }
     is_tv = True
-    if models[0].production_code != 400:
+    if models[0].production_code and models[0].production_code.code != 400:
         is_tv = False
 
     # Омега, получаем unv_code из stockobj через signs (СКЖИ)
