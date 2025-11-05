@@ -19,7 +19,7 @@ class FullClearanceInvoiceSerializer(serializers.ModelSerializer):
     Serializer for the ClearanceInvoice model with nested ClearanceInvoiceItems.
     """
     items = serializers.SerializerMethodField()
-    order = OrderSerializer(read_only=True)
+    order = OrderSerializer(read_only=True, many=True)
 
     class Meta:
         model = ClearanceInvoice
@@ -28,9 +28,7 @@ class FullClearanceInvoiceSerializer(serializers.ModelSerializer):
             'count',
             'cleared',
             'ttn',
-            'series',
             'recipient',
-            'quantity_shipped',
             'create_at',
             'date_payments',
             'date_calc',
