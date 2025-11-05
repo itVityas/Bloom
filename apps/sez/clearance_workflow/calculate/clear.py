@@ -29,13 +29,13 @@ def clear_invoice_calculate(invoice_id: int):
             clearance_invoice=invoice_id).select_related('declared_item')
         for item in invoice_items:
             di = item.declared_item_id
-            if di and di.available_quantity:
+            if di and di.available_quantity is not None:
                 di.available_quantity = F('available_quantity') + item.quantity
                 di.save(update_fields=['available_quantity'])
 
         cleared_items = ClearedItem.objects.filter(clearance_invoice_items__clearance_invoice__id=invoice_id)
         for item in cleared_items:
-            if item.declared_item_id and item.declared_item_id.available_quantity:
+            if item.declared_item_id and item.declared_item_id.available_quantity is not None:
                 item.declared_item_id.available_quantity = F('available_quantity') + item.quantity
                 item.declared_item_id.save(update_fields=['available_quantity'])
         cleared_items.delete()
