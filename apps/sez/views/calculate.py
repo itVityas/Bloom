@@ -71,8 +71,8 @@ class FullClearanceWorkflowView(APIView):
                 return Response({'error': str(ex)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             except PanelException as ex:
                 return Response({'error': str(ex)}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
-            except Exception as ex:
-                return Response({'error': str(ex)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            # except Exception as ex:
+            #     return Response({'error': str(ex)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request):

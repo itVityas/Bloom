@@ -36,7 +36,7 @@ def clear_model_items(
                         is_tv: bool,
                         gifted: bool,
                         only_panel: bool,
-                        order_id: int = None) -> List[Dict[str, Any]]:
+                        order_list: list = None) -> List[Dict[str, Any]]:
     '''
     Args:
         invoice_item (ClearanceInvoiceItems):
@@ -95,9 +95,9 @@ def clear_model_items(
         if requested_qty <= 0:
             continue
 
-        if order_id:
+        if order_list:
             declaration_numbers = Declaration.objects.filter(
-                container__order__id=order_id, is_use=True).values_list('declaration_number')
+                container__order__id__in=order_list, is_use=True).values_list('declaration_number')
             di_qs = (
                     DeclaredItem.objects.select_for_update()
                     .select_related("declaration")
@@ -178,9 +178,9 @@ def clear_model_items(
             except (TypeError, ValueError):
                 continue
 
-            if order_id:
+            if order_list:
                 declaration_numbers = Declaration.objects.filter(
-                    container__order__id=order_id, is_use=True).values_list('declaration_number')
+                    container__order__id__in=order_list, is_use=True).values_list('declaration_number')
                 di_qs = (
                         DeclaredItem.objects.select_for_update()
                         .select_related("declaration")
@@ -266,7 +266,7 @@ def begin_calculation(invoice_id: int):
         logging.error(f'Invoice {invoice_id} already cleared')
         raise InvoiceAlreadyClearedException()
 
-    order_id = invoice.order.id if invoice.order else None
+    orders = list(invoice.order.values_list('id', flat=True)) if invoice.order else None
     is_gifted = invoice.is_gifted
     only_panel = invoice.only_panel
 
@@ -280,7 +280,7 @@ def begin_calculation(invoice_id: int):
         for item in invoice_items:
             # возвращает - "model_id": int - "model_display": str (СКЖИ)- "count": int - "unvcode": int is_tv: bool
             # и список products в n количестве со самых старых
-            used_models, product_list = process_product(item, order_id, is_gifted)
+            used_models, product_list = process_product(item, orders, is_gifted)
 
             for m in used_models:
                 clear_model_items(
@@ -291,7 +291,7 @@ def begin_calculation(invoice_id: int):
                     is_tv=m.get('is_tv'),
                     gifted=is_gifted,
                     only_panel=only_panel,
-                    order_id=order_id
+                    order_list=orders
                 )
 
             # обновляем запись в продуктах
@@ -313,7 +313,7 @@ def begin_calculation(invoice_id: int):
         invoice.save()
 
 
-def process_product(invoice_item: ClearanceInvoiceItems, order_id: int, is_gifted: bool) -> Tuple:
+def process_product(invoice_item: ClearanceInvoiceItems, order_list: list, is_gifted: bool) -> Tuple:
     '''
     Получаем список product c фильтрацией по условиям
     Получаем список моделей из этих product
@@ -336,14 +336,14 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_id: int, is_gifte
         )
     '''
     # Получаем список products с фильтрацией по условиям
-    logging.info(f'Start process_product with invoice:{invoice_item.id} order_id:{order_id} is_gifted:{is_gifted}')
+    logging.info(f'Start process_product with invoice:{invoice_item.id} order_id:{order_list} is_gifted:{is_gifted}')
     process_transitions_list = ProductTransitions.objects.all().values_list('old_product')
     products = Products.objects.filter(model__name__id=invoice_item.model_name_id.id, cleared__isnull=True)
-    if order_id:
+    if order_list:
         # get list of decl in order: [('07260/52003398',), ('07260/52001406',),
         # ('07260/52001405',), ('07260/52001449',), ('07260/52001402',)]
         declaration_numbers = Declaration.objects.filter(
-            container__order__id=order_id, is_use=True).values_list('declaration_number')
+            container__order__id__in=order_list, is_use=True).values_list('declaration_number')
         products = products.filter(consignment__declaration_number__in=declaration_numbers)
     if is_gifted:
         declaration_numbers = Declaration.objects.filter(gifted=True, is_use=True).values_list('declaration_number')
