@@ -51,22 +51,6 @@ class ClearanceInvoiceFilter(filters.FilterSet):
         field_name='ttn',
         lookup_expr='iendswith',
         help_text=("Filter by TTN ending with value (case-insensitive)"))
-    series = filters.CharFilter(
-        field_name='series',
-        lookup_expr='iexact',
-        help_text=("Filter by exact series (case-insensitive)"))
-    cont_series = filters.CharFilter(
-        field_name='series',
-        lookup_expr='icontains',
-        help_text=("Filter by series containing value (case-insensitive)"))
-    start_series = filters.CharFilter(
-        field_name='series',
-        lookup_expr='istartswith',
-        help_text=("Filter by series starting with value (case-insensitive)"))
-    end_series = filters.CharFilter(
-        field_name='series',
-        lookup_expr='iendswith',
-        help_text=("Filter by series ending with value (case-insensitive)"))
     recipient = filters.CharFilter(
         field_name='recipient',
         lookup_expr='iexact')
@@ -78,19 +62,6 @@ class ClearanceInvoiceFilter(filters.FilterSet):
         lookup_expr='istartswith')
     end_recipient = filters.CharFilter(
         field_name='recipient',
-        lookup_expr='iendswith')
-    quantity_shipped = filters.NumberFilter(
-        field_name='quantity_shipped',
-        lookup_expr='iexact',
-        help_text=("Filter by exact shipped quantity"))
-    cont_quantity_shipped = filters.NumberFilter(
-        field_name='quantity_shipped',
-        lookup_expr='icontains')
-    start_quantity_shipped = filters.NumberFilter(
-        field_name='quantity_shipped',
-        lookup_expr='istartswith')
-    end_quantity_shipped = filters.NumberFilter(
-        field_name='quantity_shipped',
         lookup_expr='iendswith')
     date_calc = filters.DateFilter(
         field_name='date_calc',
@@ -112,18 +83,10 @@ class ClearanceInvoiceFilter(filters.FilterSet):
             'cont_ttn',
             'start_ttn',
             'end_ttn',
-            'series',
-            'cont_series',
-            'start_series',
-            'end_series',
             'recipient',
             'cont_recipient',
             'start_recipient',
             'end_recipient',
-            'quantity_shipped',
-            'cont_quantity_shipped',
-            'start_quantity_shipped',
-            'end_quantity_shipped',
             'date_calc',
             'isnull_date_calc',
         ]

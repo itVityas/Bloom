@@ -125,13 +125,17 @@ def clear_model_items(
 
             # Получает панель из consignments
             if str(di.item_code_1c).startswith("638111111"):
-                consignment = Consignments.objects.filter(products__model__id=model_id).first()
+                consignments = Consignments.objects.filter(
+                    products__model__id=model_id).values('declaration_number', 'G32').distinct()
                 decl_panel = None
-                if consignment:
-                    decl_panel = di_qs.filter(
-                        declaration__declaration_number=consignment.declaration_number,
-                        ordinal_number=consignment.G32
-                    ).first()
+                if consignments:
+                    for consignment in consignments:
+                        decl_panel = di_qs.filter(
+                            declaration__declaration_number=consignment.get('declaration_number'),
+                            ordinal_number=consignment.get('G32')
+                        ).first()
+                        if decl_panel:
+                            break
                 if decl_panel and decl_panel.available_quantity > 0:
                     di = decl_panel
                 has_panel = True
@@ -207,13 +211,17 @@ def clear_model_items(
 
                 # Получает панель из consignments
                 if str(di.item_code_1c).startswith("638111111"):
-                    consignment = Consignments.objects.filter(products__model__id=model_id).first()
+                    consignments = Consignments.objects.filter(
+                        products__model__id=model_id).values('declaration_number', 'G32').distinct()
                     decl_panel = None
-                    if consignment:
-                        decl_panel = di_qs.filter(
-                            declaration__declaration_number=consignment.declaration_number,
-                            ordinal_number=consignment.G32
-                        ).first()
+                    if consignments:
+                        for consignment in consignments:
+                            decl_panel = di_qs.filter(
+                                declaration__declaration_number=consignment.get('declaration_number'),
+                                ordinal_number=consignment.get('G32')
+                            ).first()
+                            if decl_panel:
+                                break
                     if decl_panel and decl_panel.available_quantity > 0:
                         di = decl_panel
                     has_panel = True
