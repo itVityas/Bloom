@@ -3,6 +3,7 @@ from datetime import datetime
 
 from apps.shtrih.models import ModelNames
 from apps.arrival.models import Order
+from apps.account.models import User
 
 
 class ClearanceInvoice(models.Model):
@@ -25,6 +26,12 @@ class ClearanceInvoice(models.Model):
     order = models.ManyToManyField(Order, blank=True)
     is_gifted = models.BooleanField(default=False)
     only_panel = models.BooleanField(default=False)
+    responsible = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return f"ClearanceInvoice #{self.pk}"
