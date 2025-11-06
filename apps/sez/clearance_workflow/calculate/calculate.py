@@ -23,6 +23,7 @@ from apps.sez.exceptions import (
     InternalException,
     PanelException,
 )
+from apps.account.models import User
 
 
 logging = logging.getLogger('apps.omega')
@@ -261,7 +262,7 @@ def clear_model_items(
             )
 
 
-def begin_calculation(invoice_id: int):
+def begin_calculation(invoice_id: int, user: User):
     '''
     Начинаем рассчет по invoice_id
     '''
@@ -317,6 +318,7 @@ def begin_calculation(invoice_id: int):
 
         # помечаем инвойс как рассчитанный
         invoice.cleared = True
+        invoice.responsible = user
         invoice.date_calc = timezone.now()
         invoice.save()
 

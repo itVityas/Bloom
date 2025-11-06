@@ -56,7 +56,7 @@ class FullClearanceWorkflowView(APIView):
         if serializer.is_valid():
             invoice_id = serializer.validated_data['invoice_id']
             try:
-                begin_calculation(invoice_id)
+                begin_calculation(invoice_id, request.user)
                 return Response({'message': 'Успешный расчет'}, status=status.HTTP_200_OK)
             except InvoiceNotFoundException as ex:
                 return Response({'error': str(ex)}, status=status.HTTP_404_NOT_FOUND)
