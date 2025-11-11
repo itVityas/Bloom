@@ -12,6 +12,10 @@ class ClearedItemListSerializer(serializers.ModelSerializer):
         source='declared_item_id.declaration.declaration_number',
         read_only=True
     )
+    permit_number = serializers.CharField(
+        source='declared_item_id.declaration.permit_number',
+        read_only=True
+    )
     declaration_date = serializers.DateField(
         source='declared_item_id.declaration.declaration_date',
         read_only=True
@@ -34,6 +38,7 @@ class ClearedItemListSerializer(serializers.ModelSerializer):
         model = ClearedItem
         fields = [
             'declaration_number',
+            'permit_number',
             'declaration_date',
             'item_name',
             'ordinal_number',
