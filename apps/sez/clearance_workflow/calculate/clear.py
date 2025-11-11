@@ -40,5 +40,5 @@ def clear_invoice_calculate(invoice_id: int):
                 item.declared_item_id.save(update_fields=['available_quantity'])
         cleared_items.delete()
         ClearanceUncleared.objects.filter(invoice_item__clearance_invoice_id=invoice_id).delete()
-        ClearanceInvoice.objects.filter(pk=invoice_id).update(date_calc=None, cleared=False)
+        ClearanceInvoice.objects.filter(pk=invoice_id).update(date_calc=None, cleared=False, responsible=None)
         logger.info(f'Invoice {invoice_id} cleared')
