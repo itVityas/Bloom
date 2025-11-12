@@ -225,3 +225,22 @@ class AdmissibleSubst(models.Model):
 
     def __str__(self):
         return f'{self.code}: {self.substfor} -> {self.subst}'
+
+
+class OBJ_ATTR_VALUES_1000004(models.Model):
+    """Для получения ТН ВЭД
+    A_2707 - код модели
+    A_2948 - ТН ВЭД
+
+    Args:
+        models (_type_): _description_
+    """
+    SOCODE = models.BigIntegerField(primary_key=True, db_column='SOCODE')
+    A_2707 = models.IntegerField(db_column='A_2707', blank=True, null=True)
+    A_2948 = models.CharField(max_length=255, db_column='A_2948', blank=True, null=True)
+    # A_2067 ...
+
+    class Meta:
+        managed = False
+        db_table = 'OBJ_ATTR_VALUES_1000004'
+        db_table_comment = 'Для ТН ВЭД'

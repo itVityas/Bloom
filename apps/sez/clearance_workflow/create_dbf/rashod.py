@@ -22,6 +22,7 @@ RASHOD_DECL_FIELDS = [
     ('G013',      'C',   2, 0),      # Везде 1
 ]
 
+
 def generate_rashod_decl_dbf(
     clearance_invoice_id: int,
     output_path: str,
