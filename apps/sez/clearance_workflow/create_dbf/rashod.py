@@ -101,7 +101,7 @@ def generate_rashod_decl_dbf(
         if name == 'G141':
             value = '300031652'
         elif name == 'G142':
-            value = 'РУПП "ВИТЯЗЬ"'
+            value = 'ОАО "ВИТЯЗЬ"'
         elif name == 'G143':
             value = 'РБ, 210605, Г.ВИТЕБСК, УЛ.П.БРОВКИ 13А'
         elif name == 'G549':

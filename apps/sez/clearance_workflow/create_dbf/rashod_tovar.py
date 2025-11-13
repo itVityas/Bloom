@@ -106,7 +106,12 @@ def generate_rashod_tovar_decl_dbf(
         if ftype == 'C':
             specs.append(f"{name} C({length})")
         elif ftype == 'N':
-            specs.append(f"{name} N({length},0)")
+            if name == 'G315A':
+                specs.append(f"{name} N({length+4}, 4)")
+            elif name == 'G45':
+                specs.append(f"{name} N({length+2}, 2)")
+            else:
+                specs.append(f"{name} N({length},0)")
         elif ftype == 'L':
             specs.append(f"{name} L")
         elif ftype == 'D':
