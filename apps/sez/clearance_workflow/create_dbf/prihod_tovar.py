@@ -2,8 +2,8 @@ import os
 import logging
 import dbf
 
-from apps.sez.models import ClearanceInvoice, ClearedItem, InnerTTNItems
-from apps.shtrih.models import Models
+from apps.sez.models import ClearanceInvoice
+from apps.declaration.models import DeclaredItem
 
 
 logger = logging.getLogger(__name__)
@@ -131,51 +131,36 @@ def generate_prihod_tovar_decl_dbf(
         raise ValueError("Open DBF: " + str(e))
 
     # Build the single row
-    cleared_items = ClearedItem.objects.filter(clearance_invoice_items__clearance_invoice=invoice)
-    line = 1
-    for cleared_item in cleared_items:
-        itter_ttn_items = None
-        if cleared_item.clearance_invoice_items and cleared_item.clearance_invoice_items.model_name_id:
-            itter_ttn_items = InnerTTNItems.objects.filter(
-                model_name=cleared_item.clearance_invoice_items.model_name_id,
-                inner_ttn__uuid=invoice.ttn
-            ).first()
+    declared_items = DeclaredItem.objects.filter(clearance_invoice_items__clearance_invoice=invoice)
+    for declared_item in declared_items:
+        num = declared_item.declaration.declaration_number.replace('/', '')
+        dop_nomer = f"d{num[:7]}"
+        nomer_gtd = f"{num[5]}{num[-5:]}"
         row = {}
         for name, ftype, *_ in TOVAR_PRIHOD_FIELDS:
             if name == 'G312':
-                if cleared_item.declared_item_id is not None:
-                    value = cleared_item.declared_item_id.name
-                else:
-                    value = cleared_item.clearance_invoice_items.model_name_id.name
+                value = declared_item.name
             elif name == 'G315A':
-                value = cleared_item.quantity
+                value = declared_item.items_quantity
             elif name == 'G317A':
-                if itter_ttn_items is not None:
-                    value = itter_ttn_items.measure
-                    continue
-                if cleared_item.declared_item_id is not None:
-                    value = cleared_item.declared_item_id.measurement
-                    continue
                 value = ''
+                if declared_item.measurement is not None:
+                    value = declared_item.measurement
             elif name == 'G32':
-                value = line
-                line += 1
+                value = declared_item.ordinal_number
             elif name == 'G33':
-                value = ''
+                value = declared_item.code
+            elif name == 'G34':
+                value = declared_item.alpha_country_code
             elif name == 'G38':
-                value = 1
+                value = declared_item.gross_weight or 0
             elif name == 'G45':
-                value = 1
+                value = declared_item.customs_cost or 0
             elif name == 'DOP_NOMER':
-                value = invoice.ttn or ''
+                value = dop_nomer
             elif name == 'NOMER_GTD':
-                inv_str = str(invoice.id)
-                value = inv_str
+                value = nomer_gtd
             elif name == 'KONST_KOD':
-                model = Models.objects.filter(name=cleared_item.clearance_invoice_items.model_name_id).first()
-                if model is not None:
-                    code = str(model.code)
-                    value = '0' + code[1:] + '0'
                 value = ''
             else:
                 # empty for fields
