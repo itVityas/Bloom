@@ -2,7 +2,7 @@ import os
 import logging
 import dbf
 
-from apps.sez.models import ClearanceInvoice
+from apps.sez.models import ClearanceInvoice, ClearedItem
 from apps.declaration.models import DeclaredItem
 
 
@@ -105,7 +105,12 @@ def generate_prihod_tovar_decl_dbf(
         if ftype == 'C':
             specs.append(f"{name} C({length})")
         elif ftype == 'N':
-            specs.append(f"{name} N({length},0)")
+            if name == 'G315A':
+                specs.append(f"{name} N({length+4}, 4)")
+            elif name == 'G45':
+                specs.append(f"{name} N({length+2}, 2)")
+            else:
+                specs.append(f"{name} N({length},0)")
         elif ftype == 'L':
             specs.append(f"{name} L")
         elif ftype == 'D':
@@ -131,7 +136,10 @@ def generate_prihod_tovar_decl_dbf(
         raise ValueError("Open DBF: " + str(e))
 
     # Build the single row
-    declared_items = DeclaredItem.objects.filter(clearance_invoice_items__clearance_invoice=invoice)
+    declaration_ids = ClearedItem.objects.filter(
+        clearance_invoice_items__clearance_invoice=invoice).values_list('declared_item_id__declaration__id')
+    list_declaration_ids = set([item[0] for item in declaration_ids])
+    declared_items = DeclaredItem.objects.filter(declaration__id__in=list_declaration_ids)
     for declared_item in declared_items:
         num = declared_item.declaration.declaration_number.replace('/', '')
         dop_nomer = f"d{num[:7]}"

@@ -2,10 +2,8 @@ import os
 import logging
 import dbf
 from django.db import transaction
-from django.db.models import Prefetch
 
-from apps.sez.models import ClearanceInvoice, ClearanceInvoiceItems, ClearedItem
-from apps.declaration.models import Declaration
+from apps.sez.models import ClearanceInvoice, ClearedItem
 
 logger = logging.getLogger(__name__)
 
@@ -213,7 +211,7 @@ def generate_prihod_decl_dbf(
                 elif name == 'G141':
                     value = '300031652'
                 elif name == 'G142':
-                    value = 'РУПП "ВИТЯЗЬ"'
+                    value = 'ОАО "ВИТЯЗЬ"'
                 elif name == 'G143':
                     value = 'РБ, 210605, Г.ВИТЕБСК, УЛ.П.БРОВКИ 13А'
                 elif name == 'G542':
