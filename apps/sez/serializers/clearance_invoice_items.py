@@ -74,6 +74,10 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
         is_gifted = obj.clearance_invoice.is_gifted
         process_transitions_list = ProductTransitions.objects.all().values_list('old_product')
         products = Products.objects.filter(model__name__id=obj.model_name_id.id, cleared__isnull=True)
+
+        model = Models.objects.filter(name=obj.model_name_id.id).first()
+        if model.production_code != 400:
+            return products.count()
         if order_list:
             # get list of decl in order: [('07260/52003398',), ('07260/52001406',),
             # ('07260/52001405',), ('07260/52001449',), ('07260/52001402',)]
