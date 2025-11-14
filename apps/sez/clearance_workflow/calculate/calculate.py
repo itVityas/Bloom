@@ -349,21 +349,25 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_list: list, is_gi
     logging.info(f'Start process_product with invoice:{invoice_item.id} order_id:{order_list} is_gifted:{is_gifted}')
     process_transitions_list = ProductTransitions.objects.all().values_list('old_product')
     products = Products.objects.filter(model__name__id=invoice_item.model_name_id.id, cleared__isnull=True)
-    if order_list:
-        # get list of decl in order: [('07260/52003398',), ('07260/52001406',),
-        # ('07260/52001405',), ('07260/52001449',), ('07260/52001402',)]
-        declaration_numbers = Declaration.objects.filter(
-            container__order__id__in=order_list, is_use=True).values_list('declaration_number')
-        products = products.filter(consignment__declaration_number__in=declaration_numbers)
-    if is_gifted:
-        declaration_numbers = Declaration.objects.filter(gifted=True, is_use=True).values_list('declaration_number')
-        products = products.filter(consignment__declaration_number__in=declaration_numbers)
-    else:
-        declaration_numbers = Declaration.objects.filter(
-            gifted=False).values_list('declaration_number')
-        products = products.filter(consignment__declaration_number__in=declaration_numbers)
-    products = products.exclude(pk__in=process_transitions_list)
-    products = products.order_by('id')
+
+    # проверка для телевизоров, прочая продукция не имеет consignment, сдедовательно данный расчет для нее не будет работать
+    model = Models.objects.filter(name=invoice_item.model_name_id.id).first()
+    if model.production_code == 400:
+        if order_list:
+            # get list of decl in order: [('07260/52003398',), ('07260/52001406',),
+            # ('07260/52001405',), ('07260/52001449',), ('07260/52001402',)]
+            declaration_numbers = Declaration.objects.filter(
+                container__order__id__in=order_list, is_use=True).values_list('declaration_number')
+            products = products.filter(consignment__declaration_number__in=declaration_numbers)
+        if is_gifted:
+            declaration_numbers = Declaration.objects.filter(gifted=True, is_use=True).values_list('declaration_number')
+            products = products.filter(consignment__declaration_number__in=declaration_numbers)
+        else:
+            declaration_numbers = Declaration.objects.filter(
+                gifted=False).values_list('declaration_number')
+            products = products.filter(consignment__declaration_number__in=declaration_numbers)
+        products = products.exclude(pk__in=process_transitions_list)
+        products = products.order_by('id')
 
     # Ошибка нехватки количества товаров
     request_quantity = invoice_item.quantity
