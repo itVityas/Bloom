@@ -256,8 +256,8 @@ def clear_model_items(
             ClearanceUncleared.objects.create(
                 invoice_item=invoice_item,
                 name=item.get('nomsign') + ': ' + item.get('name', ''),
-                request_quantity=requested_qty,
-                uncleared_quantity=requested_qty,
+                request_quantity=item.get('absolute_quantity', 0.0),
+                uncleared_quantity=item.get('absolute_quantity', 0.0),
                 reason="No matching declaration items",
             )
 
