@@ -350,7 +350,8 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_list: list, is_gi
     process_transitions_list = ProductTransitions.objects.all().values_list('old_product')
     products = Products.objects.filter(model__name__id=invoice_item.model_name_id.id, cleared__isnull=True)
 
-    # проверка для телевизоров, прочая продукция не имеет consignment, сдедовательно данный расчет для нее не будет работать
+    # проверка для телевизоров, прочая продукция не имеет consignment,
+    # сдедовательно данный расчет для нее не будет работать
     model = Models.objects.filter(name=invoice_item.model_name_id.id).first()
     if model.production_code == 400:
         if order_list:
