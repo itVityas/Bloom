@@ -21,7 +21,7 @@ from apps.sez.views.cleared_item import (
     ClearedItemListCreateAPIView,
 )
 from apps.sez.views.document_sez import DocumentSezView, CustomClearanceView
-from apps.sez.views.barcode_table import BarcodeTable
+# from apps.sez.views.barcode_table import BarcodeTable
 from apps.sez.views.report_delete import ReportDeleteView
 from apps.sez.views.available_declarations import GetAvailableDeclarationsView
 from apps.sez.views.name_amount import NameAmountView
@@ -72,7 +72,7 @@ urlpatterns = [
     # Document SEZ
     path('document_sez/', DocumentSezView.as_view()),
     path('custom_clearance/', CustomClearanceView.as_view()),
-    path('barcode_table/', BarcodeTable.as_view()),
+    # path('barcode_table/', BarcodeTable.as_view()),
 
     # InnerTTN
     path('innerttn/', InnerTTNListView.as_view()),
