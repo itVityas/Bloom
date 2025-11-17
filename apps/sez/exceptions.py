@@ -27,8 +27,8 @@ class ProductsNotEnoughException(ValidationError):
     def __init__(self, have_count, req_count, detail=None, code=None):
         if not detail:
             detail = f'''Недостаточно товаров для списания. Доступно {have_count} из {req_count}
-            Решение: 1. Измените количество для списания в соответствии с фактическим количеством
-            2. Уточните фактическое количество выбитых штрихкодов на производстве
+Решение: 1. Измените количество для списания в соответствии с фактическим количеством
+2. Уточните фактическое количество выбитых штрихкодов на производстве
             '''
         self.detail = detail
         self.code = code
@@ -60,9 +60,11 @@ class OracleException(ValidationError):
 
 
 class PanelException(ValidationError):
-    def __init__(self, detail=None, code=None):
+    def __init__(self, model_name, order='', detail=None, code=None):
         if not detail:
-            detail = 'No panel component find in tv'
+            detail = f'''Комплектующие для модели {model_name} не найдены в заказе {order}
+Решение: Проверьте правильность заказа
+            '''
         self.detail = detail
         self.code = code
 

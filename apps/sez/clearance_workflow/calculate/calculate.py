@@ -74,7 +74,7 @@ def clear_model_items(
             for item in components
         ):
             logging.error(f"Panel components not found for TV model {model_code}")
-            raise PanelException(f"Panel components not found for TV model {model_code}")
+            raise PanelException(model_name='', order='')
 
     # clear each component against DeclaredItem stocks
     for item in components:
@@ -249,7 +249,7 @@ def clear_model_items(
 
     if is_tv and not has_panel:
         logging.error(f"Panel components not found for TV model {model_code}")
-        raise PanelException(f"Panel components not found for TV model {model_code}")
+        raise PanelException(model_name='', order='')
 
     for item in components:
         if not item['clear'] and item.get('nomsign'):
