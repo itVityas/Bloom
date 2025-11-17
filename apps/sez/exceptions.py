@@ -24,9 +24,12 @@ class InvoiceAlreadyClearedException(ValidationError):
 
 
 class ProductsNotEnoughException(ValidationError):
-    def __init__(self, detail=None, code=None):
+    def __init__(self, have_count, req_count, detail=None, code=None):
         if not detail:
-            detail = 'Not enough products for clearance'
+            detail = f'''Недостаточно товаров для списания. Доступно {have_count} из {req_count}
+            Решение: 1. Измените количество для списания в соответствии с фактическим количеством
+            2. Уточните фактическое количество выбитых штрихкодов на производстве
+            '''
         self.detail = detail
         self.code = code
 
