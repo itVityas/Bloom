@@ -47,8 +47,8 @@ class ClearanceInvoiceItemListCreateAPIView(ListCreateAPIView):
                     code=status.HTTP_400_BAD_REQUEST
                 )
             if invoice_item.declared_item.available_quantity < invoice_item.quantity:
-                mess = f'available_quantity of declared item {invoice_item.declared_item.id} ' +\
-                    'is less than quantity of clearance invoice item {invoice_item.id}'
+                mess = 'Ошибка при добавлении продукта в накладную.' +\
+                    ' Запрашиваемое количество меньше доступного. Решение: Измените количество'
                 logger.warning(mess)
                 invoice_item.delete()
                 raise ValidationError(
