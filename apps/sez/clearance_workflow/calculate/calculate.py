@@ -325,7 +325,8 @@ def begin_calculation(invoice_id: int, user: User):
                 logging.error(f"Product {item.declared_item.name} not enough quantity")
                 raise ProductsNotEnoughException(
                     have_count=item.quantity,
-                    req_count=item.declared_item.available_quantity)
+                    req_count=item.declared_item.available_quantity,
+                    model_name=item.declared_item.name)
             item.declared_item.available_quantity = item.declared_item.available_quantity - item.quantity
             item.declared_item.save(update_fields=['available_quantity'])
 
@@ -389,7 +390,10 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_list: list, is_gi
     products_quantity = products_quantity or 0.0
     if request_quantity > products_quantity:
         logging.error(f'Not enough goods to write off. need {request_quantity}, have: {products_quantity}')
-        raise ProductsNotEnoughException(have_count=products_quantity, req_count=request_quantity)
+        raise ProductsNotEnoughException(
+            have_count=products_quantity,
+            req_count=request_quantity,
+            model_name=invoice_item.model_name_id.name)
 
     # Получаем скисок products с нужным колличеством
     products_list = list(products[:request_quantity])
