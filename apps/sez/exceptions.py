@@ -62,7 +62,7 @@ class OracleException(ValidationError):
 class PanelException(ValidationError):
     def __init__(self, model_name, order='', detail=None, code=None):
         if not detail:
-            detail = f'''Комплектующие для модели {model_name} не найдены в заказе {order}
+            detail = f'''Панели для модели {model_name} не найдены в заказе {order}
 Решение: Проверьте правильность заказа
             '''
         self.detail = detail
