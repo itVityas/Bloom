@@ -16,12 +16,7 @@ class ClearanceInvoiceSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate(self, attrs):
-        if not attrs.get('ttn', None):
-            raise serializers.ValidationError('ТТН не может быть пустым')
         clearance_invoice = ClearanceInvoice.objects.filter(ttn=attrs.get('ttn'))
-        id = attrs.get('id', None)
-        if id:
-            clearance_invoice = clearance_invoice.exclude(id=id)
         if clearance_invoice:
             raise TTNUsedException(ttn_name=attrs.get('ttn'), invoice_id=clearance_invoice.first().id)
         return super().validate(attrs)
