@@ -18,6 +18,8 @@ from apps.sez.exceptions import (
     InternalException,
     OracleException,
     PanelException,
+    NoDeclarationException,
+    NoClearedItemException,
 )
 
 
@@ -63,8 +65,11 @@ class FullClearanceWorkflowView(APIView):
             except InvoiceAlreadyClearedException as ex:
                 return Response({'error': str(ex)}, status=status.HTTP_400_BAD_REQUEST)
             except ProductsNotEnoughException as ex:
-                return Response({'error': str(ex)},
-                                status=status.HTTP_409_CONFLICT)
+                return Response({'error': str(ex)}, status=status.HTTP_409_CONFLICT)
+            except NoDeclarationException as ex:
+                return Response({'error': str(ex)}, status=status.HTTP_424_FAILED_DEPENDENCY)
+            except NoClearedItemException as ex:
+                return Response({'error': str(ex)}, status=status.HTTP_424_FAILED_DEPENDENCY)
             except InternalException as ex:
                 return Response({'error': str(ex)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             except OracleException as ex:

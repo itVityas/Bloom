@@ -81,3 +81,25 @@ class TTNUsedException(ValidationError):
 
     def __str__(self):
         return self.detail
+
+
+class NoDeclarationException(ValidationError):
+    def __init__(self, model_name, detail=None, code=None):
+        if not detail:
+            detail = f'Не найдены декларации соответствующие заказу для модели - {model_name}'
+        self.detail = detail
+        self.code = code
+
+    def __str__(self):
+        return self.detail
+
+
+class NoClearedItemException(ValidationError):
+    def __init__(self, model_name, detail=None, code=None):
+        if not detail:
+            detail = f'Ничего не было расстаможено для модели - {model_name}'
+        self.detail = detail
+        self.code = code
+
+    def __str__(self):
+        return self.detail

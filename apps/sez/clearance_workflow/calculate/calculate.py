@@ -22,7 +22,10 @@ from apps.sez.exceptions import (
     ProductsNotEnoughException,
     InternalException,
     PanelException,
+    NoClearedItemException,
+    NoDeclarationException,
 )
+
 from apps.account.models import User
 
 
@@ -113,6 +116,10 @@ def clear_model_items(
                     .filter(item_code_1c=code_1c, available_quantity__gt=0.0, declaration__gifted=gifted)
                     .order_by('item_code_1c', "declaration__declaration_date")
                 )
+
+        if not di_qs.exists():
+            logging.error(f"No declaration items found {invoice_item.model_name_id.name}")
+            raise NoDeclarationException(model_name=invoice_item.model_name_id.name)
 
         remaining = requested_qty
 
@@ -250,6 +257,10 @@ def clear_model_items(
     if is_tv and not has_panel:
         logging.error(f"Panel components not found for TV model {model_code}")
         raise PanelException(model_name='', order='')
+
+    if ClearedItem.objects.filter(clearance_invoice_items=invoice_item).count() == 0:
+        logging.error(f"No cleared items found for model {invoice_item.model_name_id.name}")
+        raise NoClearedItemException(model_name=invoice_item.model_name_id.name)
 
     for item in components:
         if not item['clear'] and item.get('nomsign'):
