@@ -4,6 +4,7 @@ from apps.sez.models import ClearanceInvoice, ClearanceInvoiceItems
 from apps.sez.serializers.clearance_invoice_items import ClearanceInvoiceItemsFullSerializer
 from apps.arrival.serializers.order import OrderSerializer
 from apps.account.serializers.user import UserSerializer
+from apps.sez.exceptions import TTNUsedException
 
 
 class ClearanceInvoiceSerializer(serializers.ModelSerializer):
@@ -13,6 +14,14 @@ class ClearanceInvoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClearanceInvoice
         fields = '__all__'
+
+    def validate(self, attrs):
+        if not attrs.get('ttn', None):
+            raise serializers.ValidationError('ТТН не может быть пустым')
+        clearance_invoice = ClearanceInvoice.objects.filter(ttn=attrs.get('ttn'))
+        if clearance_invoice:
+            raise TTNUsedException(ttn_name=attrs.get('ttn'), invoice_id=clearance_invoice.first().id)
+        return super().validate(attrs)
 
 
 class FullClearanceInvoiceSerializer(serializers.ModelSerializer):
