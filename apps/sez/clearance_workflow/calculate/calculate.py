@@ -23,7 +23,6 @@ from apps.sez.exceptions import (
     InternalException,
     PanelException,
     NoClearedItemException,
-    NoDeclarationException,
 )
 
 from apps.account.models import User
@@ -116,10 +115,6 @@ def clear_model_items(
                     .filter(item_code_1c=code_1c, available_quantity__gt=0.0, declaration__gifted=gifted)
                     .order_by('item_code_1c', "declaration__declaration_date")
                 )
-
-        if not di_qs.exists():
-            logging.error(f"No declaration items found {invoice_item.model_name_id.name}")
-            raise NoDeclarationException(model_name=invoice_item.model_name_id.name)
 
         remaining = requested_qty
 
