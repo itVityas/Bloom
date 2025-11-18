@@ -11,6 +11,7 @@ from apps.sez.serializers.full_clearance_workflow import (
 from apps.sez.permissions import STZPermission
 from apps.sez.clearance_workflow.calculate.clear import clear_invoice_calculate
 from apps.sez.clearance_workflow.calculate.calculate import begin_calculation
+from apps.sez.models import ClearanceInvoiceItems, InnerTTNItems, ClearanceInvoice
 from apps.sez.exceptions import (
     InvoiceNotFoundException,
     InvoiceAlreadyClearedException,
@@ -18,8 +19,8 @@ from apps.sez.exceptions import (
     InternalException,
     OracleException,
     PanelException,
-    NoDeclarationException,
     NoClearedItemException,
+    NoMatchedTTNException,
 )
 
 
@@ -58,6 +59,18 @@ class FullClearanceWorkflowView(APIView):
         if serializer.is_valid():
             invoice_id = serializer.validated_data['invoice_id']
             try:
+                invoice = ClearanceInvoice.objects.get(id=invoice_id)
+                invoice_items = ClearanceInvoiceItems.objects.filter(clearance_invoice=invoice)
+                ttn_items = InnerTTNItems.objects.filter(inner_ttn__uuid=invoice.ttn)
+                if invoice_items.count() != ttn_items.count():
+                    raise NoMatchedTTNException()
+                for ttn_item in ttn_items:
+                    item = invoice_items.filter(model_name_id=ttn_item.model_name.id).first()
+                    if not item:
+                        raise NoClearedItemException(ttn_item.model_name.name)
+                    if item.quantity != ttn_item.quantity:
+                        raise NoMatchedTTNException()
+
                 begin_calculation(invoice_id, request.user)
                 return Response({'message': 'Успешный расчет'}, status=status.HTTP_200_OK)
             except InvoiceNotFoundException as ex:
@@ -66,9 +79,9 @@ class FullClearanceWorkflowView(APIView):
                 return Response({'error': str(ex)}, status=status.HTTP_400_BAD_REQUEST)
             except ProductsNotEnoughException as ex:
                 return Response({'error': str(ex)}, status=status.HTTP_409_CONFLICT)
-            except NoDeclarationException as ex:
-                return Response({'error': str(ex)}, status=status.HTTP_424_FAILED_DEPENDENCY)
             except NoClearedItemException as ex:
+                return Response({'error': str(ex)}, status=status.HTTP_424_FAILED_DEPENDENCY)
+            except NoMatchedTTNException as ex:
                 return Response({'error': str(ex)}, status=status.HTTP_424_FAILED_DEPENDENCY)
             except InternalException as ex:
                 return Response({'error': str(ex)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

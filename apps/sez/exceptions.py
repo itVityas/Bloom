@@ -84,10 +84,10 @@ class TTNUsedException(ValidationError):
         return self.detail
 
 
-class NoDeclarationException(ValidationError):
+class NoClearedItemException(ValidationError):
     def __init__(self, model_name, detail=None, code=None):
         if not detail:
-            detail = f'Не найдены декларации соответствующие заказу для модели - {model_name}'
+            detail = f'Ничего не было расстаможено для модели - {model_name}'
         self.detail = detail
         self.code = code
 
@@ -95,10 +95,10 @@ class NoDeclarationException(ValidationError):
         return self.detail
 
 
-class NoClearedItemException(ValidationError):
-    def __init__(self, model_name, detail=None, code=None):
+class NoMatchedTTNException(ValidationError):
+    def __init__(self, detail=None, code=None):
         if not detail:
-            detail = f'Ничего не было расстаможено для модели - {model_name}'
+            detail = 'ТТН была изменена, проверьте ТТН'
         self.detail = detail
         self.code = code
 
