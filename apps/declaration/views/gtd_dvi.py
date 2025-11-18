@@ -70,7 +70,6 @@ class GTDDVIFileUploadView(APIView):
                 for chunk in dbf_file.chunks():
                     tmp_dbf.write(chunk)
                 tmp_dbf_path = tmp_dbf.name
-                print(tmp_dbf_path)
 
             table = dbf.Table(tmp_dbf_path)
             table.open()
@@ -113,7 +112,7 @@ class GTDDVIFileUploadView(APIView):
                             provision_date=datetime.date.today(),
                             paid_payment_details_count=0,
                             declaration_id=decl['GOD']+decl['NOM_GTD'].split('/')[-1],
-                            declaration_number=decl['NOM_GTD'],
+                            declaration_number=str(decl['NOM_GTD']).strip(),
                             permit_number='old',
                             country_name='old',
                             declarant_position='automatic',
