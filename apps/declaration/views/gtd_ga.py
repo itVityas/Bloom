@@ -49,7 +49,7 @@ class GTDGAFileUploadView(APIView):
 
             count = 0
             for decl_line in decl_list[::-1]:
-                if decl_line.get('GTDGA') and len(decl_line.get('GTDGA').split('/')) == 2:
+                if decl_line.get('GTDGA') and len(decl_line.get('GTDGA').split('/')) == 3:
                     decl = Declaration.objects.filter(
                         declaration_number=str(decl_line['GA']).strip()
                     ).first()
