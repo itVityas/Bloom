@@ -81,6 +81,7 @@ def clear_model_items(
     # clear each component against DeclaredItem stocks
     for item in components:
         item['clear'] = False
+        item['uncleared'] = item.get('absolute_quantity', 0.0)
         nomsign = item.get('nomsign', None)
         if not nomsign:
             continue
@@ -158,6 +159,7 @@ def clear_model_items(
             if remaining <= 0:
                 item['clear'] = True
                 break
+            item['uncleared'] = remaining
 
     # работа с аналогами
     for item in components:
@@ -245,6 +247,7 @@ def clear_model_items(
                     item['clear'] = True
                     is_find = True
                     break
+                item['uncleared'] = remaining
 
             if is_find:
                 break
@@ -258,12 +261,12 @@ def clear_model_items(
         raise NoClearedItemException(model_name=invoice_item.model_name_id.name)
 
     for item in components:
-        if not item['clear'] and item.get('nomsign'):
+        if not item['clear'] and item.get('nomsign') and item.get('uncleared', 0) > 0:
             ClearanceUncleared.objects.create(
                 invoice_item=invoice_item,
                 name=item.get('nomsign') + ': ' + item.get('name', ''),
                 request_quantity=item.get('absolute_quantity', 0.0),
-                uncleared_quantity=item.get('absolute_quantity', 0.0),
+                uncleared_quantity=item.get('uncleared', 0),
                 reason="No matching declaration items",
             )
 
