@@ -9,6 +9,7 @@ from apps.sez.clearance_workflow.create_dbf.prihod import generate_prihod_decl_d
 from apps.sez.clearance_workflow.create_dbf.rashod import generate_rashod_decl_dbf
 from apps.sez.clearance_workflow.create_dbf.rashod_tovar import generate_rashod_tovar_decl_dbf
 from apps.sez.clearance_workflow.create_dbf.prihod_tovar import generate_prihod_tovar_decl_dbf
+from apps.sez.clearance_workflow.create_dbf.rashod_g44 import generate_rashod_g44_dbf
 
 logger = logging.getLogger(__name__)
 
@@ -69,6 +70,9 @@ def generate_all_dbf_zip(
 
         rashod_tovar_path = os.path.join(rashod_dir, 'tovar.dbf')
         generate_rashod_tovar_decl_dbf(clearance_invoice_id, rashod_tovar_path)
+
+        rashod_g44_path = os.path.join(rashod_dir, 'g44.dbf')
+        generate_rashod_g44_dbf(clearance_invoice_id, rashod_g44_path)
 
         # Create the ZIP archive
         # Ensure parent dir exists
