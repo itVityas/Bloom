@@ -105,7 +105,8 @@ def generate_rashod_decl_dbf(
         elif name == 'G143':
             value = 'РБ, 210605, Г.ВИТЕБСК, УЛ.П.БРОВКИ 13А'
         elif name == 'G549':
-            value = str(invoice.id)
+            inv_str = str(invoice.id)
+            value = inv_str[-6:].rjust(4, '0')
         elif name == 'G542':
             value = invoice.date_calc.date()
         elif name == 'G082':
@@ -114,7 +115,7 @@ def generate_rashod_decl_dbf(
             value = invoice.ttn or ''
         elif name == 'NOMER_GTD':
             inv_str = str(invoice.id)
-            value = inv_str[-6:].rjust(6, '0')
+            value = inv_str[-6:].rjust(4, '0')
         elif name == 'G013':
             value = '1'
         else:
