@@ -99,8 +99,10 @@ def generate_norm_dbf(clearance_invoice_id: int, output_path: str, encoding: str
     with transaction.atomic():
         for item_index, item in enumerate(invoice_items, start=1):
             for rec in getattr(item, 'prefetched_cleared_items', []):
+                inv_str = str(invoice.id)
+                value = inv_str[-6:].rjust(4, '0')
                 row = {
-                    'GTDGA_O':    str(invoice.id),
+                    'GTDGA_O':    value,
                     'TOVGTDNO_O': item_index,
                     'GTDGA':      rec.declared_item_id.declaration.declaration_number,
                     'TOVGTDNO':   rec.declared_item_id.ordinal_number,
