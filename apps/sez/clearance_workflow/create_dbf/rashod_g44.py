@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 # Получатель
 RASHOD_DECL_FIELDS = [
     ('G32',       'N',   3, 0),
-    ('G44l',      'N',  3, 0),
+    ('G44i',      'N',  3, 0),
     ('G44KD',     'C',  2, 0),
     ('GND',       'C',  32, 0),
     ('G44DD',     'D',   8, 0),
