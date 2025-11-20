@@ -181,7 +181,7 @@ def generate_rashod_tovar_decl_dbf(
                 value = invoice.ttn or ''
             elif name == 'NOMER_GTD':
                 inv_str = str(invoice.id)
-                value = inv_str
+                value = inv_str[-6:].rjust(4, '0')
             elif name == 'KONST_KOD':
                 value = ''
                 model = Models.objects.filter(name=clearance_item.model_name_id).first()
