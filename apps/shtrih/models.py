@@ -207,6 +207,22 @@ class Workplaces(models.Model):
         return f"{self.name}"
 
 
+class invoices(models.Model):
+    """
+    Invoices
+    """
+    invoice_number = models.IntegerField(db_column='invoice_number')
+    recipient = models.SmallIntegerField(db_column='recipient_id')
+
+    class Meta:
+        managed = False
+        db_table = 'invoices'
+        ordering = ['-id']
+
+    def __str__(self):
+        return f"Invoice {self.invoice_number}"
+
+
 class Protocols(models.Model):
     """
     Protocol reference table for product components.
@@ -215,6 +231,7 @@ class Protocols(models.Model):
     workplace = models.ForeignKey(Workplaces, on_delete=models.CASCADE, db_column='workplace_id')
     work_date = models.DateField(db_column='work_date')
     shift = models.CharField(max_length=1, db_column='shift')
+    invoice = models.ForeignKey(invoices, on_delete=models.CASCADE, db_column='invoice_id')
 
     class Meta:
         managed = False

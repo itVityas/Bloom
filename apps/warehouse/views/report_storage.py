@@ -51,7 +51,7 @@ class ReportStorageView(APIView):
                 model_dict['simple'] = ProductTransitions.objects.filter(
                     new_product__in=products_qs).count()
                 model_dict['total'] = model_dict['uncleared'] + model_dict['cleared'] + model_dict['simple']
-                model_dict['compensation'] = 0
+                model_dict['compensation'] = products_qs.filter(protocols__invoice__recipient=4).count()
                 result_list.append(model_dict)
 
             serializer = ReportStorageSerializer(result_list, many=True)
