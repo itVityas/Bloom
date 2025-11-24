@@ -49,6 +49,7 @@ from apps.warehouse.views.shipment import (
     ShipmentRetrieveAPIView,
     ShipmentBarcodeRetrieveAPIView
 )
+from apps.warehouse.views.report_storage import ReportStorageView
 
 urlpatterns = [
     path('typeofwork/', TypeOfWorkListCreateView.as_view()),
@@ -84,4 +85,5 @@ urlpatterns = [
     path('shipment/detailed/<int:pk>/', ShipmentRetrieveAPIView.as_view()),
     path('shipment/update/<int:pk>/', ShipmentRetrieveUpdateDestroyAPIView.as_view()),
     path('shipment/barcode/', ShipmentBarcodeRetrieveAPIView.as_view()),
+    path('warehouse/report_storage/', ReportStorageView.as_view())
 ]
