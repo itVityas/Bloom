@@ -360,6 +360,8 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_list: list, is_gi
     # Получаем список products с фильтрацией по условиям
     logging.info(f'Start process_product with invoice:{invoice_item.id} order_id:{order_list} is_gifted:{is_gifted}')
     process_transitions_list = ProductTransitions.objects.all().values_list('old_product')
+    process_transitions_list2 = ProductTransitions.objects.all().values_list('new_product')
+    process_transitions_list = process_transitions_list.union(process_transitions_list2)
     products = Products.objects.filter(model__name__id=invoice_item.model_name_id.id, cleared__isnull=True)
 
     # проверка для телевизоров, прочая продукция не имеет consignment,
