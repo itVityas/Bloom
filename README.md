@@ -45,6 +45,8 @@ CipherString = DEFAULT:@SECLEVEL=0
 + ./manage.py loaddata fixture/type_of_work.json (if you run at first)
 + ./manage.py loaddata fixture/warehouse.json (if you run at first)
 + ./manage.py loaddata fixture/warehouse_action.json (if you run at first)
++ ./manage.py loaddata fixture/general_addtitle.json (if you run at first)
++ ./manage.py loaddata fixture/general_addbody.json (if you run at first)
 + ./manage.py runsever {ip:port} (start app)
 
 
@@ -78,3 +80,5 @@ python3 manage.py dumpdata account.Role --output=fixture/role.json
 python3 manage.py dumpdata warehouse.TypeOfWork --output=fixture/type_of_work.json
 python3 manage.py dumpdata warehouse.Warehouse --output=fixture/warehouse.json
 python3 manage.py dumpdata warehouse.WarehouseAction --output=fixture/warehouse_action.json
+python3 manage.py dumpdata general.AddTitle --output=fixture/general_addtitle.json
+python3 manage.py dumpdata general.AddBody --output=fixture/general_addbody.json
