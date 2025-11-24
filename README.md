@@ -82,3 +82,7 @@ python3 manage.py dumpdata warehouse.Warehouse --output=fixture/warehouse.json
 python3 manage.py dumpdata warehouse.WarehouseAction --output=fixture/warehouse_action.json
 python3 manage.py dumpdata general.AddTitle --output=fixture/general_addtitle.json
 python3 manage.py dumpdata general.AddBody --output=fixture/general_addbody.json
+
+
+***Ошибки***
+возможно не будут проходить миграции у token_blacklist 008 миграции, тогда заходим в 001 миграцию и меняем в 2 места с AutoField на BigAutoField
