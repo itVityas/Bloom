@@ -48,7 +48,7 @@ class ClearanceInvoiceItemListCreateAPIView(ListCreateAPIView):
                 )
             if invoice_item.declared_item.available_quantity < invoice_item.quantity:
                 mess = 'Ошибка при добавлении продукта в накладную.' +\
-                    ' Запрашиваемое количество меньше доступного. Решение: Измените количество'
+                    ' Запрашиваемое количество больше доступного. Решение: Измените количество'
                 logger.warning(mess)
                 invoice_item.delete()
                 raise ValidationError(
