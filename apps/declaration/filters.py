@@ -29,6 +29,10 @@ class DeclarationFilter(filters.FilterSet):
     order_id = filters.CharFilter(method='filter_order_id', lookup_expr='exact')
     is_use = filters.BooleanFilter(field_name='is_use', lookup_expr='exact')
     available = filters.NumberFilter(method='filter_available')
+    item_name = filters.CharFilter(method='filter_item_name')
+    start_item_name = filters.CharFilter(method='filter_start_item_name')
+    end_item_name = filters.CharFilter(method='filter_end_item_name')
+    cont_item_name = filters.CharFilter(method='filter_cont_item_name')
 
     ordering = filters.OrderingFilter(
         fields=(
@@ -70,6 +74,10 @@ class DeclarationFilter(filters.FilterSet):
             'order_id',
             'is_use',
             'available',
+            'item_name',
+            'start_item_name',
+            'end_item_name',
+            'cont_item_name',
         ]
 
     def filter_container(self, queryset, name, value):
@@ -106,6 +114,18 @@ class DeclarationFilter(filters.FilterSet):
 
     def filter_available(self, queryset, name, value):
         return queryset.filter(declared_items__available_quantity__gte=value).distinct()
+
+    def filter_item_name(self, queryset, name, value):
+        return queryset.filter(declared_items__name__iexact=value).distinct()
+
+    def filter_start_item_name(self, queryset, name, value):
+        return queryset.filter(declared_items__name__istartswith=value).distinct()
+
+    def filter_end_item_name(self, queryset, name, value):
+        return queryset.filter(declared_items__name__iendswith=value).distinct()
+
+    def filter_cont_item_name(self, queryset, name, value):
+        return queryset.filter(declared_items__name__icontains=value).distinct()
 
 
 class DeclarationItemFilter(filters.FilterSet):
