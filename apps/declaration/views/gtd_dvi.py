@@ -78,13 +78,13 @@ class GTDDVIFileUploadView(APIView):
 
             count = 0
             declaration_number = ''
-            for decl in decl_list[::-1]:
+            for decl in decl_list:
                 available_items = float(decl['PRIXOD'])-float(decl['RASXOD'])
                 try:
                     god = int(decl['GOD'])
                 except Exception:
                     continue
-                if available_items <= 0 and god < 2024:
+                if available_items <= 0:
                     continue
                 # if available_items <= 0 and god >= 2024:
                 #     available_items = float(decl['PRIXOD'])
