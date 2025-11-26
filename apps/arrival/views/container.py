@@ -23,6 +23,7 @@ from apps.arrival.serializers.container import (
     ContainerAndContantSetSerializer,
     ContainerMassUpdateSerializer,
 )
+from apps.arrival.exceptions import DuplicateContainerException
 
 
 @extend_schema(tags=['Containers'])
@@ -52,10 +53,13 @@ class ContainerCreateView(CreateAPIView):
     queryset = Container.objects.all()
 
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        container = serializer.save()
-        return Response(ContainerAndDeclarationSerializer(container).data)
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            container = serializer.save()
+            return Response(ContainerAndDeclarationSerializer(container).data)
+        except Exception:
+            return Response(serializer.errors, status=400)
 
 
 @extend_schema(tags=['Containers'])

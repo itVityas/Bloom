@@ -7,6 +7,7 @@ from apps.declaration.serializers.declaration import DeclarationSerializer
 from apps.arrival.serializers.lot import LotPostSerializer
 from apps.invoice.models import TrainDoc, InvoiceContainer
 from apps.invoice.utils.check_excel import find_sheet
+from apps.arrival.exceptions import DuplicateContainerException
 
 
 class InvoiceContainerSerializer(serializers.ModelSerializer):
@@ -107,6 +108,21 @@ class ContainerSetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Container
         fields = "__all__"
+
+    def validate(self, attrs):
+        container_name = attrs.get('name', None)
+        order = attrs.get('order', None)
+        lot = attrs.get('lot', None)
+        if container_name and order and lot:
+            if Container.objects.filter(name=container_name, order=order, lot=lot).first():
+                raise DuplicateContainerException(container_name=container_name)
+        elif order:
+            if Container.objects.filter(name=container_name, order=order).first():
+                raise DuplicateContainerException(container_name=container_name)
+        elif lot:
+            if Container.objects.filter(name=container_name, lot=lot).first():
+                raise DuplicateContainerException(container_name=container_name)
+        return super().validate(attrs)
 
     def update(self, instance, validated_data):
         name = validated_data.get('name', None)
