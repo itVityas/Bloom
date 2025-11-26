@@ -87,7 +87,8 @@ class TTNUsedException(ValidationError):
 class NoClearedItemException(ValidationError):
     def __init__(self, model_name, detail=None, code=None):
         if not detail:
-            detail = f'Ничего не было расстаможено для модели - {model_name}'
+            detail = f'Ничего не было расстаможено для модели - {model_name}' +\
+                '\nРешение: проверьте правильность заказа'
         self.detail = detail
         self.code = code
 
