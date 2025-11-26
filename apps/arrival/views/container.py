@@ -23,7 +23,6 @@ from apps.arrival.serializers.container import (
     ContainerAndContantSetSerializer,
     ContainerMassUpdateSerializer,
 )
-from apps.arrival.exceptions import DuplicateContainerException
 
 
 @extend_schema(tags=['Containers'])
