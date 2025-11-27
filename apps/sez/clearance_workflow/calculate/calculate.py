@@ -379,7 +379,7 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_list: list, is_gi
             products = products.filter(consignment__declaration_number__in=declaration_numbers)
         else:
             declaration_numbers = Declaration.objects.filter(
-                gifted=False).values_list('declaration_number')
+                gifted=False, is_use=True).values_list('declaration_number')
             products = products.filter(consignment__declaration_number__in=declaration_numbers)
         products = products.exclude(pk__in=process_transitions_list)
         products = products.order_by('id')
