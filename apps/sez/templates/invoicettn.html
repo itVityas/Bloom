@@ -30,6 +30,7 @@
 </head>
 
 <body>
+    {% load my_filters %}
     <div>
         <p><b><u>Поставщик: Открытое акционерное общество "Витязь" г.Витебск</u></b></p>
         <p><b>Адрес: {{ttn.load}}</b></p>
@@ -191,10 +192,10 @@
                 {{item.weight}}
             </td>
             <td>
-                {{item.weight}}
+                {{item.weight|multiply:item.quantity}}
             </td>
             <td>
-                {{item.weight}}
+                {{item.weight_brutto|multiply:item.quantity}}
             </td> 
             <td>
                 Беларусь

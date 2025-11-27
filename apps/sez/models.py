@@ -155,6 +155,7 @@ class InnerTTNItems(models.Model):
     quantity = models.IntegerField()  # Количество
     price_pcs = models.DecimalField(max_digits=19, decimal_places=2)  # цена за единицу
     weight = models.DecimalField(max_digits=19, decimal_places=3)  # Вес
+    weight_brutto = models.DecimalField(max_digits=19, decimal_places=3, default=0)  # Вес брутто
     nds = models.PositiveIntegerField(default=0)  # % ндс
     release = models.BooleanField(default=False)  # Реализация
     notice = models.TextField(blank=True, null=True)

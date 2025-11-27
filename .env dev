@@ -1,0 +1,17 @@
+SECRET_KEY=django-insecure-bwa$3h4%u)7d)w%%4s)d#kkf=gv3%x)j5p!&ey3xz@h^2ll(73
+DEBUG=True
+ALLOWED_HOSTS=*
+DB_ENGINE='mssql'
+DB_DRIVER='ODBC Driver 17 for SQL Server'
+DB_NAME='bloomtest'
+DB_USER='bloomsql'
+DB_PASSWORD='QweBnm12#'
+DB_HOST='192.168.2.17'
+DB_PORT='1433'
+ORACLE_DB_NAME='192.168.2.200:1521/omega'
+ORACLE_DB_USER='VZ_NEW'
+ORACLE_DB_PASSWORD='vz_new'
+
+API_USERNAME='API'
+API_PASSWORD='dO2xegis'
+API_1C_URL_GTD='http://192.168.2.2/VITYAS-2/hs/bloom/data/'
