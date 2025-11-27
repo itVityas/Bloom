@@ -26,9 +26,9 @@ def clear_invoice_calculate(invoice_id: int):
     with transaction.atomic():
         Products.objects.filter(cleared=invoice_id).update(cleared=None)
         invoice_items = ClearanceInvoiceItems.objects.filter(
-            clearance_invoice=invoice_id).select_related('declared_item')
+            clearance_invoice=invoice_id)
         for item in invoice_items:
-            di = item.declared_item_id
+            di = item.declared_item
             if di and di.available_quantity is not None:
                 di.available_quantity = F('available_quantity') + item.quantity
                 di.save(update_fields=['available_quantity'])
