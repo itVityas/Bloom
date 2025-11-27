@@ -10,6 +10,7 @@ from apps.declaration.views.declared_item import (
 )
 from apps.declaration.views.upload_declaration import ZipFileUploadAPIView
 from apps.declaration.views.gtd_dvi import GTDDVIFileUploadView
+from apps.declaration.views.gtd_dvi_update import GTDDVIFileUploadUpdateView
 from apps.declaration.views.gtd_ga import GTDGAFileUploadView
 
 
@@ -30,5 +31,6 @@ urlpatterns = [
     path('declaration/upload_zip/', ZipFileUploadAPIView.as_view(), name='zip-upload'),
     path('declaration/delete_all_declaration/', DeclarationBulkDeleteAPIView.as_view(), name='delete-all'),
     path('utils/upload_dbf/', GTDDVIFileUploadView.as_view()),
+    path('utils/upload_dbf_update/', GTDDVIFileUploadUpdateView.as_view()),
     path('utils/upload_gtdga/', GTDGAFileUploadView.as_view()),
 ]
