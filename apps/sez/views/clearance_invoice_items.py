@@ -7,7 +7,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework import status
 from django.db.models import F
 
-from apps.sez.models import ClearanceInvoiceItems
+from apps.sez.models import ClearanceInvoiceItems, ClearedItem
 from apps.sez.permissions import ClearanceInvoiceItemsPermission
 from apps.sez.serializers.clearance_invoice_items import ClearanceInvoiceItemsSerializer
 from rest_framework.response import Response
@@ -57,6 +57,11 @@ class ClearanceInvoiceItemListCreateAPIView(ListCreateAPIView):
                 )
             invoice_item.declared_item.available_quantity = F('available_quantity') - invoice_item.quantity
             invoice_item.declared_item.save(update_fields=['available_quantity'])
+            ClearedItem.objects.create(
+                clearance_invoice_items=invoice_item,
+                declared_item_id=invoice_item.declared_item.id,
+                quantity=invoice_item.quantity
+            )
 
 
 @extend_schema(tags=['ClearanceInvoiceItems'])
@@ -92,5 +97,6 @@ class ClearanceInvoiceItemDetailedView(RetrieveUpdateDestroyAPIView):
         if instance.declared_item:
             instance.declared_item.available_quantity = F('available_quantity') + instance.quantity
             instance.declared_item.save(update_fields=['available_quantity'])
+        ClearedItem.objects.filter(clearance_invoice_items=instance).delete()
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

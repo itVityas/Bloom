@@ -11,7 +11,7 @@ from apps.sez.serializers.full_clearance_workflow import (
 from apps.sez.permissions import STZPermission
 from apps.sez.clearance_workflow.calculate.clear import clear_invoice_calculate
 from apps.sez.clearance_workflow.calculate.calculate import begin_calculation
-from apps.sez.models import ClearanceInvoiceItems, InnerTTNItems, ClearanceInvoice
+from apps.sez.models import ClearanceInvoiceItems, InnerTTNItems, ClearanceInvoice, ClearedItem
 from apps.sez.exceptions import (
     InvoiceNotFoundException,
     InvoiceAlreadyClearedException,
@@ -59,6 +59,7 @@ class FullClearanceWorkflowView(APIView):
         if serializer.is_valid():
             invoice_id = serializer.validated_data['invoice_id']
             try:
+                ClearedItem.objects.filter(clearance_invoice_items__clearance_invoice_id=invoice_id).delete()
                 invoice = ClearanceInvoice.objects.get(id=invoice_id)
                 invoice_items = ClearanceInvoiceItems.objects.filter(clearance_invoice=invoice)
                 ttn_items = InnerTTNItems.objects.filter(inner_ttn__uuid=invoice.ttn)
