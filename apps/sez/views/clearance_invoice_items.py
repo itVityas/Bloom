@@ -59,7 +59,7 @@ class ClearanceInvoiceItemListCreateAPIView(ListCreateAPIView):
             invoice_item.declared_item.save(update_fields=['available_quantity'])
             ClearedItem.objects.create(
                 clearance_invoice_items=invoice_item,
-                declared_item_id=invoice_item.declared_item.id,
+                declared_item_id=invoice_item.declared_item,
                 quantity=invoice_item.quantity
             )
 
