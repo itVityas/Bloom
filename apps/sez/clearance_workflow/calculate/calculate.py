@@ -66,7 +66,6 @@ def clear_model_items(
     Raises:
         PanelError: If is_tv=True and no TV panel component is found in the breakdown.
     '''
-    print(model_id, model_code, quantity)
     components = component_flat_list(model_code, None, quantity)
     has_panel = False
 
@@ -331,9 +330,22 @@ def begin_calculation(invoice_id: int, user: User):
 
         # складываем дубликаты ClearedItems
         cleared_items = ClearedItem.objects.filter(clearance_invoice_items__in=invoice_items)
+        decls = []
         for cleared_item in cleared_items:
-            pass
-
+            try:
+                if cleared_item.declared_item_id.id in decls:
+                    continue
+                cleared_dubl = cleared_items.exclude(id=cleared_item.id).filter(
+                    declared_item_id=cleared_item.declared_item_id
+                )
+                if cleared_dubl:
+                    cleared_item.quantity = cleared_item.quantity + cleared_dubl.aggregate(
+                        Sum('quantity'))['quantity__sum']
+                    cleared_dubl.delete()
+                    cleared_item.save()
+                    decls.append(cleared_item.declared_item_id.id)
+            except Exception:
+                pass
 
         # помечаем инвойс как рассчитанный
         invoice.cleared = True
@@ -374,7 +386,7 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_list: list, is_gi
     # проверка для телевизоров, прочая продукция не имеет consignment,
     # сдедовательно данный расчет для нее не будет работать
     model = Models.objects.filter(name=invoice_item.model_name_id.id).first()
-    if model.production_code.code == 400:
+    if model.production_code == 400:
         if order_list:
             # get list of decl in order: [('07260/52003398',), ('07260/52001406',),
             # ('07260/52001405',), ('07260/52001449',), ('07260/52001402',)]
