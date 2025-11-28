@@ -39,11 +39,13 @@ class InvoiceTTNToPDFView(RetrieveAPIView):
         price = 0
         weight = 0
         full_price = 0
+        weight_gross = 0
         for item in items:
             quantity += item.quantity
             item.price = item.price_pcs * item.quantity
             price += item.price
-            weight += item.weight
+            weight += item.weight * item.quantity
+            weight_gross += item.weight_brutto * item.quantity
             item.nds_sum = price * item.nds / 100
             item.full_price = item.nds_sum + item.price
             full_price += item.full_price
@@ -64,6 +66,7 @@ class InvoiceTTNToPDFView(RetrieveAPIView):
             "coin": coin,
             "rub_text": rub_text,
             "weight_text": weight_text,
+            "weight_gross": weight_gross,
         }
 
         html_message = render_to_string(
