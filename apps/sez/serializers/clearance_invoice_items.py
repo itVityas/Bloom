@@ -76,7 +76,7 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
         products = Products.objects.filter(model__name__id=obj.model_name_id.id, cleared__isnull=True)
 
         model = Models.objects.filter(name=obj.model_name_id.id).first()
-        if model.production_code != 400:
+        if model.production_code.code != 400:
             return products.count()
         if order_list:
             # get list of decl in order: [('07260/52003398',), ('07260/52001406',),

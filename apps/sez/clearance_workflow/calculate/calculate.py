@@ -66,6 +66,7 @@ def clear_model_items(
     Raises:
         PanelError: If is_tv=True and no TV panel component is found in the breakdown.
     '''
+    print(model_id, model_code, quantity)
     components = component_flat_list(model_code, None, quantity)
     has_panel = False
 
@@ -327,6 +328,12 @@ def begin_calculation(invoice_id: int, user: User):
                     model_name=item.declared_item.name)
             item.declared_item.available_quantity = item.declared_item.available_quantity - item.quantity
             item.declared_item.save(update_fields=['available_quantity'])
+
+        # складываем дубликаты ClearedItems
+        cleared_items = ClearedItem.objects.filter(clearance_invoice_items__in=invoice_items)
+        for cleared_item in cleared_items:
+            pass
+
 
         # помечаем инвойс как рассчитанный
         invoice.cleared = True
