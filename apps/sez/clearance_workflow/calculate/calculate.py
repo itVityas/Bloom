@@ -120,6 +120,7 @@ def clear_model_items(
         remaining = requested_qty
 
         for i in di_qs:
+            i.refresh_from_db()
             di = i
             available = di.available_quantity or 0.0
             if available <= 0:
@@ -142,11 +143,13 @@ def clear_model_items(
                             break
                 if decl_panel and decl_panel.available_quantity > 0:
                     di = decl_panel
+                    available = di.available_quantity or 0.0
+                    to_clear = min(available, remaining)
                 has_panel = True
 
             # Update available_quantity
             di.available_quantity = available - to_clear
-            di.save(update_fields=["available_quantity"])
+            di.save(update_fields=["available_quantity"], force_update=True)
 
             # Record clearance
             ClearedItem.objects.create(
