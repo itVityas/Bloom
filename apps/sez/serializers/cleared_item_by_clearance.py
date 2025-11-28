@@ -45,6 +45,7 @@ class ClearedItemListSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClearedItem
         fields = [
+            'id',
             'declaration_number',
             'permit_number',
             'declaration_date',
