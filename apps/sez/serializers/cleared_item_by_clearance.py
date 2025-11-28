@@ -33,6 +33,14 @@ class ClearedItemListSerializer(serializers.ModelSerializer):
         read_only=True
     )
     sum_cost = serializers.SerializerMethodField()
+    declared_available_quantity = serializers.IntegerField(
+        source='declared_item_id.available_quantity',
+        read_only=True
+    )
+    declared_item_quantity = serializers.IntegerField(
+        source='declared_item_id.items_quantity',
+        read_only=True
+    )
 
     class Meta:
         model = ClearedItem
@@ -45,6 +53,9 @@ class ClearedItemListSerializer(serializers.ModelSerializer):
             'quantity',
             'measurement',
             'sum_cost',
+            'declared_item_id',
+            'declared_available_quantity',
+            'declared_item_quantity',
         ]
 
     @extend_schema_field(serializers.FloatField())
