@@ -374,7 +374,7 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_list: list, is_gi
     # проверка для телевизоров, прочая продукция не имеет consignment,
     # сдедовательно данный расчет для нее не будет работать
     model = Models.objects.filter(name=invoice_item.model_name_id.id).first()
-    if model.production_code == 400:
+    if model.production_code.code == 400:
         if order_list:
             # get list of decl in order: [('07260/52003398',), ('07260/52001406',),
             # ('07260/52001405',), ('07260/52001449',), ('07260/52001402',)]
