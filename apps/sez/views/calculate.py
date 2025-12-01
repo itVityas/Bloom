@@ -35,6 +35,7 @@ from apps.sez.exceptions import (
             200: OpenApiResponse(description='Успешный расчет'),
             400: OpenApiResponse(description='Накладная уже рассчитана'),
             404: OpenApiResponse(description='Накладная не найдена'),
+            406: OpenApiResponse(description='Декларации в 1с не заполнены'),
             409: OpenApiResponse(description='Недостаточно товаров для списания'),
             422: OpenApiResponse(description='Проверка панели не пройдена'),
             424: OpenApiResponse(description='Нет совпадений в декларации для данной модели'),
@@ -80,7 +81,7 @@ class FullClearanceWorkflowView(APIView):
             except InvoiceAlreadyClearedException as ex:
                 return Response({'error': str(ex)}, status=status.HTTP_400_BAD_REQUEST)
             except No1cCodeException as ex:
-                return Response({'error': str(ex)}, status=status.HTTP_424_FAILED_DEPENDENCY)
+                return Response({'error': str(ex), 'err_list': ex.err_list}, status=status.HTTP_406_NOT_ACCEPTABLE)
             except ProductsNotEnoughException as ex:
                 return Response({'error': str(ex)}, status=status.HTTP_409_CONFLICT)
             except NoClearedItemException as ex:
