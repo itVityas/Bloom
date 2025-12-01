@@ -128,6 +128,7 @@
 </head>
 
 <body>
+    {% load my_filters %}
     <div style="text-align: center;">
         <div style="display: inline-block;">
         <b>УНП</b>
@@ -274,7 +275,7 @@
                 
             </td>
             <td>
-                {{item.weight_brutto}}
+                {{item.weight_brutto|multiply:item.quantity}}
             </td>
             <td>
                 {{item.notice}}

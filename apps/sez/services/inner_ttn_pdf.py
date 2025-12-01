@@ -20,7 +20,7 @@ def get_ttn_pdf(id: int) -> str:
         quantity += item.quantity
         item.price = item.price_pcs * item.quantity
         price += item.price
-        weight += item.weight_brutto
+        weight += item.weight_brutto * item.quantity
         item.nds_sum = price * item.nds / 100
         item.full_price = item.nds_sum + item.price
         full_price += item.full_price
