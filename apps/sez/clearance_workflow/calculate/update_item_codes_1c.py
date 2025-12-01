@@ -81,4 +81,3 @@ def update_item_codes_1c():
     # 6. Bulk update
     if items_to_update:
         DeclaredItem.objects.bulk_update(items_to_update, ["item_code_1c"])
-        logger.info(f"Updated {len(items_to_update)} DeclaredItem records.")

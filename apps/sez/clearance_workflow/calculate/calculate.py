@@ -23,6 +23,7 @@ from apps.sez.exceptions import (
     InternalException,
     PanelException,
     NoClearedItemException,
+    No1cCodeException,
 )
 
 from apps.account.models import User
@@ -389,7 +390,7 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_list: list, is_gi
     # проверка для телевизоров, прочая продукция не имеет consignment,
     # сдедовательно данный расчет для нее не будет работать
     model = Models.objects.filter(name=invoice_item.model_name_id.id).first()
-    if model.production_code == 400:
+    if model.production_code.code == 400:
         if order_list:
             # get list of decl in order: [('07260/52003398',), ('07260/52001406',),
             # ('07260/52001405',), ('07260/52001449',), ('07260/52001402',)]
@@ -403,6 +404,13 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_list: list, is_gi
             declaration_numbers = Declaration.objects.filter(
                 gifted=False, is_use=True).values_list('declaration_number')
             products = products.filter(consignment__declaration_number__in=declaration_numbers)
+
+        decl_item_without_1c = DeclaredItem.objects.filter(
+            item_code_1c__isnull=True,
+            declaration__declaration_number__in=declaration_numbers)
+        if decl_item_without_1c.count() != 0:
+            raise No1cCodeException(decl_items=decl_item_without_1c)
+
         products = products.exclude(pk__in=process_transitions_list)
         products = products.order_by('id')
 
