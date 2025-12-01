@@ -66,6 +66,7 @@ class ClearanceInvoiceProductsExportView(APIView):
             barcode = product.barcode or ''
             if model_name != product.model.name:
                 ws.append([])
+                model_short = model_name.short_name if model_name else ''
                 model_name = product.model.name
                 dict_buf = {}
                 dict_buf['model_name'] = model_short
