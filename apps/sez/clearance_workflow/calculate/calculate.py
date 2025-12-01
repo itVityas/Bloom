@@ -407,7 +407,8 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_list: list, is_gi
 
         decl_item_without_1c = DeclaredItem.objects.filter(
             item_code_1c__isnull=True,
-            declaration__declaration_number__in=declaration_numbers)
+            declaration__declaration_number__in=declaration_numbers).order_by(
+                'declaration__declaration_number', 'ordinal_number')
         if decl_item_without_1c.count() != 0:
             logging.error(f'No 1c code in declaration items: {decl_item_without_1c}')
             raise No1cCodeException(decl_items=decl_item_without_1c)
