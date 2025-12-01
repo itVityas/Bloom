@@ -15,7 +15,6 @@ NORM_FIELDS = [
     ('GTDGA',      'C', 50, 0),      # Номер декларации, Declaration.declaration_number
     ('TOVGTDNO',   'N', 11, 0),      # Номер товара в декларации, DeclaredItem.ordinal_number
     ('TOVCOUNT',   'C', 19, 2),      # Количество ClearedItem.quantity
-    ('CNTEI',    'C', 8, 0),         # Единицы измерения
     ('SUBCODE',    'C', 20, 0),      # Пусто
     ('TNVD',       'C', 10, 0),      # Пусто
     ('SUBCODE_O',  'C', 20, 0),      # Пусто
@@ -108,7 +107,6 @@ def generate_norm_dbf(clearance_invoice_id: int, output_path: str, encoding: str
                     'GTDGA':      rec.declared_item_id.declaration.declaration_number,
                     'TOVGTDNO':   rec.declared_item_id.ordinal_number,
                     'TOVCOUNT':   str(rec.quantity),
-                    'CNTEI':      'шт',
                     'SUBCODE':    '',
                     'TNVD':       '',
                     'SUBCODE_O':  '',

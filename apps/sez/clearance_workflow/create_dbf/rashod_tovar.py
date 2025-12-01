@@ -158,9 +158,11 @@ def generate_rashod_tovar_decl_dbf(
             elif name == 'G317A':
                 if itter_ttn_items is not None:
                     value = itter_ttn_items.measure
+                    row[name] = value
                     continue
                 if clearance_item.declared_item_id is not None:
                     value = clearance_item.declared_item_id.measurement
+                    row[name] = value
                     continue
                 value = ''
             elif name == 'G32':
