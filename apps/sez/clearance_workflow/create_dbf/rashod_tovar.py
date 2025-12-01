@@ -152,7 +152,7 @@ def generate_rashod_tovar_decl_dbf(
                 if clearance_item.declared_item_id is not None:
                     value = clearance_item.declared_item_id.name
                 else:
-                    value = clearance_item.model_name_id.short_name
+                    value = clearance_item.model_name_id.name
             elif name == 'G315A':
                 value = clearance_item.quantity
             elif name == 'G317A':
