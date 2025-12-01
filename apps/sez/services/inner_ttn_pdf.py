@@ -28,7 +28,7 @@ def get_ttn_pdf(id: int) -> str:
     coin = int((full_price % 1) * 100)
     rub = int(full_price)
     rub_text = num2words(rub, lang='ru')
-    weight_text = num2words(int(weight), lang='ru')
+    weight_text = num2words(int(weight*1000), lang='ru')
 
     context = {
         "date": ttn.date.strftime("%d.%m.%Y"),
