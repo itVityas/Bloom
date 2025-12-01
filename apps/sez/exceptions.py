@@ -113,7 +113,8 @@ class No1cCodeException(ValidationError):
             decl_list = ''
             for item in decl_items:
                 decl_list += f" {item.declaration.declaration_number}:  позиция {item.ordinal_number}\n"
-            self.detail = f"Не найдены коды 1С для товаров в 1С:\n{decl_list} проверьте данные в 1С"
+            self.detail = f"Не найдены заводские коды в декларациях в 1С:\n {decl_list} " +\
+                          "проверьте данные в 1С. Решение позвоните в бухгалтерия"
         except Exception:
             self.detail = 'Не найдены коды 1С для товаров'
         self.code = code

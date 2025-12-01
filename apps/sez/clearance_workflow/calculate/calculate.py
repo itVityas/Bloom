@@ -409,6 +409,7 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_list: list, is_gi
             item_code_1c__isnull=True,
             declaration__declaration_number__in=declaration_numbers)
         if decl_item_without_1c.count() != 0:
+            logging.error(f'No 1c code in declaration items: {decl_item_without_1c}')
             raise No1cCodeException(decl_items=decl_item_without_1c)
 
         products = products.exclude(pk__in=process_transitions_list)
