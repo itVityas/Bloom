@@ -21,6 +21,7 @@ from apps.sez.exceptions import (
     PanelException,
     NoClearedItemException,
     NoMatchedTTNException,
+    No1cCodeException
 )
 
 
@@ -78,6 +79,8 @@ class FullClearanceWorkflowView(APIView):
                 return Response({'error': str(ex)}, status=status.HTTP_404_NOT_FOUND)
             except InvoiceAlreadyClearedException as ex:
                 return Response({'error': str(ex)}, status=status.HTTP_400_BAD_REQUEST)
+            except No1cCodeException as ex:
+                return Response({'error': str(ex)}, status=status.HTTP_424_FAILED_DEPENDENCY)
             except ProductsNotEnoughException as ex:
                 return Response({'error': str(ex)}, status=status.HTTP_409_CONFLICT)
             except NoClearedItemException as ex:
