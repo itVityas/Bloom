@@ -115,7 +115,7 @@ class No1cCodeException(ValidationError):
             for item in decl_items:
                 decl_list = f"{item.declaration.declaration_number}:  позиция {item.ordinal_number}"
                 err_list.append(decl_list)
-            self.detail = f"Не найдены заводские коды в декларациях в 1С:\n {decl_list} \n" +\
+            self.detail = "Не найдены заводские коды в декларациях в 1С." +\
                           "проверьте данные в 1С. Решение: позвоните в бухгалтерию"
             self.err_list = err_list
         except Exception:
