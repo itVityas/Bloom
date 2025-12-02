@@ -44,6 +44,7 @@ class ReportStorageView(APIView):
                 model_dict = {}
                 model = ModelNames.objects.get(id=models_id)
                 model_dict['model_name'] = model.short_name if model.short_name else model.name
+                model_dict['model_name_id'] = models_id
 
                 products_qs = Products.objects.filter(model__name=models_id, id__in=products_list_id)
                 model_dict['uncleared'] = products_qs.filter(cleared__isnull=True).count()

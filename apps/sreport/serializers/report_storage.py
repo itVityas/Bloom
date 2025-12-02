@@ -11,6 +11,7 @@ class ReportStorageSerializer(serializers.Serializer):
     compensation = product (invoices.recitiont_id=4)
     """
     model_name = serializers.CharField()
+    model_name_id = serializers.IntegerField()
     uncleared = serializers.IntegerField()
     cleared = serializers.IntegerField()
     simple = serializers.IntegerField()
