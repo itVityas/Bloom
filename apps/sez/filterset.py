@@ -225,6 +225,28 @@ class InnerTTNFilter(filters.FilterSet):
         field_name='uuid',
         lookup_expr='icontains'
     )
+    date = filters.DateFilter(
+        field_name='date',
+        lookup_expr='icontains'
+    )
+    start_notice = filters.CharFilter(
+        field_name='notice',
+        lookup_expr='istartswith'
+    )
+    end_notice = filters.CharFilter(
+        field_name='notice',
+        lookup_expr='iendswith'
+    )
+    cont_notice = filters.CharFilter(
+        field_name='notice',
+        lookup_expr='icontains'
+    )
+    noitce = filters.CharFilter(
+        field_name='notice',
+        lookup_expr='iexact'
+    )
+    quantity = filters.NumberFilter(method='filter_quantity')
+    price = filters.NumberFilter(method='filter_price')
 
     ordering = filters.OrderingFilter(
         fields=(
@@ -241,5 +263,16 @@ class InnerTTNFilter(filters.FilterSet):
             'uuid',
             'start_uuid',
             'end_uuid',
-            'cont_uuid'
+            'cont_uuid',
+            'date',
+            'start_notice',
+            'end_notice',
+            'cont_notice',
+            'notice',
         ]
+
+    def filter_quantity(self, queryset, name, value):
+        return queryset.filter(innerttnitems__quantity__exact=value).distinct()
+
+    def filter_price(self, queryset, name, value):
+        return queryset.filter(innerttnitems__price_pcs__exact=value).distinct()
