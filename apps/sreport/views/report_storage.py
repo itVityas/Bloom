@@ -6,7 +6,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 
 from apps.shtrih.models import Products, ProductTransitions, ModelNames
 from apps.warehouse.models import WarehouseProduct
-from apps.warehouse.serializers.report_storage import ReportStorageSerializer
+from apps.sreport.serializers.report_storage import ReportStorageSerializer
 
 
 @extend_schema(tags=['Warehouse report'])
