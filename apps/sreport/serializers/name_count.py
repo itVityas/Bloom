@@ -23,6 +23,8 @@ class ModelNameOrderSerializer(serializers.Serializer):
         consigments = Consignments.objects.filter(
             model_name__id=obj['model_name_id'],
             declaration_number__in=order_decl).values('declaration_number', 'G32').exclude(is_gift=1).distinct()
+        if not consigments:
+            return 0
         quantity = consigments.aggregate(Sum('quantity'))['quantity__sum'] \
             - consigments.aggregate(Sum('used_quantity'))['used_quantity__sum']
         return int(quantity)
@@ -82,6 +84,8 @@ class ModelNameCountSerializer(serializers.Serializer):
         consigments = Consignments.objects.filter(
             model_name__id=obj['model_name_id']).exclude(
                 declaration_number__in=decl_numbers).exclude(is_gift=1).distinct()
+        if not consigments:
+            return 0
         quantity = consigments.aggregate(Sum('quantity'))['quantity__sum'] \
             - consigments.aggregate(Sum('used_quantity'))['used_quantity__sum']
         return int(quantity)
