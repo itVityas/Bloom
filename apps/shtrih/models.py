@@ -79,6 +79,7 @@ class Consignments(models.Model):
     declaration_number = models.CharField(max_length=50)
     declaration_date = models.DateTimeField()
     G32 = models.SmallIntegerField()
+    is_gift = models.BooleanField(null=True, blank=True)
 
     class Meta:
         managed = False

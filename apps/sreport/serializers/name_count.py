@@ -22,8 +22,9 @@ class ModelNameOrderSerializer(serializers.Serializer):
             container__order__id=obj['order_id']).values('declaration_number').distinct()
         consigments = Consignments.objects.filter(
             model_name__id=obj['model_name_id'],
-            declaration_number__in=order_decl).values('declaration_number', 'G32').distinct()
-        quantity = consigments.aggregate(Sum('quantity'))['quantity__sum'] - consigments.aggregate(Sum('used_quantity'))['used_quantity__sum']
+            declaration_number__in=order_decl).values('declaration_number', 'G32').exclude(is_gift=1).distinct()
+        quantity = consigments.aggregate(Sum('quantity'))['quantity__sum'] \
+            - consigments.aggregate(Sum('used_quantity'))['used_quantity__sum']
         return int(quantity)
 
     def get_uncleared(self, obj) -> int:
@@ -31,7 +32,7 @@ class ModelNameOrderSerializer(serializers.Serializer):
             container__order__id=obj['order_id']).values('declaration_number').distinct()
         consigments = Consignments.objects.filter(
             model_name__id=obj['model_name_id'],
-            declaration_number__in=order_decl).distinct()
+            declaration_number__in=order_decl).exclude(is_gift=1).distinct()
         process_transitions_list = ProductTransitions.objects.all().values_list('old_product')
         process_transitions_list2 = ProductTransitions.objects.all().values_list('new_product')
         process_transitions_list = process_transitions_list.union(process_transitions_list2)
@@ -48,7 +49,7 @@ class ModelNameCountSerializer(serializers.Serializer):
 
     def get_order(self, obj) -> dict:
         consigments = Consignments.objects.filter(
-            model_name__id=obj['model_name_id']).values('declaration_number').distinct()
+            model_name__id=obj['model_name_id']).values('declaration_number').exclude(is_gift=1).distinct()
         orders_id = Order.objects.filter(
             containers__declarations__declaration_number__in=consigments).values_list('id', flat=True).distinct()
         data = []
@@ -59,13 +60,13 @@ class ModelNameCountSerializer(serializers.Serializer):
 
     def get_without_order_uncleared(self, obj) -> int:
         consigments = Consignments.objects.filter(
-            model_name__id=obj['model_name_id']).values('declaration_number').distinct()
+            model_name__id=obj['model_name_id']).values('declaration_number').exclude(is_gift=1).distinct()
         orders_id = Order.objects.filter(
             containers__declarations__declaration_number__in=consigments).values_list('id', flat=True).distinct()
         decl_numbers = Declaration.objects.filter(
             container__order__in=orders_id).values_list('declaration_number', flat=True).distinct()
         consigments = Consignments.objects.filter(
-            model_name__id=obj['model_name_id'], declaration_number__in=decl_numbers).distinct()
+            model_name__id=obj['model_name_id'], declaration_number__in=decl_numbers).exclude(is_gift=1).distinct()
         products = Products.objects.filter(
             model__name__id=obj['model_name_id'], cleared__isnull=True)
         products = products.exclude(consignment__in=consigments)
@@ -73,12 +74,14 @@ class ModelNameCountSerializer(serializers.Serializer):
 
     def get_without_order_available(self, obj) -> int:
         consigments = Consignments.objects.filter(
-            model_name__id=obj['model_name_id']).values('declaration_number').distinct()
+            model_name__id=obj['model_name_id']).values('declaration_number').exclude(is_gift=1).distinct()
         orders_id = Order.objects.filter(
             containers__declarations__declaration_number__in=consigments).values_list('id', flat=True).distinct()
         decl_numbers = Declaration.objects.filter(
             container__order__in=orders_id).values_list('declaration_number', flat=True).distinct()
         consigments = Consignments.objects.filter(
-            model_name__id=obj['model_name_id']).exclude(declaration_number__in=decl_numbers).distinct()
-        quantity = consigments.aggregate(Sum('quantity'))['quantity__sum'] - consigments.aggregate(Sum('used_quantity'))['used_quantity__sum']
+            model_name__id=obj['model_name_id']).exclude(
+                declaration_number__in=decl_numbers).exclude(is_gift=1).distinct()
+        quantity = consigments.aggregate(Sum('quantity'))['quantity__sum'] \
+            - consigments.aggregate(Sum('used_quantity'))['used_quantity__sum']
         return int(quantity)
