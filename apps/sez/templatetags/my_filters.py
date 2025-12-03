@@ -6,4 +6,4 @@ register = template.Library()
 
 @register.filter
 def multiply(value, arg):
-    return float(value) * float(arg)
+    return round(float(value) * float(arg), 3)

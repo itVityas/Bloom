@@ -192,10 +192,10 @@
                 {{item.weight}}
             </td>
             <td>
-                {{item.weight|multiply:item.quantity}}
+                {{item.weight|multiply:item.quantity|floatformat:2}}
             </td>
             <td>
-                {{item.weight_brutto|multiply:item.quantity}}
+                {{item.weight_brutto|multiply:item.quantity|floatformat:2}}
             </td> 
             <td>
                 Беларусь
@@ -230,16 +230,16 @@
                 
             </td>
             <td>
-                <b>{{full_price}}</b>
+                <b>{{full_price|floatformat:2}}</b>
             </td>
             <td>
                 
             </td>
             <td>
-                <b>{{weight}}</b>
+                <b>{{weight|floatformat:2}}</b>
             </td> 
             <td>
-                {{weight_gross}}
+                {{weight_gross|floatformat:2}}
             </td> 
             <td>
             </td>
