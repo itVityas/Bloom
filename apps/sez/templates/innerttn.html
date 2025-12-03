@@ -251,10 +251,10 @@
                 {{item.quantity}}
             </td>
             <td>
-                {{item.price_pcs}}
+                {{item.price_pcs|floatformat:2}}
             </td>
             <td>
-                {{item.price}}
+                {{item.price|floatformat:2}}
             </td>
             <td>
                 {% if item.nds != 0 %}
@@ -269,13 +269,13 @@
                 {% endif %}
             </td>
             <td>
-                {{item.full_price}}
+                {{item.full_price|floatformat:2}}
             </td>
             <td>
                 
             </td>
             <td>
-                {{item.weight_brutto|multiply:item.quantity|floatformat:3}}
+                {{item.weight_brutto|multiply:item.quantity|floatformat:2}}
             </td>
             <td>
                 {{item.notice}}
@@ -297,7 +297,7 @@
                 <b>x</b>
             </td>
             <td>
-                <b>{{price}}</b>
+                <b>{{price|floatformat:2}}</b>
             </td>
             <td>
                 <b>x</b>
@@ -306,13 +306,13 @@
                 
             </td>
             <td>
-                <b>{{full_price}}</b>
+                <b>{{full_price|floatformat:2}}</b>
             </td>
             <td>
                 
             </td>
             <td>
-                <b>{{weight}}</b>
+                <b>{{weight|floatformat:2}}</b>
             </td>
             <td>
                 
