@@ -28,3 +28,4 @@ class ReportStorage(models.Model):
     class Meta:
         managed = False
         db_table = 'report_storage'
+        ordering = ['model_name_id']
