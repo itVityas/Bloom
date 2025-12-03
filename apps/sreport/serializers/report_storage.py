@@ -11,7 +11,7 @@ class ReportStorageSerializer(serializers.ModelSerializer):
         model = ReportStorage
         fields = '__all__'
 
-    def get_total(self, obj):
+    def get_total(self, obj) -> int:
         return obj.uncleared + obj.cleared + obj.simple
 
 # class ReportStorageSerializer(serializers.Serializer):
