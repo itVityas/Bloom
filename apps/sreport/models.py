@@ -9,13 +9,13 @@ class ReportStorage(models.Model):
         COUNT(CASE WHEN pr.cleared is not null THEN 1 END) as cleared,
         COUNT(CASE WHEN pt.new_product_id is not null THEN 1 END) as simple,
         COUNT(CASE WHEN invoice.recipient_id=4 THEN 1 END) as compensation
-    FROM bloomtest.dbo.products as pr
-    JOIN bloomtest.dbo.models as mod ON pr.model_id = mod.id
-    JOIN bloomtest.dbo.model_names as name ON mod.name_id = name.id
-    LEFT JOIN bloomtest.dbo.product_transitions as pt ON pr.id = pt.new_product_id
-    JOIN bloomtest.dbo.warehouse_warehouseproduct as wp ON wp.product_id = pr.id
-    JOIN bloomtest.dbo.protocols as prot ON prot.product_id = pr.id
-    JOIN bloomtest.dbo.invoices as invoice ON invoice.id = prot.invoice_id
+    FROM products as pr
+    JOIN models as mod ON pr.model_id = mod.id
+    JOIN model_names as name ON mod.name_id = name.id
+    LEFT JOIN product_transitions as pt ON pr.id = pt.new_product_id
+    JOIN warehouse_warehouseproduct as wp ON wp.product_id = pr.id
+    JOIN protocols as prot ON prot.product_id = pr.id
+    JOIN invoices as invoice ON invoice.id = prot.invoice_id
     GROUP BY name.id, name.name
     """
     model_name_id = models.IntegerField(db_column='model_name_id', primary_key=True)
