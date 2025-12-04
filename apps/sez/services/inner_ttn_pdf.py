@@ -4,6 +4,7 @@ from weasyprint.fonts import FontConfiguration
 from num2words import num2words
 
 from apps.sez.models import InnerTTN, InnerTTNItems
+from apps.omega.models import OBJ_ATTR_VALUES_1000004
 
 
 def get_ttn_pdf(id: int) -> str:
@@ -17,6 +18,10 @@ def get_ttn_pdf(id: int) -> str:
     weight = 0
     full_price = 0
     for item in items:
+        short_name = item.model_name.short_name if item.model_name.short_name else item.model_name.name
+        omega_obj = OBJ_ATTR_VALUES_1000004.objects.using('oracle_db').filter(
+            A_3607=short_name).first()
+        item.full_name = omega_obj.А_3173 if omega_obj else item.model_name.name
         quantity += item.quantity
         item.price = item.price_pcs * item.quantity
         price += item.price

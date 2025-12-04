@@ -231,6 +231,9 @@ class OBJ_ATTR_VALUES_1000004(models.Model):
     """Для получения ТН ВЭД
     A_2707 - код модели
     A_2948 - ТН ВЭД
+    A_2951 - вес  нето
+    А_2950 - вес брутто
+    А_3173 - там же полное название
 
     Args:
         models (_type_): _description_
@@ -238,6 +241,10 @@ class OBJ_ATTR_VALUES_1000004(models.Model):
     SOCODE = models.BigIntegerField(primary_key=True, db_column='SOCODE')
     A_2707 = models.IntegerField(db_column='A_2707', blank=True, null=True)
     A_2948 = models.CharField(max_length=255, db_column='A_2948', blank=True, null=True)
+    A_2951 = models.DecimalField(max_digits=32, decimal_places=2, db_column='A_2951', blank=True, null=True)
+    A_2950 = models.DecimalField(max_digits=32, decimal_places=2, db_column='A_2950', blank=True, null=True)
+    А_3173 = models.CharField(max_length=255, db_column='A_3173', blank=True, null=True)
+    A_3607 = models.CharField(max_length=255, db_column='A_3607', blank=True, null=True)
     # A_2067 ...
 
     class Meta:
