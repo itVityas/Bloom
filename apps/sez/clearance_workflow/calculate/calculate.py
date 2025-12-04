@@ -397,11 +397,11 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_list: list, is_gi
             declaration_numbers = Declaration.objects.filter(
                 container__order__id__in=order_list, is_use=True).values_list('declaration_number')
             products = products.filter(consignment__declaration_number__in=declaration_numbers)
-        elif is_gifted:
-            declaration_numbers = Declaration.objects.filter(gifted=True, is_use=True).values_list('declaration_number')
+        if is_gifted:
+            declaration_numbers = declaration_numbers.filter(gifted=True, is_use=True).values_list('declaration_number')
             products = products.filter(consignment__declaration_number__in=declaration_numbers)
         else:
-            declaration_numbers = Declaration.objects.filter(
+            declaration_numbers = declaration_numbers.filter(
                 gifted=False, is_use=True).values_list('declaration_number')
             products = products.filter(consignment__declaration_number__in=declaration_numbers)
 
