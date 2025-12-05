@@ -7,12 +7,47 @@ from apps.declaration.models import Declaration
 from django.db.models import Sum
 
 
+class DeclarationCountSerializer(serializers.Serializer):
+    declaration_number = serializers.CharField()
+    model_name_id = serializers.IntegerField(write_only=True)
+    order = serializers.SerializerMethodField()
+    uncleared = serializers.SerializerMethodField()
+    available_count = serializers.SerializerMethodField()
+
+    def get_order(self, obj) -> dict:
+        return OrderSerializer(
+            Order.objects.filter(containers__declarations__declaration_number=obj['declaration_number']).first()
+        ).data
+
+    def get_available_count(self, obj) -> int:
+        consigments = Consignments.objects.filter(
+            model_name__id=obj['model_name_id'],
+            declaration_number=obj['declaration_number']).exclude(is_gift=1).distinct()
+        if not consigments:
+            return 0
+        quantity = consigments.aggregate(Sum('quantity'))['quantity__sum'] \
+            - consigments.aggregate(Sum('used_quantity'))['used_quantity__sum']
+        return int(quantity)
+
+    def get_uncleared(self, obj) -> int:
+        consigments = Consignments.objects.filter(
+            model_name__id=obj['model_name_id'],
+            declaration_number=obj['declaration_number']).exclude(is_gift=1).distinct()
+        products = Products.objects.filter(model__name__id=obj['model_name_id'], consignment__in=consigments)
+        process_transitions_list = ProductTransitions.objects.all().values_list('old_product')
+        process_transitions_list2 = ProductTransitions.objects.all().values_list('new_product')
+        process_transitions_list = process_transitions_list.union(process_transitions_list2)
+        products = products.exclude(pk__in=process_transitions_list)
+        return products.count()
+
+
 class ModelNameOrderSerializer(serializers.Serializer):
     model_name_id = serializers.IntegerField(write_only=True)
     order_id = serializers.IntegerField(write_only=True)
-    order = uncleared = serializers.SerializerMethodField()
+    order = serializers.SerializerMethodField()
     uncleared = serializers.SerializerMethodField()
     available_count = serializers.SerializerMethodField()
+    declaration_numbers = serializers.SerializerMethodField()
 
     def get_order(self, obj) -> dict:
         return OrderSerializer(Order.objects.get(pk=obj['order_id'])).data
@@ -41,6 +76,19 @@ class ModelNameOrderSerializer(serializers.Serializer):
         products = Products.objects.filter(model__name__id=obj['model_name_id'], cleared__isnull=True)
         products = products.exclude(pk__in=process_transitions_list, consignment__in=consigments)
         return products.count()
+
+    def get_declaration_numbers(self, obj) -> list:
+        consigments = Consignments.objects.filter(
+            model_name__id=obj['model_name_id']).exclude(is_gift=1).values('declaration_number').distinct()
+        if not consigments:
+            return []
+        decl_list = []
+        for decl in consigments:
+            decl_list.append({
+                'declaration_number': decl['declaration_number'],
+                'model_name_id': obj['model_name_id']
+            })
+        return DeclarationCountSerializer(decl_list, many=True).data
 
 
 class ModelNameCountSerializer(serializers.Serializer):
