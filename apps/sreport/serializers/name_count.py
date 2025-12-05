@@ -33,7 +33,10 @@ class DeclarationCountSerializer(serializers.Serializer):
         consigments = Consignments.objects.filter(
             model_name__id=obj['model_name_id'],
             declaration_number=obj['declaration_number']).exclude(is_gift=1).distinct()
-        products = Products.objects.filter(model__name__id=obj['model_name_id'], consignment__in=consigments)
+        products = Products.objects.filter(
+            model__name__id=obj['model_name_id'],
+            consignment__in=consigments,
+            cleared__isnull=True)
         process_transitions_list = ProductTransitions.objects.all().values_list('old_product')
         process_transitions_list2 = ProductTransitions.objects.all().values_list('new_product')
         process_transitions_list = process_transitions_list.union(process_transitions_list2)
