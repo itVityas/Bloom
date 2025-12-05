@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from apps.sez.permissions import STZPermission
 from apps.sez.serializers.name_amount import NameAmountSerializer
-from apps.shtrih.models import Models
+from apps.shtrih.models import Models, ProductTransitions
 
 
 @extend_schema(tags=['Sez'])
@@ -44,18 +44,22 @@ HAVING COUNT_BIG([products].[id]) = 0
 ORDER BY [model_names].[short_name] ASC OFFSET 0 ROWS
         """
         ziro = request.query_params.get('ziro', 'false').lower()
+        prod_trans = ProductTransitions.objects.all()
         if ziro == 'true':
-            queryset = Models.objects.filter(
+            queryset = Models.objects.exclude(
+                Q(products__id__in=prod_trans.values('new_product')) | Q(products__id__in=prod_trans.values('old_product'))
+                ).filter(
                 Q(products__cleared__isnull=True) | Q(products__cleared=0)
             ).values('name__id', 'name__short_name', 'name__name', 'code').annotate(
                 real_amount=Count('products')
             ).filter(real_amount=0).order_by('name__short_name')
         else:
-            queryset = Models.objects.filter(
-                Q(products__cleared__isnull=True) | Q(products__cleared=0)
+            queryset = Models.objects.exclude(
+                Q(products__id__in=prod_trans.values('new_product')) | Q(products__id__in=prod_trans.values('old_product'))
+                ).filter(
+                products__cleared__isnull=True
             ).values('name__id', 'name__short_name', 'name__name', 'code').annotate(
                 real_amount=Count('products')
             ).filter(real_amount__gt=0).order_by('name__short_name')
-
         serializer = NameAmountSerializer(queryset, many=True)
         return Response(serializer.data)
