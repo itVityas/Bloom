@@ -47,7 +47,8 @@ ORDER BY [model_names].[short_name] ASC OFFSET 0 ROWS
         prod_trans = ProductTransitions.objects.all()
         if ziro == 'true':
             queryset = Models.objects.exclude(
-                Q(products__id__in=prod_trans.values('new_product')) | Q(products__id__in=prod_trans.values('old_product'))
+                    Q(products__id__in=prod_trans.values('new_product'))
+                    | Q(products__id__in=prod_trans.values('old_product'))
                 ).filter(
                 Q(products__cleared__isnull=True) | Q(products__cleared=0)
             ).values('name__id', 'name__short_name', 'name__name', 'code').annotate(
@@ -55,7 +56,8 @@ ORDER BY [model_names].[short_name] ASC OFFSET 0 ROWS
             ).filter(real_amount=0).order_by('name__short_name')
         else:
             queryset = Models.objects.exclude(
-                Q(products__id__in=prod_trans.values('new_product')) | Q(products__id__in=prod_trans.values('old_product'))
+                    Q(products__id__in=prod_trans.values('new_product'))
+                    | Q(products__id__in=prod_trans.values('old_product'))
                 ).filter(
                 products__cleared__isnull=True
             ).values('name__id', 'name__short_name', 'name__name', 'code').annotate(
