@@ -41,6 +41,10 @@ class ClearedItemListSerializer(serializers.ModelSerializer):
         source='declared_item_id.items_quantity',
         read_only=True
     )
+    model_name = serializers.CharField(
+        source='clearance_invoice_items.model_name_id.name',
+        read_only=True
+    )
 
     class Meta:
         model = ClearedItem
@@ -57,6 +61,7 @@ class ClearedItemListSerializer(serializers.ModelSerializer):
             'declared_item_id',
             'declared_available_quantity',
             'declared_item_quantity',
+            'model_name',
         ]
 
     @extend_schema_field(serializers.FloatField())
