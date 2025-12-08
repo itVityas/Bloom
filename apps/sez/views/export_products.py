@@ -52,7 +52,7 @@ class ClearanceInvoiceProductsExportView(APIView):
         ws.title = f"Invoice_{invoice_id}_Products"
 
         # Write header
-        headers = ["Number", "Product ID", "Model Short Name", "Barcode", "Date"]
+        headers = ["Number", "Product ID", "Model Short Name", "Barcode", "Date", 'variant_code']
         ws.append(headers)
 
         # Write data rows
@@ -69,6 +69,7 @@ class ClearanceInvoiceProductsExportView(APIView):
                 dict_buf['model_name'] = model_name.name if model_name else ''
                 dict_buf['count'] = count
                 dict_buf['module'] = prev_module
+                dict_buf['variant_code'] = ''
                 summarize_lines.append(dict_buf)
                 model_name = product.model.name
                 count = 0
@@ -90,17 +91,19 @@ class ClearanceInvoiceProductsExportView(APIView):
                 dict_buf['model_name'] = model_name.name
                 dict_buf['count'] = count
                 dict_buf['module'] = prev_module
+                dict_buf['variant_code'] = ''
                 summarize_lines.append(dict_buf)
                 prev_module = module
                 count = 0
 
             count += 1
-            ws.append([count, product_id, model_name.name, barcode, date])
+            ws.append([count, product_id, model_name.name, barcode, date, product.model.variant_code])
 
         dict_buf = {}
         dict_buf['model_name'] = model_name.name
         dict_buf['count'] = count
         dict_buf['module'] = prev_module
+        dict_buf['variant_code'] = ''
         summarize_lines.append(dict_buf)
         prev_module = module
 
