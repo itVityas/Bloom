@@ -62,17 +62,15 @@ class ClearanceInvoiceProductsExportView(APIView):
         summarize_lines = []
         for product in products_qs:
             product_id = product.id
-            model_short = product.model.name.short_name if product.model and product.model.name else ''
             barcode = product.barcode or ''
             if model_name != product.model.name:
                 ws.append([])
-                model_short = model_name.short_name if model_name else ''
-                model_name = product.model.name
                 dict_buf = {}
-                dict_buf['model_name'] = model_short
+                dict_buf['model_name'] = model_name.name if model_name else ''
                 dict_buf['count'] = count
                 dict_buf['module'] = prev_module
                 summarize_lines.append(dict_buf)
+                model_name = product.model.name
                 count = 0
 
             date = ''
@@ -89,7 +87,7 @@ class ClearanceInvoiceProductsExportView(APIView):
             if prev_module != module:
                 ws.append([])
                 dict_buf = {}
-                dict_buf['model_name'] = model_short
+                dict_buf['model_name'] = model_name.name
                 dict_buf['count'] = count
                 dict_buf['module'] = prev_module
                 summarize_lines.append(dict_buf)
@@ -97,10 +95,10 @@ class ClearanceInvoiceProductsExportView(APIView):
                 count = 0
 
             count += 1
-            ws.append([count, product_id, model_short, barcode, date])
+            ws.append([count, product_id, model_name.name, barcode, date])
 
         dict_buf = {}
-        dict_buf['model_name'] = model_short
+        dict_buf['model_name'] = model_name.name
         dict_buf['count'] = count
         dict_buf['module'] = prev_module
         summarize_lines.append(dict_buf)
