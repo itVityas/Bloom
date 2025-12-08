@@ -149,8 +149,8 @@ def generate_rashod_tovar_decl_dbf(
         row = {}
         for name, ftype, *_ in TOVAR_RASHOD_FIELDS:
             if name == 'G312':
-                if clearance_item.declared_item_id is not None:
-                    value = clearance_item.declared_item_id.name
+                if clearance_item.declared_item is not None:
+                    value = clearance_item.declared_item.name
                 else:
                     value = clearance_item.model_name_id.name
             elif name == 'G315A':
@@ -160,8 +160,8 @@ def generate_rashod_tovar_decl_dbf(
                     value = itter_ttn_items.measure
                     row[name] = value
                     continue
-                if clearance_item.declared_item_id is not None:
-                    value = clearance_item.declared_item_id.measurement
+                if clearance_item.declared_item is not None:
+                    value = clearance_item.declared_item.measurement
                     row[name] = value
                     continue
                 value = ''
