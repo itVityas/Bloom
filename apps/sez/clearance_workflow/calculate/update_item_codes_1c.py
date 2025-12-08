@@ -1,5 +1,7 @@
 import logging
 import requests
+from datetime import datetime
+
 from django.conf import settings
 
 from apps.declaration.models import Declaration, DeclaredItem
@@ -64,8 +66,11 @@ def update_item_codes_1c():
     items_to_update = []
     for entry in api_data:
         try:
+            dt = datetime.strptime(entry['Дата'], "%d.%m.%Y %H:%M:%S")
+            res_date = dt.strftime("%Y-%m-%d")
             item = DeclaredItem.objects.get(
                 declaration__declaration_number=entry["НомерГТДКод"],
+                declaration__declaration_date=res_date,
                 ordinal_number=entry["НомерСтроки"]
             )
             item.item_code_1c = int(entry["НоменклатураЗаводскойКод"])
