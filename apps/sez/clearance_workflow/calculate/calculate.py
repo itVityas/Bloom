@@ -100,13 +100,24 @@ def clear_model_items(
         if requested_qty <= 0:
             continue
 
+        remaining = requested_qty
+
+        analogs = fetch_analog_details(nomsign)
+        all_nomsigns = [code_1c]
+        for analog in analogs:
+            try:
+                code_1c = int(analog.get('nomsign', None))
+                all_nomsigns.append(code_1c)
+            except (TypeError, ValueError):
+                continue
+
         if order_list:
             declaration_numbers = Declaration.objects.filter(
                 container__order__id__in=order_list, is_use=True).values_list('declaration_number')
             di_qs = (
                     DeclaredItem.objects.select_for_update()
                     .select_related("declaration")
-                    .filter(item_code_1c=code_1c, available_quantity__gt=0.0,
+                    .filter(item_code_1c__in=all_nomsigns, available_quantity__gt=0.0,
                             declaration__gifted=gifted, declaration__declaration_number__in=declaration_numbers)
                     .order_by('item_code_1c', "declaration__declaration_date")
                 )
@@ -114,11 +125,9 @@ def clear_model_items(
             di_qs = (
                     DeclaredItem.objects.select_for_update()
                     .select_related("declaration")
-                    .filter(item_code_1c=code_1c, available_quantity__gt=0.0, declaration__gifted=gifted)
+                    .filter(item_code_1c__in=all_nomsigns, available_quantity__gt=0.0, declaration__gifted=gifted)
                     .order_by('item_code_1c', "declaration__declaration_date")
                 )
-
-        remaining = requested_qty
 
         for i in di_qs:
             i.refresh_from_db()
@@ -164,97 +173,6 @@ def clear_model_items(
                 item['clear'] = True
                 break
             item['uncleared'] = remaining
-
-    # работа с аналогами
-    for item in components:
-        if item.get('clear', True):
-            continue
-
-        nomsign = item.get('nomsign', None)
-        if not nomsign:
-            continue
-
-        if only_panel and is_tv:
-            if not isinstance(item.get("nomsign"), str) or not item["nomsign"].startswith("638111111"):
-                continue
-
-        requested_qty = item.get('absolute_quantity', 0.0)
-        if requested_qty <= 0:
-            continue
-
-        remaining = requested_qty
-
-        analogs = fetch_analog_details(nomsign)
-        for analog in analogs:
-            try:
-                code_1c = int(analog.get('nomsign', None))
-            except (TypeError, ValueError):
-                continue
-
-            if order_list:
-                declaration_numbers = Declaration.objects.filter(
-                    container__order__id__in=order_list, is_use=True).values_list('declaration_number')
-                di_qs = (
-                        DeclaredItem.objects.select_for_update()
-                        .select_related("declaration")
-                        .filter(item_code_1c=code_1c, available_quantity__gt=0.0,
-                                declaration__gifted=gifted, declaration__declaration_number__in=declaration_numbers)
-                        .order_by('item_code_1c', "declaration__declaration_date")
-                    )
-            else:
-                di_qs = (
-                        DeclaredItem.objects.select_for_update()
-                        .select_related("declaration")
-                        .filter(item_code_1c=code_1c, available_quantity__gt=0.0, declaration__gifted=gifted)
-                        .order_by('item_code_1c', "declaration__declaration_date")
-                    )
-
-            is_find = False
-            for i in di_qs:
-                di = i
-                available = di.available_quantity or 0.0
-                if available <= 0:
-                    continue
-
-                to_clear = min(available, remaining)
-
-                # Получает панель из consignments
-                if str(di.item_code_1c).startswith("638111111"):
-                    consignments = Consignments.objects.filter(
-                        products__model__id=model_id).values('declaration_number', 'G32').distinct()
-                    decl_panel = None
-                    if consignments:
-                        for consignment in consignments:
-                            decl_panel = di_qs.filter(
-                                declaration__declaration_number=consignment.get('declaration_number'),
-                                ordinal_number=consignment.get('G32')
-                            ).first()
-                            if decl_panel:
-                                break
-                    if decl_panel and decl_panel.available_quantity > 0:
-                        di = decl_panel
-                    has_panel = True
-
-                # Update available_quantity
-                di.available_quantity = available - to_clear
-                di.save(update_fields=["available_quantity"])
-
-                # Record clearance
-                ClearedItem.objects.create(
-                    clearance_invoice_items=invoice_item,
-                    declared_item_id=di,
-                    quantity=to_clear,
-                )
-
-                remaining -= to_clear
-                if remaining <= 0:
-                    item['clear'] = True
-                    is_find = True
-                    break
-                item['uncleared'] = remaining
-
-            if is_find:
-                break
 
     if is_tv and not has_panel:
         logging.error(f"256:Panel components not found for TV model {model_code}")
