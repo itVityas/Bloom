@@ -140,6 +140,7 @@ def generate_rashod_tovar_decl_dbf(
     clearance_items = ClearanceInvoiceItems.objects.filter(clearance_invoice=invoice)
     line = 1
     for clearance_item in clearance_items:
+        cont_flag = False
         itter_ttn_items = None
         if clearance_item.model_name_id:
             itter_ttn_items = InnerTTNItems.objects.filter(
@@ -150,6 +151,13 @@ def generate_rashod_tovar_decl_dbf(
         for name, ftype, *_ in TOVAR_RASHOD_FIELDS:
             if name == 'G312':
                 if clearance_item.declared_item is not None:
+                    clearance_models = ClearanceInvoiceItems.objects.filter(
+                        clearance_invoice=invoice,
+                        declared_item__isnull=True
+                    )
+                    if clearance_models and clearance_models.filter(model_name_id=clearance_item.model_name_id):
+                        cont_flag = True
+                        continue
                     value = clearance_item.declared_item.name
                 else:
                     value = clearance_item.model_name_id.name
@@ -198,6 +206,7 @@ def generate_rashod_tovar_decl_dbf(
                 else:
                     value = 0
             row[name] = value
-        table.append(row)
+        if not cont_flag:
+            table.append(row)
 
     table.close()
