@@ -22,7 +22,6 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
     model_name_object = serializers.SerializerMethodField()
     model_name = serializers.SerializerMethodField()
     model_code = serializers.SerializerMethodField()
-    unit_name = serializers.SerializerMethodField()
     real_amount = serializers.SerializerMethodField()
 
     class Meta:
@@ -31,11 +30,9 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
             'id',
             'quantity',
             'clearance_invoice',
-            'declared_item',
             'model_name_object',
             'model_name',
             'model_code',
-            'unit_name',
             'real_amount',
         ]
 
@@ -44,32 +41,19 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
 
     def get_model_name(self, obj) -> str:
         model_name = obj.model_name_id
-        if obj.declared_item:
-            return obj.declared_item.name
         if model_name:
             return model_name.short_name
         return ''
 
     def get_model_code(self, obj) -> str:
         model_name_id = obj.model_name_id
-        if obj.declared_item:
-            return None
         if model_name_id:
             model = Models.objects.filter(name=model_name_id).first()
             if model:
                 return model.code
         return None
 
-    def get_unit_name(self, obj) -> str:
-        if obj.declared_item:
-            return obj.declared_item.unit_code
-        return None
-
     def get_real_amount(self, obj) -> float:
-        declaration = obj.declared_item
-        if declaration:
-            return declaration.available_quantity
-
         order_list = obj.clearance_invoice.order.values_list('id', flat=True)
         is_gifted = obj.clearance_invoice.is_gifted
         process_transitions_list = ProductTransitions.objects.all().values_list('old_product')

@@ -239,17 +239,6 @@ def begin_calculation(invoice_id: int, user: User):
                 product.cleared = invoice
                 product.save(update_fields=['cleared'])
 
-        invoice_item_decl = ClearanceInvoiceItems.objects.filter(clearance_invoice=invoice, declared_item__isnull=False)
-        for item in invoice_item_decl:
-            if item.quantity > item.declared_item.available_quantity:
-                logging.error(f"Product {item.declared_item.name} not enough quantity")
-                raise ProductsNotEnoughException(
-                    have_count=item.quantity,
-                    req_count=item.declared_item.available_quantity,
-                    model_name=item.declared_item.name)
-            item.declared_item.available_quantity = item.declared_item.available_quantity - item.quantity
-            item.declared_item.save(update_fields=['available_quantity'])
-
         # складываем дубликаты ClearedItems
         cleared_items = ClearedItem.objects.filter(clearance_invoice_items__in=invoice_items)
         decls = []

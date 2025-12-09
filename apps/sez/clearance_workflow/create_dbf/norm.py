@@ -96,27 +96,15 @@ def generate_norm_dbf(clearance_invoice_id: int, output_path: str, encoding: str
 
     # 6. Populate rows inside a transaction to ensure atomicity
     row_count = 0
-    arr = {}
-    model_pos = 0
-    item_pos = 0
+
     with transaction.atomic():
-        for item in invoice_items:
-            if item.declared_item is None:
-                model_pos += 1
-                arr[item.model_name_id.id] = model_pos
-                item_pos = model_pos
-            else:
-                item_pos = arr.get(item.model_name_id.id, None)
-                if item_pos is None:
-                    model_pos += 1
-                    arr[item.model_name_id.id] = model_pos
-                    item_pos = model_pos
+        for item_index, item in enumerate(invoice_items, start=1):
             for rec in getattr(item, 'prefetched_cleared_items', []):
                 inv_str = str(invoice.id)
                 value = inv_str[-6:].rjust(4, '0')
                 row = {
                     'GTDGA_O':    value,
-                    'TOVGTDNO_O': item_pos,
+                    'TOVGTDNO_O': item_index,
                     'GTDGA':      rec.declared_item_id.declaration.declaration_number,
                     'TOVGTDNO':   rec.declared_item_id.ordinal_number,
                     'TOVCOUNT':   str(rec.quantity),

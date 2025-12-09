@@ -140,7 +140,7 @@ def generate_rashod_tovar_decl_dbf(
     clearance_items = ClearanceInvoiceItems.objects.filter(clearance_invoice=invoice)
     line = 1
     for clearance_item in clearance_items:
-        cont_flag = False
+
         itter_ttn_items = None
         if clearance_item.model_name_id:
             itter_ttn_items = InnerTTNItems.objects.filter(
@@ -150,26 +150,12 @@ def generate_rashod_tovar_decl_dbf(
         row = {}
         for name, ftype, *_ in TOVAR_RASHOD_FIELDS:
             if name == 'G312':
-                if clearance_item.declared_item is not None:
-                    clearance_models = ClearanceInvoiceItems.objects.filter(
-                        clearance_invoice=invoice,
-                        declared_item__isnull=True
-                    )
-                    if clearance_models and clearance_models.filter(model_name_id=clearance_item.model_name_id):
-                        cont_flag = True
-                        continue
-                    value = clearance_item.declared_item.name
-                else:
-                    value = clearance_item.model_name_id.name
+                value = clearance_item.model_name_id.name
             elif name == 'G315A':
                 value = clearance_item.quantity
             elif name == 'G317A':
                 if itter_ttn_items is not None:
                     value = itter_ttn_items.measure
-                    row[name] = value
-                    continue
-                if clearance_item.declared_item is not None:
-                    value = clearance_item.declared_item.measurement
                     row[name] = value
                     continue
                 value = ''
@@ -206,7 +192,6 @@ def generate_rashod_tovar_decl_dbf(
                 else:
                     value = 0
             row[name] = value
-        if not cont_flag:
-            table.append(row)
+        table.append(row)
 
     table.close()
