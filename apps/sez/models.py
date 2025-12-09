@@ -59,13 +59,6 @@ class ClearanceInvoiceItems(models.Model):
         related_name='clearance_invoice_items',
         db_column='model_name_id',
     )
-    declared_item = models.ForeignKey(
-        'declaration.DeclaredItem',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='clearance_invoice_items',
-    )
     quantity = models.FloatField()
 
     def __str__(self):

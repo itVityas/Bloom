@@ -4,7 +4,7 @@ from django.db import transaction
 from django.db.models import F
 
 from apps.sez.models import (
-    ClearanceInvoice, ClearanceInvoiceItems, ClearedItem, ClearanceUncleared)
+    ClearanceInvoice, ClearedItem, ClearanceUncleared)
 from apps.shtrih.models import Products
 from apps.sez.exceptions import InvoiceNotFoundException
 
@@ -25,13 +25,6 @@ def clear_invoice_calculate(invoice_id: int):
     logger.info(f'Start clearing invoice {invoice_id}')
     with transaction.atomic():
         Products.objects.filter(cleared=invoice_id).update(cleared=None)
-        invoice_items = ClearanceInvoiceItems.objects.filter(
-            clearance_invoice=invoice_id)
-        for item in invoice_items:
-            di = item.declared_item
-            if di and di.available_quantity is not None:
-                di.available_quantity = F('available_quantity') + item.quantity
-                di.save(update_fields=['available_quantity'])
 
         cleared_items = ClearedItem.objects.filter(clearance_invoice_items__clearance_invoice__id=invoice_id)
         for item in cleared_items:
