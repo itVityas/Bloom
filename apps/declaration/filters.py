@@ -33,6 +33,7 @@ class DeclarationFilter(filters.FilterSet):
     start_item_name = filters.CharFilter(method='filter_start_item_name')
     end_item_name = filters.CharFilter(method='filter_end_item_name')
     cont_item_name = filters.CharFilter(method='filter_cont_item_name')
+    is_completed = filters.BooleanFilter(field_name='is_completed', lookup_expr='exact')
 
     ordering = filters.OrderingFilter(
         fields=(
@@ -78,6 +79,7 @@ class DeclarationFilter(filters.FilterSet):
             'start_item_name',
             'end_item_name',
             'cont_item_name',
+            'is_completed',
         ]
 
     def filter_container(self, queryset, name, value):
