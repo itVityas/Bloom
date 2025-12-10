@@ -17,8 +17,9 @@ from apps.sez.views.clearance_invoice_items import (
     ClearanceInvoiceItemListCreateAPIView,
 )
 from apps.sez.views.cleared_item import (
-    ClearedItemDetailedView,
-    ClearedItemListCreateAPIView,
+    ListClearedItemView,
+    CreateClearedItemView,
+    DestroyClearedItemView,
 )
 from apps.sez.views.document_sez import DocumentSezView, CustomClearanceView
 # from apps.sez.views.barcode_table import BarcodeTable
@@ -62,8 +63,9 @@ urlpatterns = [
          name='clearance-invoice-item-detail'),
 
     # ClearedItem endpoints
-    path('cleared_item/', ClearedItemListCreateAPIView.as_view(), name='cleared-item-list'),
-    path('cleared_item/detailed/<int:pk>/', ClearedItemDetailedView.as_view(), name='cleared-item-detail'),
+    path('cleared_item/list/', ListClearedItemView.as_view(), name='cleared-item-list'),
+    path('cleared_item/create/', CreateClearedItemView.as_view(), name='cleared-item-detail'),
+    path('cleared_item/delete/<int:pk>/', DestroyClearedItemView.as_view(), name='cleared-item-delete'),
 
     # sez
     path('available_declarations/', GetAvailableDeclarationsView.as_view()),

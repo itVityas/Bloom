@@ -1,6 +1,6 @@
 import django_filters as filters
 
-from .models import ClearanceInvoice, InnerTTN
+from .models import ClearanceInvoice, InnerTTN, ClearedItem
 
 
 class ClearanceInvoiceFilter(filters.FilterSet):
@@ -276,3 +276,58 @@ class InnerTTNFilter(filters.FilterSet):
 
     def filter_price(self, queryset, name, value):
         return queryset.filter(innerttnitems__price_pcs__exact=value).distinct()
+
+
+class ClearedItemFilter(filters.FilterSet):
+    """
+    Filter for ClearedItem records.
+
+    Supports filtering by exact match, partial match, and null checks.
+    """
+    pk = filters.NumberFilter(
+        field_name='id',
+        lookup_expr='iexact',
+        help_text=("Filter by exact ID match")
+    )
+    is_hand = filters.BooleanFilter(
+        field_name='is_hand',
+        lookup_expr='exact',
+        help_text=("Filter by exact is_hand match")
+    )
+    invoice_id = filters.NumberFilter(
+        field_name='clearance_invoice_items__clearance_invoice__id',
+        lookup_expr='iexact',
+        help_text=("Filter by exact invoice_id match")
+    )
+    declaration_number = filters.CharFilter(
+        field_name='declared_item_id__declaration__declaration_number',
+        lookup_expr='iexact',
+        help_text=("Filter by exact declaration_number match")
+    )
+    cont_declaration_number = filters.CharFilter(
+        field_name='declared_item_id__declaration__declaration_number',
+        lookup_expr='icontains',
+        help_text=("Filter by declaration_number containing value")
+    )
+    start_declaration_number = filters.CharFilter(
+        field_name='declared_item_id__declaration__declaration_number',
+        lookup_expr='istartswith',
+        help_text=("Filter by declaration_number starting with value")
+    )
+    end_declaration_number = filters.CharFilter(
+        field_name='declared_item_id__declaration__declaration_number',
+        lookup_expr='iendswith',
+        help_text=("Filter by declaration_number ending with value")
+    )
+
+    class Meta:
+        model = ClearedItem
+        fields = [
+            'pk',
+            'is_hand',
+            'invoice_id',
+            'declaration_number',
+            'cont_declaration_number',
+            'start_declaration_number',
+            'end_declaration_number',
+        ]

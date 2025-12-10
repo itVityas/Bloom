@@ -1,10 +1,22 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import IsAuthenticated
+import logging
+
+from rest_framework.generics import ListAPIView, DestroyAPIView, CreateAPIView
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework.permissions import IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.response import Response
+from rest_framework import status
+from django.db import transaction
 
 from apps.sez.models import ClearedItem
 from apps.sez.permissions import ClearedItemPermission
 from apps.sez.serializers.cleared_item import ClearedItemSerializer
+from apps.sez.filterset import ClearedItemFilter
+from apps.declaration.models import DeclaredItem
+from Bloom.paginator import StandartResultPaginator
+
+
+logger = logging.getLogger('apps.omega')
 
 
 @extend_schema(tags=['ClearedItem'])
@@ -13,43 +25,83 @@ from apps.sez.serializers.cleared_item import ClearedItemSerializer
         summary='List all cleared items',
         description='Permission: admin, arrival_reader, cleared_item_writer',
     ),
+)
+class ListClearedItemView(ListAPIView):
+    permission_classes = [IsAuthenticated, ClearedItemPermission]
+    serializer_class = ClearedItemSerializer
+    queryset = ClearedItem.objects.all()
+    pagination_class = StandartResultPaginator
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ClearedItemFilter
+
+
+@extend_schema(tags=['ClearedItem'])
+@extend_schema_view(
     post=extend_schema(
         summary='Create a cleared item',
         description='Permission: admin, cleared_item_writer',
     ),
 )
-class ClearedItemListCreateAPIView(ListCreateAPIView):
-    """
-    List all cleared items or create a new cleared item.
-    """
-    permission_classes = (IsAuthenticated, ClearedItemPermission)
+class CreateClearedItemView(CreateAPIView):
+    permission_classes = [IsAuthenticated, ClearedItemPermission]
     serializer_class = ClearedItemSerializer
     queryset = ClearedItem.objects.all()
+
+    def post(self, request, *args, **kwargs):
+        try:
+            with transaction.atomic():
+                serializer = self.get_serializer(data=request.data)
+                serializer.is_valid(raise_exception=True)
+                declaration_item = DeclaredItem.objects.filter(
+                    id=serializer.validated_data['declared_item_id'].id
+                ).first()
+                if not declaration_item:
+                    return Response({'error': 'Не найден элемент декларации'}, status=status.HTTP_400_BAD_REQUEST)
+                if declaration_item.available_quantity < serializer.validated_data['quantity']:
+                    return Response(
+                        {'error': f'Недостаточное количество товара {serializer.validated_data["quantity"]},' +
+                            f'в наличии {declaration_item.available_quantity}'},
+                        status=status.HTTP_400_BAD_REQUEST)
+                print(3)
+                serializer.validated_data['is_hand'] = True
+                print(1)
+                serializer.save()
+                declaration_item.available_quantity -= serializer.validated_data['quantity']
+                print(2)
+                declaration_item.save()
+                logger.info(f'Creating cleared item: {request.data}')
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            logger.error(f'Error creating cleared item: {e}')
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @extend_schema(tags=['ClearedItem'])
 @extend_schema_view(
-    get=extend_schema(
-        summary='Retrieve cleared item by ID',
-        description='Permission: admin, arrival_reader, cleared_item_writer',
-    ),
-    put=extend_schema(
-        summary='Update cleared item',
-        description='Permission: admin, cleared_item_writer',
-    ),
-    patch=extend_schema(
-        summary='Partial update cleared item',
-        description='Permission: admin, cleared_item_writer',
-    ),
     delete=extend_schema(
-        summary='Delete cleared item',
+        summary='Create a cleared item',
         description='Permission: admin, cleared_item_writer',
     ),
 )
-class ClearedItemDetailedView(RetrieveUpdateDestroyAPIView):
-    """
-    Retrieve, update, or delete a cleared item.
-    """
-    permission_classes = (IsAuthenticated, ClearedItemPermission)
+class DestroyClearedItemView(DestroyAPIView):
+    permission_classes = [IsAuthenticated, ClearedItemPermission]
     serializer_class = ClearedItemSerializer
     queryset = ClearedItem.objects.all()
+
+    def delete(self, request, *args, **kwargs):
+        try:
+            with transaction.atomic():
+                instance = self.get_object()
+                declaration_item = DeclaredItem.objects.filter(
+                    id=instance.declared_item_id.id
+                ).first()
+                if not declaration_item:
+                    return Response({'error': 'Не найден элемент декларации'}, status=status.HTTP_400_BAD_REQUEST)
+                declaration_item.available_quantity += instance.quantity
+                declaration_item.save()
+                logger.info(f'Deleting cleared item: {instance.id}')
+                instance.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            logger.error(f'Error deleting cleared item: {e}')
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

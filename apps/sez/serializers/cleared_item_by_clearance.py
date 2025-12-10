@@ -62,6 +62,7 @@ class ClearedItemListSerializer(serializers.ModelSerializer):
             'declared_available_quantity',
             'declared_item_quantity',
             'model_name',
+            'is_hand',
         ]
 
     @extend_schema_field(serializers.FloatField())

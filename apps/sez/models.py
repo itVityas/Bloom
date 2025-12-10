@@ -87,6 +87,7 @@ class ClearedItem(models.Model):
         related_name='cleared_items',
     )
     quantity = models.FloatField()
+    is_hand = models.BooleanField(default=False)
 
     def __str__(self):
         return f"ClearedItem #{self.pk} (Invoice #{self.clearance_invoice_items})"
