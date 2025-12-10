@@ -81,6 +81,7 @@ class Declaration(models.Model):
     gifted = models.BooleanField(default=False)
     # use this declaration in calculations
     is_use = models.BooleanField(default=True)
+    is_completed = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-id']
