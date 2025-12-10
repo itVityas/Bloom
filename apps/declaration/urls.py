@@ -9,9 +9,7 @@ from apps.declaration.views.declared_item import (
     DeclaredItemListCreateAPIView, DeclaredItemDetailedView
 )
 from apps.declaration.views.upload_declaration import ZipFileUploadAPIView
-from apps.declaration.views.gtd_dvi import GTDDVIFileUploadView
-from apps.declaration.views.gtd_dvi_update import GTDDVIFileUploadUpdateView
-from apps.declaration.views.gtd_ga import GTDGAFileUploadView
+from apps.declaration.views.mark_completed import MarkCompletedView
 
 
 urlpatterns = [
@@ -30,7 +28,5 @@ urlpatterns = [
     path('declared_item/detailed/<int:pk>/', DeclaredItemDetailedView.as_view(), name='declared-item-detail'),
     path('declaration/upload_zip/', ZipFileUploadAPIView.as_view(), name='zip-upload'),
     path('declaration/delete_all_declaration/', DeclarationBulkDeleteAPIView.as_view(), name='delete-all'),
-    path('utils/upload_dbf/', GTDDVIFileUploadView.as_view()),
-    path('utils/upload_dbf_update/', GTDDVIFileUploadUpdateView.as_view()),
-    path('utils/upload_gtdga/', GTDGAFileUploadView.as_view()),
+    path('declaration/mark_completed/', MarkCompletedView.as_view(), name='mark-completed'),
 ]
