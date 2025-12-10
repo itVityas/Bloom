@@ -11,6 +11,7 @@ from django.db import transaction
 from apps.sez.models import ClearedItem
 from apps.sez.permissions import ClearedItemPermission
 from apps.sez.serializers.cleared_item import ClearedItemSerializer
+from apps.sez.serializers.cleared_item_by_clearance import ClearedItemListSerializer
 from apps.sez.filterset import ClearedItemFilter
 from apps.declaration.models import DeclaredItem
 from Bloom.paginator import StandartResultPaginator
@@ -40,6 +41,7 @@ class ListClearedItemView(ListAPIView):
     post=extend_schema(
         summary='Create a cleared item',
         description='Permission: admin, cleared_item_writer',
+        responses=ClearedItemListSerializer,
     ),
 )
 class CreateClearedItemView(CreateAPIView):
@@ -62,14 +64,12 @@ class CreateClearedItemView(CreateAPIView):
                         {'error': f'Недостаточное количество товара {serializer.validated_data["quantity"]},' +
                             f'в наличии {declaration_item.available_quantity}'},
                         status=status.HTTP_400_BAD_REQUEST)
-                print(3)
                 serializer.validated_data['is_hand'] = True
-                print(1)
                 serializer.save()
                 declaration_item.available_quantity -= serializer.validated_data['quantity']
-                print(2)
                 declaration_item.save()
                 logger.info(f'Creating cleared item: {request.data}')
+                serializer = ClearedItemListSerializer(instance=serializer.instance)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as e:
             logger.error(f'Error creating cleared item: {e}')
