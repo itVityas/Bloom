@@ -11,6 +11,10 @@ from apps.declaration.models import Declaration
     get=extend_schema(
         summary='Mark declaration completed',
         description='Permission: admin, declaration_reader',
+        responses={
+            200: {'description': 'Mark completed'},
+            404: {'description': 'Not found'},
+        }
     ),
 )
 class MarkCompletedView(APIView):
