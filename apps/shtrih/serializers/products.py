@@ -28,3 +28,21 @@ class ProductGetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Products
         fields = '__all__'
+
+
+class ProductUpdateClearedSerializer(serializers.ModelSerializer):
+    """
+    Update serializer for clearing products.
+
+    This serializer is used to update the 'cleared' field of a product.
+    It allows setting the 'cleared' field to a specific value.
+
+    Fields:
+        - cleared (IntegerField): The field to be updated with the new cleared value.
+
+    Read-only Fields:
+        - All fields (since this is an update-only serializer)
+    """
+    class Meta:
+        model = Products
+        fields = ['cleared']

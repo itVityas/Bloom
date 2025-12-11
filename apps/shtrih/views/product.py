@@ -1,10 +1,11 @@
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.shtrih.models import Products
-from apps.shtrih.serializers.products import ProductGetSerializer
+from apps.sez.models import ClearanceInvoice
+from apps.shtrih.serializers.products import ProductGetSerializer, ProductUpdateClearedSerializer
 from apps.shtrih.permission import StrihPermission
 from apps.shtrih.filterset import ProductFilter
 
@@ -38,3 +39,43 @@ class ProductListView(ListAPIView):
     permission_classes = (IsAuthenticated, StrihPermission)
     filter_backends = [DjangoFilterBackend]
     filterset_class = ProductFilter
+
+
+@extend_schema(tags=['Shtrih'])
+@extend_schema_view(
+    patch=extend_schema(
+        summary='Partial update Products cleared',
+        description="description='Permission: admin, strih",
+    ),
+    put=extend_schema(
+        summary='Full update Products cleared',
+        description="description='Permission: admin, strih",
+    )
+)
+class ProductUpdateClearedView(UpdateAPIView):
+    """
+    API endpoint that allows clearing of products.
+
+    This endpoint is used to update the 'cleared' field of a product.
+    It requires authentication and specific permissions.
+
+    Typical filters include:
+    - barcode: Exact barcode match
+    - state: Product condition/state
+    - model: Filter by specific model
+    - color_id: Filter by color
+    - search: Search across multiple fields
+    """
+    queryset = Products.objects.all()
+    serializer_class = ProductUpdateClearedSerializer
+    permission_classes = (IsAuthenticated, StrihPermission)
+
+    def perform_update(self, serializer: ProductUpdateClearedSerializer):
+        clearance_invoice_id = self.request.data.get('cleared', None)
+        if clearance_invoice_id is None:
+            serializer.save(cleared=None)
+        else:
+            clearance_invoice = ClearanceInvoice.objects.filter(
+                pk=clearance_invoice_id
+            ).first()
+            serializer.save(cleared=clearance_invoice)
