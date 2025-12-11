@@ -15,6 +15,7 @@ from apps.sez.views.clearance_invoice import (
 from apps.sez.views.clearance_invoice_items import (
     ClearanceInvoiceItemDetailedView,
     ClearanceInvoiceItemListCreateAPIView,
+    ClearanceInvoiceItemsEmptyCreateAPIView,
 )
 from apps.sez.views.cleared_item import (
     ListClearedItemView,
@@ -61,6 +62,8 @@ urlpatterns = [
          name='clearance-invoice-item-list'),
     path('clearance_invoice_items/detailed/<int:pk>/', ClearanceInvoiceItemDetailedView.as_view(),
          name='clearance-invoice-item-detail'),
+    path('clearance_invoice_items/empty/', ClearanceInvoiceItemsEmptyCreateAPIView.as_view(),
+         name='clearance-invoice-item-empty-create'),
 
     # ClearedItem endpoints
     path('cleared_item/list/', ListClearedItemView.as_view(), name='cleared-item-list'),
