@@ -78,7 +78,7 @@
                 {% for item in invoice.cleared_items.all %}
                     <tr>
                         <td>{{ forloop.counter }}</td>
-                        <td>{{item.declared_item_id.declaration.declaration_number}} от {{item.declared_item_id.declaration.provision_date|date:"d.m.Y"}}г.</td>
+                        <td>{{item.declared_item_id.declaration.declaration_number}} от {{item.declared_item_id.declaration.declaration_date|date:"d.m.Y"}}г.</td>
                         <td>{{item.declared_item_id.ordinal_number}}</td>
                         <td>{{item.declared_item_id.name}}</td>
                         <td>{{item.quantity}}</td>
