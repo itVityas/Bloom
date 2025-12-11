@@ -60,6 +60,10 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
         products = Products.objects.filter(model__name__id=obj.model_name_id.id, cleared__isnull=True)
 
         model = Models.objects.filter(name=obj.model_name_id.id).first()
+        if not model:
+            return 0
+        if not model.production_code:
+            return 0
         if model.production_code.code != 400:
             return products.count()
         if order_list:
