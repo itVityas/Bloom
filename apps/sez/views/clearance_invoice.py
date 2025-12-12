@@ -1,16 +1,24 @@
+from datetime import datetime
+
 from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateDestroyAPIView,
-    RetrieveAPIView, ListAPIView)
+    RetrieveAPIView, ListAPIView, CreateAPIView)
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from django_filters.rest_framework import DjangoFilterBackend
+from django.utils import timezone
 
-from apps.sez.models import ClearanceInvoice
+from apps.sez.models import ClearanceInvoice, ClearanceInvoiceItems
+from apps.shtrih.models import ModelNames
 from apps.sez.permissions import ClearanceInvoicePermission
 from apps.sez.serializers.clearance_invoice import (
-    ClearanceInvoiceSerializer, FullClearanceInvoiceSerializer)
+    ClearanceInvoiceSerializer,
+    FullClearanceInvoiceSerializer,
+    ClearanceInvoiceEmptySerializer)
 from Bloom.paginator import StandartResultPaginator
 from apps.sez.filterset import ClearanceInvoiceFilter
+from rest_framework import status
+from rest_framework.response import Response
 
 
 @extend_schema(tags=['ClearanceInvoice'])
@@ -94,3 +102,41 @@ class GetFullClearancesInvoiceListView(ListAPIView):
     pagination_class = StandartResultPaginator
     filter_backends = [DjangoFilterBackend,]
     filterset_class = ClearanceInvoiceFilter
+
+
+@extend_schema(tags=['ClearanceInvoice'])
+@extend_schema_view(
+    post=extend_schema(
+        summary='Create a clearance invoice with Empty ClearanceIncoiceItem',
+        description='Permission: admin, clearance_invoice_writer',
+    ),
+)
+class CreateClearanceInvoiceEmtpyView(CreateAPIView):
+    """
+    Create a clearance invoice with Empty ClearanceIncoiceItem
+    """
+    permission_classes = (IsAuthenticated, ClearanceInvoicePermission)
+    serializer_class = ClearanceInvoiceEmptySerializer
+    queryset = ClearanceInvoice.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        clearance_invoice = ClearanceInvoice(
+            count=request.data.get('count', 1),
+            cleared=True,
+            ttn='R0',
+            recipient=request.user,
+            create_at=datetime.now(tz=timezone.get_current_timezone()),
+            date_payments=datetime.now(tz=timezone.get_current_timezone()),
+            date_calc=datetime.now(tz=timezone.get_current_timezone()),
+            is_gifted=request.data.get('is_gifted'),
+            only_panel=False,
+        )
+        clearance_invoice.save()
+        clearance_invoice_item = ClearanceInvoiceItems(
+            clearance_invoice=clearance_invoice,
+            model_name_id=ModelNames.objects.get(id=589),
+            quantity=1,
+        )
+        clearance_invoice_item.save()
+        serializer = FullClearanceInvoiceSerializer(clearance_invoice)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

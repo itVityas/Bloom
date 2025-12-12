@@ -55,3 +55,16 @@ class FullClearanceInvoiceSerializer(serializers.ModelSerializer):
         items = ClearanceInvoiceItems.objects.filter(clearance_invoice=obj)
         serializer = ClearanceInvoiceItemsFullSerializer(items, many=True)
         return serializer.data
+
+
+class ClearanceInvoiceEmptySerializer(serializers.ModelSerializer):
+    """
+    Serializer for the ClearanceInvoice model with nested ClearanceInvoiceItems.
+    """
+    class Meta:
+        model = ClearanceInvoice
+        fields = [
+            'count',
+            'ttn',
+            'is_gifted',
+        ]

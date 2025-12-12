@@ -11,6 +11,7 @@ from apps.sez.views.clearance_invoice import (
     ClearanceInvoiceListCreateAPIView,
     GetFullClearanceInvoiceView,
     GetFullClearancesInvoiceListView,
+    CreateClearanceInvoiceEmtpyView,
 )
 from apps.sez.views.clearance_invoice_items import (
     ClearanceInvoiceItemDetailedView,
@@ -56,6 +57,7 @@ urlpatterns = [
     path('clearance_invoice/full/<int:pk>/', GetFullClearanceInvoiceView.as_view()),
     path('clearance_invoice/full/', GetFullClearancesInvoiceListView.as_view()),
     path('clearance_invoice/reportdelete/<int:pk>/', ReportDeleteView.as_view()),
+    path('clearance_invoice/empty/', CreateClearanceInvoiceEmtpyView.as_view()),
 
     # ClearanceInvoiceItems endpoints
     path('clearance_invoice_items/', ClearanceInvoiceItemListCreateAPIView.as_view(),
