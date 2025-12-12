@@ -45,6 +45,7 @@ class ClearedItemListSerializer(serializers.ModelSerializer):
         source='clearance_invoice_items.model_name_id.name',
         read_only=True
     )
+    quantity = serializers.DecimalField(max_digits=19, decimal_places=4)
 
     class Meta:
         model = ClearedItem
