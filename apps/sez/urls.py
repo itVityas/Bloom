@@ -8,7 +8,8 @@ from apps.sez.views.export_products import ClearanceInvoiceProductsExportView
 from apps.sez.views.report_clearanceinvoice import ReportClearanceInvoicePDFView
 from apps.sez.views.clearance_invoice import (
     ClearanceInvoiceDetailedView,
-    ClearanceInvoiceListCreateAPIView,
+    ClearanceInvoiceCreateAPIView,
+    ClearanceInvoiceListAPIView,
     GetFullClearanceInvoiceView,
     GetFullClearancesInvoiceListView,
     CreateClearanceInvoiceEmtpyView,
@@ -51,7 +52,8 @@ urlpatterns = [
     path('reportinvoicettnpdf/<int:pk>/', InvoiceTTNToPDFView.as_view()),
 
     # ClearanceInvoice endpoints
-    path('clearance_invoice/', ClearanceInvoiceListCreateAPIView.as_view(), name='clearance-invoice-list'),
+    path('clearance_invoice/', ClearanceInvoiceCreateAPIView.as_view(), name='clearance-invoice-list'),
+    path('clearance_invoice/list/', ClearanceInvoiceListAPIView.as_view(), name='clearance-invoice-list'),
     path('clearance_invoice/detailed/<int:pk>/', ClearanceInvoiceDetailedView.as_view(),
          name='clearance-invoice-detail'),
     path('clearance_invoice/full/<int:pk>/', GetFullClearanceInvoiceView.as_view()),

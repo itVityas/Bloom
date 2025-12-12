@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from rest_framework.generics import (
-    ListCreateAPIView, RetrieveUpdateDestroyAPIView,
+    RetrieveUpdateDestroyAPIView,
     RetrieveAPIView, ListAPIView, CreateAPIView)
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
@@ -14,6 +14,7 @@ from apps.sez.permissions import ClearanceInvoicePermission
 from apps.sez.serializers.clearance_invoice import (
     ClearanceInvoiceSerializer,
     FullClearanceInvoiceSerializer,
+    ClearanceInvoiceListSerializer,
     ClearanceInvoiceEmptySerializer)
 from Bloom.paginator import StandartResultPaginator
 from apps.sez.filterset import ClearanceInvoiceFilter
@@ -27,21 +28,33 @@ from rest_framework.response import Response
         summary='List all clearance invoices',
         description='Permission: admin, stz_reader, clearance_invoice_writer',
     ),
+)
+class ClearanceInvoiceListAPIView(ListAPIView):
+    """
+    List all clearance invoices or create a new clearance invoice.
+    """
+    permission_classes = (IsAuthenticated, ClearanceInvoicePermission)
+    serializer_class = ClearanceInvoiceListSerializer
+    queryset = ClearanceInvoice.objects.all()
+    filter_backends = [DjangoFilterBackend,]
+    filterset_class = ClearanceInvoiceFilter
+    pagination_class = StandartResultPaginator
+
+
+@extend_schema(tags=['ClearanceInvoice'])
+@extend_schema_view(
     post=extend_schema(
         summary='Create a clearance invoice',
         description='Permission: admin, clearance_invoice_writer',
     ),
 )
-class ClearanceInvoiceListCreateAPIView(ListCreateAPIView):
+class ClearanceInvoiceCreateAPIView(CreateAPIView):
     """
     List all clearance invoices or create a new clearance invoice.
     """
     permission_classes = (IsAuthenticated, ClearanceInvoicePermission)
     serializer_class = ClearanceInvoiceSerializer
     queryset = ClearanceInvoice.objects.all()
-    filter_backends = [DjangoFilterBackend,]
-    filterset_class = ClearanceInvoiceFilter
-    pagination_class = StandartResultPaginator
 
 
 @extend_schema(tags=['ClearanceInvoice'])
@@ -128,7 +141,8 @@ class CreateClearanceInvoiceEmtpyView(CreateAPIView):
             count=request.data.get('count', 1),
             cleared=True,
             ttn='R0',
-            recipient=request.user,
+            responsible=request.user,
+            recipient='Вывоз',
             create_at=datetime.now(tz=timezone.get_current_timezone()),
             date_payments=datetime.now(tz=timezone.get_current_timezone()),
             date_calc=datetime.now(tz=timezone.get_current_timezone()),

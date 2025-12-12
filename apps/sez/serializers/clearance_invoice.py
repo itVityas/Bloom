@@ -22,6 +22,17 @@ class ClearanceInvoiceSerializer(serializers.ModelSerializer):
         return super().validate(attrs)
 
 
+class ClearanceInvoiceListSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the ClearanceInvoice model with nested Order and User data.
+    """
+    responsible = UserSerializer(read_only=True)
+
+    class Meta:
+        model = ClearanceInvoice
+        fields = '__all__'
+
+
 class FullClearanceInvoiceSerializer(serializers.ModelSerializer):
     """
     Serializer for the ClearanceInvoice model with nested ClearanceInvoiceItems.
