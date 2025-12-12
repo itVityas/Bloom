@@ -82,6 +82,18 @@ class ShipmentBansFilter(filters.FilterSet):
         method='filter_cont_color',
         help_text=("Color code contains"))
 
+    ordering = filters.OrderingFilter(
+        fields=(
+            ('id', 'id'),
+            ('barcode', 'barcode'),
+            ('model_name_id__short_name', 'model'),
+            ('production_code_id__name', 'production'),
+            ('color_id__color_code', 'color'),
+            ('pakaging_date_from', 'pakaging_date_from'),
+            ('pakaging_date_to', 'pakaging_date_to'),
+        ),
+    )
+
     class Meta:
         model = ShipmentBans
         fields = [
