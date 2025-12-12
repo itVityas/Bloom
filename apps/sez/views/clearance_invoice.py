@@ -39,6 +39,9 @@ class ClearanceInvoiceListCreateAPIView(ListCreateAPIView):
     permission_classes = (IsAuthenticated, ClearanceInvoicePermission)
     serializer_class = ClearanceInvoiceSerializer
     queryset = ClearanceInvoice.objects.all()
+    filter_backends = [DjangoFilterBackend,]
+    filterset_class = ClearanceInvoiceFilter
+    pagination_class = StandartResultPaginator
 
 
 @extend_schema(tags=['ClearanceInvoice'])
