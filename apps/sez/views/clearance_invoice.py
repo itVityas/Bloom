@@ -109,6 +109,7 @@ class GetFullClearancesInvoiceListView(ListAPIView):
     post=extend_schema(
         summary='Create a clearance invoice with Empty ClearanceIncoiceItem',
         description='Permission: admin, clearance_invoice_writer',
+        responses=FullClearanceInvoiceSerializer,
     ),
 )
 class CreateClearanceInvoiceEmtpyView(CreateAPIView):
