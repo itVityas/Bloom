@@ -10,6 +10,9 @@ from apps.sez.clearance_workflow.create_dbf.rashod import generate_rashod_decl_d
 from apps.sez.clearance_workflow.create_dbf.rashod_tovar import generate_rashod_tovar_decl_dbf
 from apps.sez.clearance_workflow.create_dbf.prihod_tovar import generate_prihod_tovar_decl_dbf
 from apps.sez.clearance_workflow.create_dbf.rashod_g44 import generate_rashod_g44_dbf
+from apps.sez.clearance_workflow.create_dbf.rashod_tovar_shipment import generate_rashod_tovar_decl_dbf_shipment
+from apps.sez.clearance_workflow.create_dbf.norm_shipment import generate_norm_dbf_shipment
+from apps.sez.models import ClearanceInvoiceItems
 
 logger = logging.getLogger(__name__)
 
@@ -55,9 +58,15 @@ def generate_all_dbf_zip(
         os.makedirs(prihod_dir)
         os.makedirs(rashod_dir)
 
+        clerance_invoice_items = ClearanceInvoiceItems.objects.filter(
+            clearance_invoice_id=clearance_invoice_id,
+            model_name_id__id=389)
         # Generate each DBF into its folder
         norm_path = os.path.join(norm_dir, 'norm.dbf')
-        generate_norm_dbf(clearance_invoice_id, norm_path)
+        if clerance_invoice_items.count() > 0:
+            generate_norm_dbf_shipment(clearance_invoice_id, norm_path)
+        else:
+            generate_norm_dbf(clearance_invoice_id, norm_path)
 
         prihod_path = os.path.join(prihod_dir, 'decl.dbf')
         generate_prihod_decl_dbf(clearance_invoice_id, prihod_path)
@@ -69,7 +78,10 @@ def generate_all_dbf_zip(
         generate_rashod_decl_dbf(clearance_invoice_id, rashod_path)
 
         rashod_tovar_path = os.path.join(rashod_dir, 'tovar.dbf')
-        generate_rashod_tovar_decl_dbf(clearance_invoice_id, rashod_tovar_path)
+        if clerance_invoice_items.count() > 0:
+            generate_rashod_tovar_decl_dbf_shipment(clearance_invoice_id, rashod_tovar_path)
+        else:
+            generate_rashod_tovar_decl_dbf(clearance_invoice_id, rashod_tovar_path)
 
         rashod_g44_path = os.path.join(rashod_dir, 'g44.dbf')
         generate_rashod_g44_dbf(clearance_invoice_id, rashod_g44_path)
