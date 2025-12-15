@@ -149,12 +149,11 @@ def clear_model_items(
                             declaration__declaration_number=consignment.get('declaration_number'),
                             ordinal_number=consignment.get('G32')
                         ).first()
-                        if decl_panel:
+                        if decl_panel and decl_panel.available_quantity > remaining:
+                            di = decl_panel
+                            available = di.available_quantity or 0.0
+                            to_clear = min(available, remaining)
                             break
-                if decl_panel and decl_panel.available_quantity > 0:
-                    di = decl_panel
-                    available = di.available_quantity or 0.0
-                    to_clear = min(available, remaining)
                 has_panel = True
 
             # Update available_quantity
@@ -183,6 +182,11 @@ def clear_model_items(
         raise NoClearedItemException(model_name=invoice_item.model_name_id.name)
 
     for item in components:
+        if str(item.get('nomsign')).startswith('638111111') and not item.get('clear') > 0:
+            logging.error(f"Panel components not cleared for model {invoice_item.model_name_id.name} "
+                          + "nomsign:{item.get('nomsign')}")
+            raise PanelException(model_name=invoice_item.model_name_id.name, order='')
+
         if not item['clear'] and item.get('nomsign') and item.get('uncleared', 0) > 0:
             ClearanceUncleared.objects.create(
                 invoice_item=invoice_item,
