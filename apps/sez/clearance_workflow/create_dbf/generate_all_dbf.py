@@ -60,7 +60,7 @@ def generate_all_dbf_zip(
 
         clerance_invoice_items = ClearanceInvoiceItems.objects.filter(
             clearance_invoice_id=clearance_invoice_id,
-            model_name_id__id=389)
+            model_name_id__id=589)
         # Generate each DBF into its folder
         norm_path = os.path.join(norm_dir, 'norm.dbf')
         if clerance_invoice_items.count() > 0:

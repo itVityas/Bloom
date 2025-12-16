@@ -147,7 +147,7 @@ def generate_rashod_tovar_decl_dbf_shipment(
                 value = cleared_item.quantity
             elif name == 'G317A':
                 value = ''
-                value = cleared_item.declared_item_id.measure
+                value = cleared_item.declared_item_id.measurement
             elif name == 'G32':
                 value = line
                 line += 1
