@@ -101,7 +101,7 @@ def fetch_vznab_stock_details(scp_unv: int) -> List[Dict[str, Optional[object]]]
         )
 
         qs = (
-            VzNab.objects.using('oracle_db')
+            VzNab.objects.using('oracle_db').distinct()
             .filter(spc_unv_id=scp_unv, kdd=None)
             .select_related('item_unv')
             .annotate(
@@ -186,7 +186,6 @@ def fetch_vznab_stock_flat_tree(
             for norm in norms_qs:
                 norm_qty = float(norm.norm or 0.0)
                 norm_abs = norm_qty * count
-
                 flat_list.append({
                     'scp_unv': item['item_unv'],         # родительский unv
                     'item_sign': norm.plcode,            # vz_norm.plcode
@@ -232,18 +231,20 @@ def component_flat_list(
             - absolute_quantity: float
     '''
     flat_list = fetch_vznab_stock_flat_tree(scp_unv, depth, count)
-    for i in range(len(flat_list)-1):
-        if flat_list[i] is None or flat_list == []:
-            flat_list.remove(flat_list[i])
+    for i in flat_list:
+        if i is None or i == [] or i == {}:
+            flat_list.remove(i)
             continue
+
+    for i in range(len(flat_list)-1):
         for j in range(i+1, len(flat_list)):
-            if j < len(flat_list):
+            if j >= len(flat_list):
                 break
             if flat_list[j] is None or flat_list[j] == []:
                 flat_list.remove(flat_list[j])
                 continue
-            if flat_list[i]['item_sign'] == flat_list[j]['item_sign']:
+            if flat_list[i]['item_unv'] == flat_list[j]['item_unv']:
                 flat_list[i]['absolute_quantity'] += flat_list[j]['absolute_quantity']
-                flat_list.remove(flat_list[j])
+                flat_list.pop(j)
                 continue
     return flat_list
