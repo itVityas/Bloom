@@ -81,6 +81,30 @@ class ShipmentBansFilter(filters.FilterSet):
     cont_color = filters.CharFilter(
         method='filter_cont_color',
         help_text=("Color code contains"))
+    order_number = filters.CharFilter(
+        field_name='order_number',
+        lookup_expr='iexact',
+        help_text=("Exact order number match (case-insensitive)"))
+    start_order_number = filters.CharFilter(
+        field_name='order_number',
+        lookup_expr='istartswith',
+        help_text=("Order number starts with (case-insensitive)"))
+    end_order_number = filters.CharFilter(
+        field_name='order_number',
+        lookup_expr='iendswith',
+        help_text=("Order number ends with (case-insensitive)"))
+    cont_order_number = filters.CharFilter(
+        field_name='order_number',
+        lookup_expr='icontains',
+        help_text=("Order number contains (case-insensitive)"))
+    start_date = filters.DateFilter(
+        field_name='start_date',
+        lookup_expr='iexact',
+        help_text=("Order start_date is exact"))
+    end_date = filters.DateFilter(
+        field_name='end_date',
+        lookup_expr='iexact',
+        help_text=("Order end_date is exact"))
 
     ordering = filters.OrderingFilter(
         fields=(
@@ -117,6 +141,12 @@ class ShipmentBansFilter(filters.FilterSet):
             'start_color',
             'end_color',
             'cont_color',
+            'order_number',
+            'start_order_number',
+            'end_order_number',
+            'cont_order_number',
+            'start_date',
+            'end_date',
         ]
 
     def filter_model(self, queryset, name, value):
