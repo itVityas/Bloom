@@ -115,6 +115,9 @@ class ShipmentBansFilter(filters.FilterSet):
             ('color_id__color_code', 'color'),
             ('pakaging_date_from', 'pakaging_date_from'),
             ('pakaging_date_to', 'pakaging_date_to'),
+            ('order_number', 'order_number'),
+            ('start_date', 'start_date'),
+            ('end_date', 'end_date'),
         ),
     )
 
