@@ -296,7 +296,9 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_list: list, is_gi
     process_transitions_list = ProductTransitions.objects.all().values_list('old_product')
     process_transitions_list2 = ProductTransitions.objects.all().values_list('new_product')
     process_transitions_list = process_transitions_list.union(process_transitions_list2)
-    products = Products.objects.filter(model__name__id=invoice_item.model_name_id.id, cleared__isnull=True)
+    products = Products.objects.filter(
+        model__name__id=invoice_item.model_name_id.id,
+        cleared__isnull=True).exclude(state=1)
 
     # проверка для телевизоров, прочая продукция не имеет consignment,
     # сдедовательно данный расчет для нее не будет работать

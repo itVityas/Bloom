@@ -36,7 +36,7 @@ class DeclarationCountSerializer(serializers.Serializer):
         products = Products.objects.filter(
             model__name__id=obj['model_name_id'],
             consignment__in=consigments,
-            cleared__isnull=True)
+            cleared__isnull=True).exclude(state=1)
         process_transitions_list = ProductTransitions.objects.all().values_list('old_product')
         process_transitions_list2 = ProductTransitions.objects.all().values_list('new_product')
         process_transitions_list = process_transitions_list.union(process_transitions_list2)
@@ -76,7 +76,7 @@ class ModelNameOrderSerializer(serializers.Serializer):
         process_transitions_list = ProductTransitions.objects.all().values_list('old_product')
         process_transitions_list2 = ProductTransitions.objects.all().values_list('new_product')
         process_transitions_list = process_transitions_list.union(process_transitions_list2)
-        products = Products.objects.filter(model__name__id=obj['model_name_id'], cleared__isnull=True)
+        products = Products.objects.filter(model__name__id=obj['model_name_id'], cleared__isnull=True).exclude(state=1)
         products = products.exclude(pk__in=process_transitions_list, consignment__in=consigments)
         return products.count()
 
@@ -121,7 +121,7 @@ class ModelNameCountSerializer(serializers.Serializer):
         consigments = Consignments.objects.filter(
             model_name__id=obj['model_name_id'], declaration_number__in=decl_numbers).exclude(is_gift=1).distinct()
         products = Products.objects.filter(
-            model__name__id=obj['model_name_id'], cleared__isnull=True)
+            model__name__id=obj['model_name_id'], cleared__isnull=True).exclude(state=1)
         products = products.exclude(consignment__in=consigments)
         return products.count()
 

@@ -101,7 +101,7 @@ class ProductCountByModelNameView(APIView):
     serializer_class = CountSerializer
 
     def get(self, request, pk):
-        count = Products.objects.filter(model__name_id=pk).count()
+        count = Products.objects.filter(model__name_id=pk).exclude(state=1).count()
         model = Models.objects.filter(name_id=pk).first()
         model_code = 0
         if model:

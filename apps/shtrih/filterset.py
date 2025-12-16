@@ -23,6 +23,10 @@ class ProductFilter(filter.FilterSet):
         field_name='model__omega_variant_id',
         lookup_expr='exact',
         help_text="Filter products by omega variant ID (case insensitive)",)
+    state = filter.NumberFilter(
+        field_name='state',
+        lookup_expr='exact',
+        help_text="Filter products by state (case insensitive)",)
 
     class Meta:
         model = Products
@@ -36,6 +40,7 @@ class ProductFilter(filter.FilterSet):
             'cleared',
             'omega_model_id',
             'omega_variant_id',
+            'state',
         ]
 
 
