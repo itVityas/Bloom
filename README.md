@@ -39,6 +39,7 @@ CipherString = DEFAULT:@SECLEVEL=0
 + pip3 install -r requirements.txt (install dependencies)
 + python3 manage.py migrate
 + python3 manage.py createsuperuser
++ python3 manage.py collectstatic
 + python3 manage.py runserver {ip:port|port}
 + ./manage.py migrate (apply migrations for DB, if you need)
 + ./manage.py loaddata fixture/role.json (if you run at first)
