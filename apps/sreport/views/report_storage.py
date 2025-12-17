@@ -1,11 +1,11 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.sreport.serializers.report_storage import ReportStorageSerializer
 from apps.sreport.models import ReportStorage
+from apps.sreport.filters import ReportStorageFilter
 
 
 @extend_schema(tags=['Warehouse report'])
@@ -16,18 +16,13 @@ from apps.sreport.models import ReportStorage
         methods=["GET"],
     )
 )
-class ReportStorageView(APIView):
+class ReportStorageView(ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ReportStorageSerializer
     queryset = ReportStorage.objects.all()
-
-    def get(self, request):
-        try:
-            queryset = self.queryset.all()
-            serializer = ReportStorageSerializer(queryset, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = ReportStorageFilter
+    pagination_class = None
 
 # class ReportStorageView(APIView):
 #     permission_classes = [IsAuthenticated]
