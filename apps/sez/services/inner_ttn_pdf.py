@@ -17,6 +17,7 @@ def get_ttn_pdf(id: int) -> str:
     price = 0
     weight = 0
     full_price = 0
+    cargo_spaces = 0
     for item in items:
         short_name = item.model_name.short_name if item.model_name.short_name else item.model_name.name
         omega_obj = OBJ_ATTR_VALUES_1000004.objects.using('oracle_db').filter(
@@ -29,6 +30,7 @@ def get_ttn_pdf(id: int) -> str:
         item.nds_sum = price * item.nds / 100
         item.full_price = item.nds_sum + item.price
         full_price += item.full_price
+        cargo_spaces += item.cargo_space
 
     coin = int((full_price % 1) * 100)
     rub = int(full_price)
@@ -46,6 +48,7 @@ def get_ttn_pdf(id: int) -> str:
         "coin": coin,
         "rub_text": rub_text,
         "weight_text": weight_text,
+        "cargo_spaces": cargo_spaces,
     }
 
     html_message = render_to_string(
