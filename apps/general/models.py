@@ -1,4 +1,5 @@
 from django.db import models
+from rest_framework.exceptions import ValidationError
 
 from apps.account.models import User
 
@@ -60,3 +61,47 @@ class AddBody(models.Model):
 
     def __str__(self):
         return f'Content for {self.title.name}'
+
+
+class SiteLockManager(models.Manager):
+    """Manager для работы с singleton записью"""
+
+    def get_singleton(self):
+        """Возвращает единственную запись или создает ее"""
+        obj, created = self.get_or_create(pk=1)
+        return obj
+
+    def update_lock(self, **kwargs):
+        """Обновляет настройки блокировки"""
+        obj = self.get_singleton()
+        for key, value in kwargs.items():
+            setattr(obj, key, value)
+        obj.save()
+        return obj
+
+
+class SiteLock(models.Model):
+    declare = models.BooleanField(default=False)
+    decl_invoice = models.BooleanField(default=False)
+    decl_upload = models.BooleanField(default=False)
+    sgp = models.BooleanField(default=False)
+    sez = models.BooleanField(default=False)
+    sez_calc = models.BooleanField(default=False)
+    sez_dbf_download = models.BooleanField(default=False)
+
+    objects = SiteLockManager()
+
+    def save(self, *args, **kwargs):
+        """Разрешаем только одну запись"""
+        if not self.pk and SiteLock.objects.exists():
+            raise ValidationError('Может существовать только одна запись SiteLock')
+
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        """Запрещаем удаление singleton записи"""
+        raise ValidationError('Нельзя удалить запись SiteLock')
+
+    def __str__(self):
+        return 'Настройки блокировки сайта'

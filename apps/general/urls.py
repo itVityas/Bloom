@@ -12,6 +12,7 @@ from apps.general.views.add_title import (
     AddTitleListAPIView,
     AddTitleRetrieveUpdateDestroyAPIView
 )
+from apps.general.views.site_lock import SiteLockView, SiteLockUpdateView
 
 urlpatterns = [
     path('visits/', VisitsListCreateView.as_view()),
@@ -25,5 +26,9 @@ urlpatterns = [
     # Logs
     path('logs/django_download/', LogDjangoDownloadView.as_view(), name='django-log-download'),
     path('logs/omega_download/', LogOmegaDownloadView.as_view(), name='omega-log-download'),
+
+    # Site Lock
+    path('site-lock/', SiteLockView.as_view(), name='site-lock'),
+    path('site-lock/update/<int:pk>/', SiteLockUpdateView.as_view(), name='site-lock-update'),
 
 ]
