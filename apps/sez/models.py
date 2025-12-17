@@ -150,6 +150,7 @@ class InnerTTNItems(models.Model):
     price_pcs = models.DecimalField(max_digits=19, decimal_places=2)  # цена за единицу
     weight = models.DecimalField(max_digits=19, decimal_places=3)  # Вес
     weight_brutto = models.DecimalField(max_digits=19, decimal_places=3, default=0)  # Вес брутто
+    cargo_space = models.IntegerField(default=1)  # количество грузовых мест
     nds = models.PositiveIntegerField(default=0)  # % ндс
     release = models.BooleanField(default=False)  # Реализация
     notice = models.TextField(blank=True, null=True)
