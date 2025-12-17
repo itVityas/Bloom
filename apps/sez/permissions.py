@@ -44,9 +44,10 @@ class ClearedItemPermission(RoleBasedPermission):
     - Other methods: Allowed for 'admin' and 'clearance_invoice_writer'.
     """
     allowed_roles_get = {'admin', 'stz_reader', 'clearance_invoice_writer'}
-    allowed_roles_post = {'admin', 'clearance_invoice_writer'}
-    allowed_roles_update = {'admin', 'clearance_invoice_writer'}
-    allowed_roles_delete = {'admin', 'clearance_invoice_writer'}
+    allowed_roles_post = {'admin', 'clearance_invoice_writer', 'add_cleared_items'}
+    allowed_roles_update = {'admin', 'clearance_invoice_writer', 'add_cleared_items'}
+    allowed_roles_delete = {'admin', 'clearance_invoice_writer',
+                            'delete_user_cleared_item', 'delete_rogram_cleared_items'}
 
 
 class InnerTTNPermission(RoleBasedPermission):
