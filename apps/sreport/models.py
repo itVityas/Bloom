@@ -16,6 +16,7 @@ LEFT JOIN product_transitions as pt ON pr.id = pt.new_product_id
 JOIN warehouse_warehouseproduct as wp ON wp.product_id = pr.id
 JOIN protocols as prot ON prot.product_id = pr.id
 JOIN invoices as invoice ON invoice.id = prot.invoice_id
+where pr != 1
 GROUP BY name.id, name.name
     """
     model_name_id = models.IntegerField(db_column='model_name_id', primary_key=True)
