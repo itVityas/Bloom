@@ -68,6 +68,9 @@ def generate_all_dbf_zip(
         else:
             generate_norm_dbf(clearance_invoice_id, norm_path)
 
+        prihod_g44_path = os.path.join(prihod_dir, 'g44.dbf')
+        generate_rashod_g44_dbf(clearance_invoice_id, prihod_g44_path)
+
         prihod_path = os.path.join(prihod_dir, 'decl.dbf')
         generate_prihod_decl_dbf(clearance_invoice_id, prihod_path)
 
