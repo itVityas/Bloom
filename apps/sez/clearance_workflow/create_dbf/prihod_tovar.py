@@ -148,7 +148,8 @@ def generate_prihod_tovar_decl_dbf(
         for name, ftype, *_ in TOVAR_PRIHOD_FIELDS:
             if name == 'G312':
                 value = str(declared_item.name).encode(
-                    encoding, errors='replace').decode(encoding=encoding, errors='replace')
+                    encoding, errors='replace').decode(encoding=encoding, errors='replace').encode(
+                    'UTF-8', errors='replace').decode(encoding='UTF-8', errors='replace')
             elif name == 'G315A':
                 value = declared_item.items_quantity
             elif name == 'G317A':
