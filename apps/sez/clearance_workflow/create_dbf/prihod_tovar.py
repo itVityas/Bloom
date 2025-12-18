@@ -147,7 +147,8 @@ def generate_prihod_tovar_decl_dbf(
         row = {}
         for name, ftype, *_ in TOVAR_PRIHOD_FIELDS:
             if name == 'G312':
-                value = declared_item.name
+                value = str(declared_item.name).encode(
+                    encoding, errors='replace').decode(encoding=encoding, errors='replace')
             elif name == 'G315A':
                 value = declared_item.items_quantity
             elif name == 'G317A':

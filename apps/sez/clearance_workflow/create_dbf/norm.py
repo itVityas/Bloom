@@ -107,7 +107,7 @@ def generate_norm_dbf(clearance_invoice_id: int, output_path: str, encoding: str
                     'TOVGTDNO_O': item_index,
                     'GTDGA':      rec.declared_item_id.declaration.declaration_number,
                     'TOVGTDNO':   rec.declared_item_id.ordinal_number,
-                    'TOVCOUNT':   str(rec.quantity),
+                    'TOVCOUNT':   str(round(rec.quantity, 4)),
                     'SUBCODE':    '',
                     'TNVD':       '',
                     'SUBCODE_O':  '',
