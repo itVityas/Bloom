@@ -38,7 +38,6 @@ def dbf_to_dict(record):
         g311stz = float(g311stz)
     finally:
         g311stz = 0.0
-    g31stz = 'e'
     data = {
         'declaration': get_declaration(record),
         'name': clean_str(record.G312),
