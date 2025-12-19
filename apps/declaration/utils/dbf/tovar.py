@@ -31,12 +31,12 @@ def dbf_to_dict(record):
     g31stz = clean_str(record.G31STZ)
     try:
         g31stz = float(g31stz)
-    finally:
+    except Exception:
         g31stz = 0.0
     g311stz = clean_str(record.G31STZ)
     try:
         g311stz = float(g311stz)
-    finally:
+    except Exception:
         g311stz = 0.0
     data = {
         'declaration': get_declaration(record),
