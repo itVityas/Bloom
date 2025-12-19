@@ -59,7 +59,7 @@ def dbf_to_dict(record):
         'net_weight': record.G38A,
         'previous_customs_regime_code': clean_str(record.G372),
         'g373': clean_str(record.G373),
-        'customs_cost': record.G45,
+        'customs_cost': record.G45 if record.G45 else 0,
         'items_quantity': g31stz,
         'measurement_code': clean_str(record.G311STZ),
         'measurement': clean_str(record.G312STZ),
