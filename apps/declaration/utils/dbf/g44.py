@@ -81,3 +81,4 @@ def process_g44_dbf_file(file_path):
         save_g44_records_to_db(list_records)
     except Exception as e:
         print(f"Ошибка обработки файла G44.DBF: {e}")
+        raise e

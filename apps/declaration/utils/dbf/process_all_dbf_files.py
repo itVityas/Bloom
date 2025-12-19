@@ -2,6 +2,9 @@ import os
 import zipfile
 from tempfile import NamedTemporaryFile
 
+from django.db import transaction
+
+
 from .decl import process_decl_dbf_file
 from .tovar import process_tovar_dbf_file
 # from .g18 import process_g18_dbf_file
@@ -57,11 +60,12 @@ def process_all_dbf_files(zip_file_path, container=None, gifted=False):
             with NamedTemporaryFile(delete=False, suffix=".dbf") as tmp_file:
                 tmp_file.write(zip_ref.read(file_name))
                 tmp_file_path = tmp_file.name
-            try:
-                if file_name == 'DECL.DBF':
-                    process_func(tmp_file_path, container=container, gifted=gifted)
-                else:
-                    process_func(tmp_file_path)
-            finally:
-                if os.path.exists(tmp_file_path):
-                    os.remove(tmp_file_path)
+            with transaction.atomic():
+                try:
+                    if file_name == 'DECL.DBF':
+                        process_func(tmp_file_path, container=container, gifted=gifted)
+                    else:
+                        process_func(tmp_file_path)
+                finally:
+                    if os.path.exists(tmp_file_path):
+                        os.remove(tmp_file_path)

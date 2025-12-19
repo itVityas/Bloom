@@ -28,6 +28,17 @@ def dbf_to_dict(record):
     :param record: A record from the DBF file.
     :return: Dictionary mapping for DeclaredItem fields.
     """
+    g31stz = clean_str(record.G31STZ)
+    try:
+        g31stz = float(g31stz)
+    finally:
+        g31stz = 0.0
+    g311stz = clean_str(record.G31STZ)
+    try:
+        g311stz = float(g311stz)
+    finally:
+        g311stz = 0.0
+    g31stz = 'e'
     data = {
         'declaration': get_declaration(record),
         'name': clean_str(record.G312),
@@ -50,11 +61,11 @@ def dbf_to_dict(record):
         'previous_customs_regime_code': clean_str(record.G372),
         'g373': clean_str(record.G373),
         'customs_cost': record.G45,
-        'items_quantity': float(clean_str(record.G31STZ)),
+        'items_quantity': g31stz,
         'measurement_code': clean_str(record.G311STZ),
         'measurement': clean_str(record.G312STZ),
         'valuation_method': clean_str(record.G43),
-        'available_quantity': float(clean_str(record.G31STZ)),
+        'available_quantity': g311stz,
     }
     return data
 
@@ -96,4 +107,5 @@ def process_tovar_dbf_file(file_path):
         list_items = list_of_dict_dbf_records(records)
         save_items_to_db(list_items)
     except Exception as e:
-        print(f"Ошибка обработки файла: {e}")
+        print(f"Ошибка обработки файла tovar: {e}")
+        raise e

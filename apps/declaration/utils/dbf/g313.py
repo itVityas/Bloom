@@ -87,3 +87,4 @@ def process_g313_dbf_file(file_path):
         save_g313_records_to_db(list_records)
     except Exception as e:
         print(f"Ошибка обработки файла G313.DBF: {e}")
+        raise e
