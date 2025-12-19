@@ -147,6 +147,10 @@ class DeclarationItemFilter(filters.FilterSet):
         lookup_expr='icontains')
     available = filters.NumberFilter(field_name='available_quantity', lookup_expr='gte')
     ordinal_number = filters.NumberFilter(field_name='ordinal_number', lookup_expr='exact')
+    name = filters.CharFilter(field_name='name', lookup_expr='iexact')
+    start_name = filters.CharFilter(field_name='name', lookup_expr='istartswith')
+    end_name = filters.CharFilter(field_name='name', lookup_expr='iendswith')
+    cont_name = filters.CharFilter(field_name='name', lookup_expr='icontains')
 
     class Meta:
         model = DeclaredItem
@@ -159,4 +163,8 @@ class DeclarationItemFilter(filters.FilterSet):
             'cont_declaration_number',
             'available',
             'ordinal_number',
+            'name',
+            'start_name',
+            'end_name',
+            'cont_name',
         ]

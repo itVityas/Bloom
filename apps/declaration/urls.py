@@ -6,7 +6,8 @@ from apps.declaration.views.declaration import (
     DeclarationAndItemCreateAPIView, BindDeclarationsToContainerAPIView, DeclarationBulkDeleteAPIView
 )
 from apps.declaration.views.declared_item import (
-    DeclaredItemListCreateAPIView, DeclaredItemDetailedView
+    DeclaredItemListCreateAPIView, DeclaredItemDetailedView,
+    DeclaredItemListView
 )
 from apps.declaration.views.upload_declaration import ZipFileUploadAPIView
 from apps.declaration.views.mark_completed import MarkCompletedView
@@ -29,4 +30,5 @@ urlpatterns = [
     path('declaration/upload_zip/', ZipFileUploadAPIView.as_view(), name='zip-upload'),
     path('declaration/delete_all_declaration/', DeclarationBulkDeleteAPIView.as_view(), name='delete-all'),
     path('declaration/mark_completed/', MarkCompletedView.as_view(), name='mark-completed'),
+    path('declared_item/list/', DeclaredItemListView.as_view(), name='declared-item-list-view')
 ]

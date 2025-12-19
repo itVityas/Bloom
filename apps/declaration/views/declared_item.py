@@ -3,17 +3,19 @@ from tempfile import NamedTemporaryFile
 
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from apps.declaration.permissions import DeclarationPermission
 from apps.declaration.models import DeclaredItem
 from apps.declaration.serializers.declared_item import (
-    DeclaredItemSerializer, DeclaredItemFileUploadSerializer
+    DeclaredItemSerializer, DeclaredItemFileUploadSerializer,
+    DeclarationItemGetSerializer
 )
 from apps.declaration.utils.dbf.tovar import process_tovar_dbf_file
 from apps.declaration.filters import DeclarationItemFilter
+from Bloom.paginator import PageNumberPagination
 
 
 @extend_schema(tags=['DeclaredItem'])
@@ -105,3 +107,19 @@ class DeclaredItemDetailedView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, DeclarationPermission)
     serializer_class = DeclaredItemSerializer
     queryset = DeclaredItem.objects.all()
+
+
+@extend_schema(tags=['DeclaredItem'])
+@extend_schema_view(
+    get=extend_schema(
+        summary='List all items',
+        description='Permission: admin, arrival_reader, declaration_writer',
+    ),
+)
+class DeclaredItemListView(ListAPIView):
+    permission_classes = (IsAuthenticated, DeclarationPermission)
+    serializer_class = DeclarationItemGetSerializer
+    queryset = DeclaredItem.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = DeclarationItemFilter
+    pagination_class = PageNumberPagination
