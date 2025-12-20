@@ -66,6 +66,8 @@ def process_all_dbf_files(zip_file_path, container=None, gifted=False):
                         process_func(tmp_file_path, container=container, gifted=gifted)
                     else:
                         process_func(tmp_file_path)
+                except Exception as e:
+                    raise Exception(e)
                 finally:
                     if os.path.exists(tmp_file_path):
                         os.remove(tmp_file_path)

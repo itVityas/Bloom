@@ -32,12 +32,7 @@ def dbf_to_dict(record):
     try:
         g31stz = float(g31stz)
     except Exception:
-        g31stz = 0.0
-    g311stz = clean_str(record.G31STZ)
-    try:
-        g311stz = float(g311stz)
-    except Exception:
-        g311stz = 0.0
+        g31stz = record.G38
     data = {
         'declaration': get_declaration(record),
         'name': clean_str(record.G312),
@@ -46,7 +41,7 @@ def dbf_to_dict(record):
         'country_code': clean_str(record.G34),
         'alpha_country_code': clean_str(record.G34A),
         'gross_weight': record.G38,
-        'quantity': record.G41,
+        'quantity': record.G41 if record.G41 != 0 else record.g38,
         'unit_code': clean_str(record.G41A),
         'unit_name': clean_str(record.G41B),
         'cost': record.G42,
@@ -64,7 +59,7 @@ def dbf_to_dict(record):
         'measurement_code': clean_str(record.G311STZ),
         'measurement': clean_str(record.G312STZ),
         'valuation_method': clean_str(record.G43),
-        'available_quantity': g311stz,
+        'available_quantity': g31stz,
     }
     return data
 
