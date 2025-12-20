@@ -14,7 +14,10 @@ from apps.sez.clearance_workflow.calculate.omega_fetch import component_flat_lis
 @extend_schema_view(
     get=extend_schema(
         summary='Compound of model with analogs',
-        description='Get compound of model with analogs',
+        description='''Permission: IsUser
+        item_sign: обозначение в Омеге;
+        item_unv: обозначение в 1C;
+        nomsign: заводской код в Омеге;''',
         parameters=[
             OpenApiParameter(
                 name='model_id',
