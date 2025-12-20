@@ -374,7 +374,8 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_list: list, is_gi
         Stockobj.objects
         .using('oracle_db')
         .filter(sign__in=signs)
-        .values('sign', 'unvcode')
+        .values('sign', 'unvcode', 'desc_date')
+        .order_by('desc_date')
     )
     sign_to_unv = {s['sign']: s['unvcode'] for s in stockobjs}
 

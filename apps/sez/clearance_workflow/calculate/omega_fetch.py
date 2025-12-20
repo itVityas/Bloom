@@ -112,7 +112,6 @@ def fetch_vznab_stock_details(scp_unv: int) -> List[Dict[str, Optional[object]]]
                 nomsign=stock_nomsign_sq
             )
         )
-
         raw = list(qs.values('spc_unv_id', 'item_sign', 'item_unv_id', 'quantity', 'name', 'nomsign'))
         results = [
             {
