@@ -373,7 +373,7 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_list: list, is_gi
     stockobjs = (
         Stockobj.objects
         .using('oracle_db')
-        .filter(sign__in=signs)
+        .filter(sign__in=signs, subtype=1)
         .values('sign', 'unvcode', 'desc_date')
         .order_by('desc_date')
     )

@@ -52,7 +52,7 @@ class CompoundOfModelWithAnalogs(APIView):
             stockobjs = (
                 Stockobj.objects
                 .using('oracle_db')
-                .filter(sign=sign)
+                .filter(sign=sign, subtype=1)
                 .values('sign', 'unvcode')
             ).first()
 
