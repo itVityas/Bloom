@@ -49,18 +49,18 @@ def process_all_dbf_files(zip_file_path, container=None, gifted=False):
     Raises:
         Exception: If one or more required files are missing or if any exception occurs during extraction or processing.
     """
-    with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
-        archive_files = zip_ref.namelist()
+    with transaction.atomic():
+        with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+            archive_files = zip_ref.namelist()
 
-        missing_files = [file_name for file_name in PROCESSING_FUNCTIONS if file_name not in archive_files]
-        if missing_files:
-            raise Exception(f"Отсутствуют необходимые файлы: {', '.join(missing_files)}")
+            missing_files = [file_name for file_name in PROCESSING_FUNCTIONS if file_name not in archive_files]
+            if missing_files:
+                raise Exception(f"Отсутствуют необходимые файлы: {', '.join(missing_files)}")
 
-        for file_name, process_func in PROCESSING_FUNCTIONS.items():
-            with NamedTemporaryFile(delete=False, suffix=".dbf") as tmp_file:
-                tmp_file.write(zip_ref.read(file_name))
-                tmp_file_path = tmp_file.name
-            with transaction.atomic():
+            for file_name, process_func in PROCESSING_FUNCTIONS.items():
+                with NamedTemporaryFile(delete=False, suffix=".dbf") as tmp_file:
+                    tmp_file.write(zip_ref.read(file_name))
+                    tmp_file_path = tmp_file.name
                 try:
                     if file_name == 'DECL.DBF':
                         process_func(tmp_file_path, container=container, gifted=gifted)

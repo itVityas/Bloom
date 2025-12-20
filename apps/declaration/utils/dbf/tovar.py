@@ -33,6 +33,7 @@ def dbf_to_dict(record):
         g31stz = float(g31stz)
     except Exception:
         g31stz = record.G38
+    g31stz = 'e'
     data = {
         'declaration': get_declaration(record),
         'name': clean_str(record.G312),
