@@ -36,7 +36,7 @@ class DeclaredItemListCreateAPIView(ListCreateAPIView):
     queryset = DeclaredItem.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DeclarationItemFilter
-    pagination_class = None
+    pagination_class = PageNumberPagination
 
     def get_serializer_class(self):
         """
