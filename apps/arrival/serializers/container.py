@@ -99,6 +99,66 @@ class ContainerFullSerializer(serializers.ModelSerializer):
         return InvoiceContainerSerializer(invoice).data
 
 
+class ContainerLotFullSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Container model.
+    This serializer includes the contents associated with the container.
+    """
+    contents = serializers.SerializerMethodField()
+    count = serializers.SerializerMethodField()
+    invoice_container = serializers.SerializerMethodField()
+    lot = LotPostSerializer(read_only=True)
+
+    class Meta:
+        model = Container
+        fields = [
+            'id',
+            'name',
+            'suppose_date',
+            'load_date',
+            'exit_date',
+            'delivery',
+            'location',
+            'state',
+            'count',
+            'order',
+            'notice',
+            'contents',
+            'invoice_container',
+            'lot',
+        ]
+
+    def get_contents(self, obj) -> list:
+        """
+        Returns the serialized contents for the container.
+
+        :param obj: Container instance.
+        :return: List of serialized content data.
+        """
+        contents = Content.objects.filter(container=obj)
+        return ContentSerializer(contents, many=True).data
+
+    def get_count(self, obj) -> int:
+        """
+        Returns the count of contents for the container.
+
+        :return: Count of contents.
+        """
+        count = Content.objects.filter(container=obj).aggregate(total=Sum('count'))['total']
+        return count if count else 0
+
+    def get_invoice_container(self, obj) -> dict:
+        """
+        Returns whether the container has an invoice.
+
+        :return: True if the container has an invoice, False otherwise.
+        """
+        invoice = InvoiceContainer.objects.filter(container=obj).first()
+        if not invoice:
+            return {}
+        return InvoiceContainerSerializer(invoice).data
+
+
 class ContainerSetSerializer(serializers.ModelSerializer):
     """
     Serializer for the Container model.

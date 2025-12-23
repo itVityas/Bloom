@@ -22,6 +22,7 @@ from apps.arrival.serializers.container import (
     ContainerBindSerializer,
     ContainerAndContantSetSerializer,
     ContainerMassUpdateSerializer,
+    ContainerLotFullSerializer,
 )
 
 
@@ -92,7 +93,7 @@ class ContainerUpdateView(UpdateAPIView, DestroyAPIView):
 )
 class ContainerDetailView(RetrieveAPIView):
     permission_classes = (IsAuthenticated, ContainerPermission)
-    serializer_class = ContainerFullSerializer
+    serializer_class = ContainerLotFullSerializer
     queryset = Container.objects.all()
 
 
