@@ -15,7 +15,7 @@ from apps.declaration.serializers.declared_item import (
 )
 from apps.declaration.utils.dbf.tovar import process_tovar_dbf_file
 from apps.declaration.filters import DeclarationItemFilter
-from Bloom.paginator import PageNumberPagination
+from Bloom.paginator import StandartResultPaginator
 
 
 @extend_schema(tags=['DeclaredItem'])
@@ -36,7 +36,7 @@ class DeclaredItemListCreateAPIView(ListCreateAPIView):
     queryset = DeclaredItem.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DeclarationItemFilter
-    pagination_class = PageNumberPagination
+    pagination_class = StandartResultPaginator
 
     def get_serializer_class(self):
         """
@@ -122,4 +122,4 @@ class DeclaredItemListView(ListAPIView):
     queryset = DeclaredItem.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DeclarationItemFilter
-    pagination_class = PageNumberPagination
+    pagination_class = StandartResultPaginator
