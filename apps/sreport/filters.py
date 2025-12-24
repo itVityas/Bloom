@@ -40,13 +40,13 @@ class ReportStorageFilter(filters.FilterSet):
         return queryset.filter(model_name_id__in=model_names)
 
     def filter_warehouse_id(self, queryset, name, value):
-        if not value:
+        if value == 0:
             return queryset.values(
                 'model_name_id', 'name'
             ).annotate(
-                total_uncleared=Sum('uncleared'),
-                total_cleared=Sum('cleared'),
-                total_simple=Sum('simple'),
-                total_compensation=Sum('compensation')
+                uncleared=Sum('uncleared'),
+                cleared=Sum('cleared'),
+                simple=Sum('simple'),
+                compensation=Sum('compensation')
             )
         return queryset.filter(warehouse_id=value)

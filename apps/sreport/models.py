@@ -29,7 +29,7 @@ GROUP BY name.id, name.name, wt.warehouse_id
     cleared = models.IntegerField()
     simple = models.IntegerField()
     compensation = models.IntegerField()
-    warehouse_id = models.IntegerField(db_column='warehouse_id')
+    warehouse_id = models.IntegerField(db_column='warehouse_id', blank=True, null=True)
 
     class Meta:
         managed = False
