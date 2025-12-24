@@ -14,7 +14,7 @@ from openpyxl.styles import (
 
 from apps.arrival.serializers.report import ListOrderSerializer
 from apps.arrival.permissions import ArrivalPermission
-from apps.arrival.models import Order, Content, Lot
+from apps.arrival.models import Order, Content, Lot, Container
 from apps.invoice.models import InvoiceContainer
 
 
@@ -101,15 +101,15 @@ class ReportCSVView(APIView):
             col11.width = 20
             col11.alignment = Alignment(wrap_text=True)
 
-            contents = Content.objects.filter(container__order=order)
+            containers = Container.objects.filter(order=order).prefetch_related('contents')
             start_position = 6
-            if contents:
-                container_name = contents.first().container.name
             i = 6
-            for content in contents:
+            if containers:
+                container_name = containers[0].name
+            for container in containers:
                 invoice = InvoiceContainer.objects.filter(
-                    container=content.container).first()
-                lot = Lot.objects.filter(container=content.container).first()
+                    container=container).first()
+                lot = Lot.objects.filter(container=container).first()
                 lot_name = ''
                 if lot:
                     lot_name = lot.name
@@ -118,29 +118,46 @@ class ReportCSVView(APIView):
                     # contract = invoice.contract
                     number = '1/' + invoice.number.split('/')[-1]
                     number += ' от ' + str(invoice.date)
-                if container_name != content.container.name:
-                    container_name = content.container.name
-                    if start_position != i:
+                if container_name != container.name:
+                    container_name = container.name
+                    if start_position < i:
                         ws.merge_cells(f'D{start_position}:D{i}')
                     start_position = i + 1
-                ws.append([
-                    content.container.order.name,           # A
-                    lot_name,                               # B
-                    number,                                 # C
-                    container_name,                         # D
-                    content.name,                           # E
-                    content.count,                          # F
-                    content.container.exit_date,            # G
-                    content.container.location,             # H
-                    content.container.suppose_date,         # I
-                    content.container.state,                # J
-                    content.container.notice,               # K
-                ])
-                i += 1
-            if contents.count() > 0:
-                ws.merge_cells(f'A6:A{contents.count()+5}')
-                if i != start_position:
-                    ws.merge_cells(f'D{start_position}:D{i-1}')
+                for content in container.contents.all():
+                    ws.append([
+                        container.order.name,                   # A
+                        lot_name,                               # B
+                        number,                                 # C
+                        container_name,                         # D
+                        content.name,                 # E
+                        content.count,                # F
+                        container.exit_date,            # G
+                        container.location,             # H
+                        container.suppose_date,         # I
+                        container.state,                # J
+                        container.notice,               # K
+                    ])
+                    i += 1
+                if len(container.contents.all()) > 0:
+                    ws.merge_cells(f'A6:A{container.contents.count()+5}')
+                    if i != start_position:
+                        ws.merge_cells(f'D{start_position}:D{i-1}')
+                if len(container.contents.all()) == 0:
+                    ws.append([
+                        container.order.name,                   # A
+                        lot_name,                               # B
+                        number,                                 # C
+                        container_name,                         # D
+                        '',                                     # E
+                        '',                                     # F
+                        container.exit_date,            # G
+                        container.location,             # H
+                        container.suppose_date,         # I
+                        container.state,                # J
+                        container.notice,               # K
+                    ])
+                    i += 1
+                    start_position = i
 
         file_path = "tmp/orders.xlsx"
         wb.save(file_path)
