@@ -14,7 +14,7 @@ from openpyxl.styles import (
 
 from apps.arrival.serializers.report import ListOrderSerializer
 from apps.arrival.permissions import ArrivalPermission
-from apps.arrival.models import Order, Content, Lot, Container
+from apps.arrival.models import Order, Lot, Container
 from apps.invoice.models import InvoiceContainer
 
 
