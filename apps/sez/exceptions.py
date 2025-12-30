@@ -76,7 +76,7 @@ class PanelException(ValidationError):
 class TTNUsedException(ValidationError):
     def __init__(self, ttn_name, invoice_id='', detail=None, code=None):
         if not detail:
-            detail = f'Накладная {ttn_name} уже использована в другом рассчете {invoice_id}'
+            detail = f'Накладная {ttn_name} уже использована в другом расчете {invoice_id}'
         self.detail = detail
         self.code = code
 
