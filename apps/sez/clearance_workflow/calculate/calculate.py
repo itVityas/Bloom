@@ -125,7 +125,10 @@ def clear_model_items(
             di_qs = (
                     DeclaredItem.objects.select_for_update()
                     .select_related("declaration")
-                    .filter(item_code_1c__in=all_nomsigns, available_quantity__gt=0.0, declaration__gifted=gifted)
+                    .filter(item_code_1c__in=all_nomsigns,
+                            available_quantity__gt=0.0,
+                            declaration__gifted=gifted,
+                            declaration__is_use=True)
                     .order_by('item_code_1c', "declaration__declaration_date")
                 )
 
