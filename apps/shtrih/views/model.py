@@ -7,6 +7,7 @@ from apps.shtrih.models import Models
 from apps.shtrih.serializers.model import ModelsSerializer
 from apps.shtrih.permission import StrihPermission
 from Bloom.paginator import StandartResultPaginator
+from apps.shtrih.filterset import ModelFilter
 
 
 @extend_schema(tags=['Shtrih'])
@@ -36,4 +37,4 @@ class ModelListView(ListAPIView):
     permission_classes = (IsAuthenticated, StrihPermission)
     pagination_class = StandartResultPaginator
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('id',)
+    filterset_class = ModelFilter
