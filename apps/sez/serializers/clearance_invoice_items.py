@@ -57,7 +57,11 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
         order_list = obj.clearance_invoice.order.values_list('id', flat=True)
         is_gifted = obj.clearance_invoice.is_gifted
         process_transitions_list = ProductTransitions.objects.all().values_list('old_product')
-        products = Products.objects.filter(model__name__id=obj.model_name_id.id, cleared__isnull=True).exclude(state=1)
+        process_transitions_list_2 = ProductTransitions.objects.all().values_list('new_product')
+        products = Products.objects.filter(
+            cleared__isnull=True,
+            model__name__id=obj.model_name_id.id,
+            ).exclude(state=1)
 
         model = Models.objects.filter(name=obj.model_name_id.id).first()
         if not model:
@@ -79,5 +83,5 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
             declaration_numbers = Declaration.objects.filter(
                 gifted=False).values_list('declaration_number')
             products = products.filter(consignment__declaration_number__in=declaration_numbers)
-        products = products.exclude(pk__in=process_transitions_list)
+        products = products.exclude(pk__in=process_transitions_list).exclude(pk__in=process_transitions_list_2)
         return products.count()

@@ -2,7 +2,7 @@ from drf_spectacular.utils import (
     extend_schema, extend_schema_view, OpenApiParameter)
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
-from django.db.models import Count, Q
+from django.db.models import Count
 from rest_framework.response import Response
 
 from apps.sez.permissions import STZPermission
@@ -44,22 +44,30 @@ HAVING COUNT_BIG([products].[id]) = 0
 ORDER BY [model_names].[short_name] ASC OFFSET 0 ROWS
         """
         ziro = request.query_params.get('ziro', 'false').lower()
-        prod_trans = ProductTransitions.objects.all()
+        prod_trans = ProductTransitions.objects.all().values_list(
+                        'old_product', 'new_product'
+                     )
+        all_products_transitions = []
+        for i in prod_trans:
+            all_products_transitions.append(i[0])
+            all_products_transitions.append(i[1])
+        all_products_transitions = list(set(all_products_transitions))
+
         if ziro == 'true':
             queryset = Models.objects.exclude(
-                    Q(products__id__in=prod_trans.values('new_product'))
-                    | Q(products__id__in=prod_trans.values('old_product'))
-                ).filter(
-                Q(products__cleared__isnull=True) | Q(products__cleared=0)
+                products__id__in=all_products_transitions
+            ).filter(
+                products__cleared__isnull=True
             ).values('name__id', 'name__short_name', 'name__name', 'code').annotate(
                 real_amount=Count('products')
             ).filter(real_amount=0).order_by('name__short_name')
         else:
-            queryset = Models.objects.exclude(
-                    Q(products__id__in=prod_trans.values('new_product'))
-                    | Q(products__id__in=prod_trans.values('old_product'))
-                ).filter(
+            queryset = Models.objects.filter(
                 products__cleared__isnull=True
+            ).extra(
+                where=[
+                    "products.id NOT IN (%s)" % ','.join(str(id) for id in all_products_transitions)
+                ]
             ).values('name__id', 'name__short_name', 'name__name', 'code').annotate(
                 real_amount=Count('products')
             ).filter(real_amount__gt=0).order_by('name__short_name')
