@@ -254,7 +254,8 @@ def begin_calculation(invoice_id: int, user: User):
                 if cleared_item.declared_item_id.id in decls:
                     continue
                 cleared_dubl = cleared_items.exclude(id=cleared_item.id).filter(
-                    declared_item_id=cleared_item.declared_item_id
+                    declared_item_id=cleared_item.declared_item_id,
+                    clearance_invoice_items=cleared_item.clearance_invoice_items
                 )
                 if cleared_dubl:
                     cleared_item.quantity = cleared_item.quantity + cleared_dubl.aggregate(
