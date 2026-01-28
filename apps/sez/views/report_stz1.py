@@ -27,7 +27,7 @@ from apps.sez.serializers.report_stz1 import DocumentRequestSerializer
     ),
 )
 class ReportSTZ1View(APIView):
-    permission_classes = (IsAuthenticated, STZPermission)
+    permission_classes = (IsAuthenticated,)
     seriaziler_class = DocumentRequestSerializer
 
     def post(self, request):
