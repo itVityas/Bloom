@@ -10,7 +10,6 @@ from weasyprint import HTML
 from weasyprint.fonts import FontConfiguration
 
 from apps.sez.models import ClearanceInvoice, ClearedItem
-from apps.sez.permissions import STZPermission
 from apps.sez.serializers.report_stz1 import DocumentRequestSerializer
 
 
