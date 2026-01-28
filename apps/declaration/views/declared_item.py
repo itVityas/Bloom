@@ -117,7 +117,7 @@ class DeclaredItemDetailedView(RetrieveUpdateDestroyAPIView):
     ),
 )
 class DeclaredItemListView(ListAPIView):
-    permission_classes = (IsAuthenticated, DeclarationPermission)
+    permission_classes = (IsAuthenticated,)
     serializer_class = DeclarationItemGetSerializer
     queryset = DeclaredItem.objects.all()
     filter_backends = (DjangoFilterBackend,)
