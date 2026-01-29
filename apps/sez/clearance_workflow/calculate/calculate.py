@@ -113,7 +113,7 @@ def clear_model_items(
 
         if order_list:
             declaration_numbers = Declaration.objects.filter(
-                container__order__id__in=order_list, is_use=True).values_list('declaration_number')
+                container__order__id__in=order_list, is_use=True, is_completed=False).values_list('declaration_number')
             di_qs = (
                     DeclaredItem.objects.select_for_update()
                     .select_related("declaration")
@@ -312,7 +312,7 @@ def process_product(invoice_item: ClearanceInvoiceItems, order_list: list, is_gi
             # get list of decl in order: [('07260/52003398',), ('07260/52001406',),
             # ('07260/52001405',), ('07260/52001449',), ('07260/52001402',)]
             declaration_numbers = Declaration.objects.filter(
-                container__order__id__in=order_list, is_use=True).values_list('declaration_number')
+                container__order__id__in=order_list, is_use=True, is_completed=False).values_list('declaration_number')
             products = products.filter(consignment__declaration_number__in=declaration_numbers)
         else:
             declaration_numbers = Declaration.objects.filter(
