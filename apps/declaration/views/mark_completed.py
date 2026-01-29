@@ -20,7 +20,7 @@ from apps.declaration.models import Declaration
 class MarkCompletedView(APIView):
     def get(self, request):
         try:
-            declaration = Declaration.objects.filter(declared_items__available_quantity=0)
+            declaration = Declaration.objects.exclude(declared_items__available_quantity__gt=0).distinct()
             declaration.update(is_completed=True)
             return Response({'count': declaration.count()})
         except Exception as ex:
