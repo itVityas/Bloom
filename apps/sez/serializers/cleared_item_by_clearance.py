@@ -1,3 +1,5 @@
+from decimal import ROUND_UP
+
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from apps.sez.models import ClearedItem
@@ -45,7 +47,7 @@ class ClearedItemListSerializer(serializers.ModelSerializer):
         source='clearance_invoice_items.model_name_id.name',
         read_only=True
     )
-    quantity = serializers.DecimalField(max_digits=19, decimal_places=4)
+    quantity = serializers.DecimalField(max_digits=19, decimal_places=4, rounding=ROUND_UP)
 
     class Meta:
         model = ClearedItem
