@@ -1,6 +1,9 @@
+import requests
+
 from apps.declaration.utils.dbf.duplicate_exception import DuplicateDeclarationException
 from apps.declaration.utils.dbf.util import clean_str, read_dbf_records
 from apps.declaration.models import Declaration
+from Bloom import settings
 
 
 def dbf_to_dict(record):
@@ -66,17 +69,34 @@ def save_declaration_to_db(declarations_data):
     """
     declarations = []
     duplicate_ids = []
+    json_data = []
 
     for data in declarations_data:
         if Declaration.objects.filter(declaration_id=data['declaration_id']).exists():
             duplicate_ids.append(data['declaration_number'])
         else:
             declarations.append(Declaration(**data))
+            buf_dict = {}
+            buf_dict['code'] = data['declaration_number']
+            buf_dict['name'] = data['permit_number']
+            json_data.append(buf_dict)
 
     if duplicate_ids:
         raise DuplicateDeclarationException(duplicate_ids)
     elif declarations:
         Declaration.objects.bulk_create(declarations)
+
+        # отправка в 1с деклараций
+        gtd_url_1c = 'http://192.168.2.2/OLYA/hs/bloom/data/'
+        # gtd_url_1c = 'http://192.168.2.2/VITYAS-2/hs/bloom/data/'
+        response = requests.post(
+            gtd_url_1c,
+            json={'gtd_numbers': json_data},
+            auth=(settings.API_USERNAME, settings.API_PASSWORD),
+            timeout=30
+        )
+        response.raise_for_status()
+
     else:
         raise Exception("Нет данных для сохранения.")
 
