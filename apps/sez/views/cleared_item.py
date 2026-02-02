@@ -133,6 +133,9 @@ class UpdateClearedItemView(UpdateAPIView):
                 serializer = self.get_serializer(data=request.data)
                 instanse = self.get_object()
                 if serializer.is_valid(raise_exception=True):
+                    if serializer.validated_data['quantity'] <= 0:
+                        return Response({'error': 'Количество не может быть меньше 0'},
+                                        status=status.HTTP_400_BAD_REQUEST)
                     dif = instanse.quantity - serializer.validated_data['quantity']
                     if instanse.declared_item_id.available_quantity + dif < 0:
                         return Response(
@@ -158,6 +161,9 @@ class UpdateClearedItemView(UpdateAPIView):
                 serializer = self.get_serializer(data=request.data)
                 instanse = self.get_object()
                 if serializer.is_valid(raise_exception=True):
+                    if serializer.validated_data['quantity'] <= 0:
+                        return Response({'error': 'Количество не может быть меньше 0'},
+                                        status=status.HTTP_400_BAD_REQUEST)
                     dif = instanse.quantity - serializer.validated_data['quantity']
                     if instanse.declared_item_id.available_quantity + dif < 0:
                         return Response(
