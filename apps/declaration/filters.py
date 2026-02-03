@@ -34,6 +34,7 @@ class DeclarationFilter(filters.FilterSet):
     end_item_name = filters.CharFilter(method='filter_end_item_name')
     cont_item_name = filters.CharFilter(method='filter_cont_item_name')
     is_completed = filters.BooleanFilter(field_name='is_completed', lookup_expr='exact')
+    code_1c = filters.NumberFilter(field_name='declared_items__item_code_1c', lookup_expr='exact')
 
     ordering = filters.OrderingFilter(
         fields=(
@@ -80,6 +81,7 @@ class DeclarationFilter(filters.FilterSet):
             'end_item_name',
             'cont_item_name',
             'is_completed',
+            'code_1c'
         ]
 
     def filter_container(self, queryset, name, value):
@@ -151,6 +153,7 @@ class DeclarationItemFilter(filters.FilterSet):
     start_name = filters.CharFilter(field_name='name', lookup_expr='istartswith')
     end_name = filters.CharFilter(field_name='name', lookup_expr='iendswith')
     cont_name = filters.CharFilter(field_name='name', lookup_expr='icontains')
+    code_1c = filters.NumberFilter(field_name='item_code_1c', lookup_expr='exact')
 
     class Meta:
         model = DeclaredItem
@@ -167,4 +170,5 @@ class DeclarationItemFilter(filters.FilterSet):
             'start_name',
             'end_name',
             'cont_name',
+            'code_1c',
         ]
