@@ -99,6 +99,8 @@ def clear_model_items(
         requested_qty = item.get('absolute_quantity', 0.0)
         if requested_qty <= 0:
             continue
+        if requested_qty < 0.0001:
+            requested_qty = 0.0001
 
         remaining = requested_qty
 
