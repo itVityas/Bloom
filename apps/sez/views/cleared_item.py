@@ -7,10 +7,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework import status
 from django.db import transaction
+from django.db.models import Sum, F
 
 from apps.sez.models import ClearedItem
 from apps.sez.permissions import ClearedItemPermission
-from apps.sez.serializers.cleared_item import ClearedItemSerializer
+from apps.sez.serializers.cleared_item import ClearedItemSerializer, ClearedItemAssemblySerializer
 from apps.sez.serializers.cleared_item_by_clearance import ClearedItemListSerializer
 from apps.sez.filterset import ClearedItemFilter
 from apps.declaration.models import DeclaredItem
@@ -182,3 +183,35 @@ class UpdateClearedItemView(UpdateAPIView):
 
         except Exception as ex:
             return Response({'error': str(ex)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@extend_schema(tags=['ClearedItem'])
+@extend_schema_view(
+    get=extend_schema(
+        summary='List all cleared items with assembling',
+        description='Permission: admin, arrival_reader, cleared_item_writer',
+    ),
+)
+class ClearedItemListAssemblingView(ListAPIView):
+    permission_classes = [IsAuthenticated, ClearedItemPermission]
+    serializer_class = ClearedItemAssemblySerializer
+    queryset = ClearedItem.objects.all()
+    pagination_class = StandartResultPaginator
+
+    def list(self, request, pk: int, *args, **kwargs):
+        queryset = ClearedItem.objects.filter(clearance_invoice_items__clearance_invoice=pk).values(
+            model_name=F('clearance_invoice_items__model_name_id__name'),
+            name=F('declared_item_id__name'),
+            code_1c=F('declared_item_id__item_code_1c')
+            ).annotate(
+                total_quantity=Sum('quantity')
+            ).values(
+                'model_name', 'total_quantity', 'name', 'code_1c'
+            ).order_by('name')
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)

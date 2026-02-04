@@ -24,6 +24,7 @@ from apps.sez.views.cleared_item import (
     CreateClearedItemView,
     DestroyClearedItemView,
     UpdateClearedItemView,
+    ClearedItemListAssemblingView,
 )
 from apps.sez.views.document_sez import DocumentSezView, CustomClearanceView
 # from apps.sez.views.barcode_table import BarcodeTable
@@ -75,6 +76,7 @@ urlpatterns = [
     path('cleared_item/create/', CreateClearedItemView.as_view(), name='cleared-item-detail'),
     path('cleared_item/delete/<int:pk>/', DestroyClearedItemView.as_view(), name='cleared-item-delete'),
     path('cleared_item/update/<int:pk>/', UpdateClearedItemView.as_view(), name='cleared-item-update'),
+    path('cleared_item/assembling/<int:pk>/', ClearedItemListAssemblingView.as_view()),
 
     # sez
     path('available_declarations/', GetAvailableDeclarationsView.as_view()),

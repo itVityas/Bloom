@@ -10,3 +10,10 @@ class ClearedItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClearedItem
         fields = '__all__'
+
+
+class ClearedItemAssemblySerializer(serializers.Serializer):
+    model_name = serializers.CharField()
+    total_quantity = serializers.FloatField()
+    name = serializers.CharField()
+    code_1c = serializers.IntegerField()
