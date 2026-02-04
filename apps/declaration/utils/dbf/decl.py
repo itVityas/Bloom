@@ -87,7 +87,7 @@ def save_declaration_to_db(declarations_data):
         Declaration.objects.bulk_create(declarations)
 
         # отправка в 1с деклараций
-        gtd_url_1c = 'http://192.168.2.2/OLYA/hs/bloom/data/'
+        gtd_url_1c = 'http://192.168.2.2/VITYAS-2/hs/bloom/data/'
         # gtd_url_1c = 'http://192.168.2.2/VITYAS-2/hs/bloom/data/'
         response = requests.post(
             gtd_url_1c,
