@@ -10,6 +10,7 @@ from apps.shtrih.views.model_name import (
 from apps.shtrih.views.model import ModelListView
 from apps.shtrih.views.product import ProductListView, ProductUpdateClearedView
 from apps.shtrih.views.barcode_date import DateFromBarcodeView
+from apps.shtrih.views.table import TableDataView
 
 urlpatterns = [
     path('strih/colors', ColorsListView.as_view()),
@@ -23,4 +24,5 @@ urlpatterns = [
     path('strih/products', ProductListView.as_view()),
     path('strih/product_update_cleared/<int:pk>/', ProductUpdateClearedView.as_view()),
     path('strih/barcode_date/', DateFromBarcodeView.as_view()),
+    path('strih/table_data/', TableDataView.as_view()),
 ]

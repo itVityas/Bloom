@@ -233,6 +233,7 @@ class Protocols(models.Model):
     work_date = models.DateField(db_column='work_date')
     shift = models.CharField(max_length=1, db_column='shift')
     invoice = models.ForeignKey(invoices, on_delete=models.CASCADE, db_column='invoice_id')
+    create_at = models.DateTimeField(db_column='create_at')
 
     class Meta:
         managed = False
@@ -269,3 +270,43 @@ class ProductTransitions(models.Model):
 
     def __str__(self):
         return f"Transition {self.old_product} {self.new_product}"
+
+
+class ScoreboardView(models.Model):
+    """
+    Score board view
+    CREATE VIEW scoreboard_data AS
+SELECT
+    p.[shift],
+    m.[digit] as module_digit,
+    p.[work_date],
+    COUNT(DISTINCT p.[product_id]) as quantity
+FROM [protocols] p
+JOIN [products] pr ON p.[product_id] = pr.[id]
+JOIN [workplaces] w ON p.[workplace_id] = w.[id]
+JOIN [modules] m ON w.[module_id] = m.[id]
+WHERE
+    pr.[state] = 0
+    AND NOT EXISTS (
+        SELECT 1
+        FROM [product_transitions] pt
+        WHERE (pt.old_product_id = pr.id OR
+               (pt.new_product_id = pr.id AND pt.action_id = 2))
+    )
+GROUP BY
+    p.[shift],
+    m.[digit],
+    p.[work_date];
+    """
+    shift = models.CharField(max_length=1, db_column='shift')
+    module_digit = models.IntegerField(db_column='module_digit')
+    work_date = models.DateField(db_column='work_date')
+    quantity = models.IntegerField(db_column='quantity', primary_key=True)
+
+    class Meta:
+        managed = False
+        db_table = 'scoreboard_data'
+        ordering = ['module_digit']
+
+    def __str__(self):
+        return f"Scoreboard {self.shift} {self.module_digit} {self.work_date} {self.quantity}"
