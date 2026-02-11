@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.db.models import Sum
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
 
 from apps.shtrih.models import ScoreboardView
 from apps.shtrih.serializers.scorevoard import ScoreboardSerializer
@@ -14,6 +14,22 @@ from apps.shtrih.serializers.scorevoard import ScoreboardSerializer
 @extend_schema_view(
     get=extend_schema(
         summary='Get table data',
+        parameters=[
+            OpenApiParameter(
+                name='start_date',
+                location=OpenApiParameter.QUERY,
+                description='start_date',
+                required=False,
+                type=date,
+            ),
+            OpenApiParameter(
+                name='end_date',
+                location=OpenApiParameter.QUERY,
+                description='end_date',
+                required=False,
+                type=date,
+            ),
+        ],
         description='''Get data for table
 {
     "today": [
@@ -66,16 +82,27 @@ class TableDataView(APIView):
     quantity = ScoreboardView.objects.all()
 
     def get(self, request):
-        today = date.today()
-        first_day = today.replace(day=1)
-        scoreboard = ScoreboardView.objects.filter(work_date=today)
-        data_today = ScoreboardSerializer(scoreboard, many=True).data
-        scoreboard_month = ScoreboardView.objects.filter(
-            work_date__range=(first_day, today)
-            ).values('module_digit').annotate(month_quantity=Sum('quantity'))
-        data_month = []
-        for i in scoreboard_month:
-            data_month.append({
-                i.get('module_digit'): i.get('month_quantity')
-            })
-        return Response({'today': data_today, 'month': data_month})
+        try:
+            end_date = request.query_params.get('end_date', None)
+            start_date = request.query_params.get('start_date', None)
+            if not end_date:
+                today = date.today()
+            else:
+                today = date.fromisoformat(end_date)
+            if not start_date:
+                first_day = today.replace(day=1)
+            else:
+                first_day = date.fromisoformat(start_date)
+            scoreboard = ScoreboardView.objects.filter(work_date=today)
+            data_today = ScoreboardSerializer(scoreboard, many=True).data
+            scoreboard_month = ScoreboardView.objects.filter(
+                work_date__range=(first_day, today)
+                ).values('module_digit').annotate(month_quantity=Sum('quantity'))
+            data_month = []
+            for i in scoreboard_month:
+                data_month.append({
+                    i.get('module_digit'): i.get('month_quantity')
+                })
+            return Response({'today': data_today, 'month': data_month})
+        except Exception as ex:
+            return Response({'error': str(ex)})

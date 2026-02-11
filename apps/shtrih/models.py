@@ -275,7 +275,7 @@ class ProductTransitions(models.Model):
 class ScoreboardView(models.Model):
     """
     Score board view
-    CREATE VIEW scoreboard_data AS
+ALTER VIEW scoreboard_data AS
 SELECT
     p.[shift],
     m.[digit] as module_digit,
@@ -287,6 +287,7 @@ JOIN [workplaces] w ON p.[workplace_id] = w.[id]
 JOIN [modules] m ON w.[module_id] = m.[id]
 WHERE
     pr.[state] = 0
+    AND w.type_of_work_id = 2
     AND NOT EXISTS (
         SELECT 1
         FROM [product_transitions] pt
