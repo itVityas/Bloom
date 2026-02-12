@@ -94,16 +94,22 @@ class TableDataView(APIView):
             else:
                 first_day = date.fromisoformat(start_date)
             scoreboard = ScoreboardView.objects.filter(work_date=today)
-            data_today = ScoreboardSerializer(scoreboard, many=True).data
             scoreboard_month = ScoreboardView.objects.filter(
                 work_date__range=(first_day, today)
-                ).values('module_digit', 'workplace').annotate(month_quantity=Sum('quantity'))
+                ).values('module_digit', 'workplace', 'shift').annotate(month_quantity=Sum('quantity'))
             data_month = []
             for i in scoreboard_month:
+                today_quantity = 0
+                for day in scoreboard:
+                    if day.module_digit == i.get('module_digit') and day.workplace == i.get('workplace') and day.shift == i.get('shift'):
+                        today_quantity = day.quantity
                 data_month.append({
-                    i.get('module_digit'): i.get('month_quantity'),
-                    'workplace': i.get('workplace')
+                    'module': i.get('module_digit'),
+                    'month': i.get('month_quantity'),
+                    'workplace': i.get('workplace'),
+                    'shift': i.get('shift'),
+                    'today': today_quantity
                 })
-            return Response({'today': data_today, 'month': data_month})
+            return Response({'scoretable': data_month})
         except Exception as ex:
             return Response({'error': str(ex)})
