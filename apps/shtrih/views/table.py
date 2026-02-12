@@ -97,11 +97,12 @@ class TableDataView(APIView):
             data_today = ScoreboardSerializer(scoreboard, many=True).data
             scoreboard_month = ScoreboardView.objects.filter(
                 work_date__range=(first_day, today)
-                ).values('module_digit').annotate(month_quantity=Sum('quantity'))
+                ).values('module_digit', 'workplace').annotate(month_quantity=Sum('quantity'))
             data_month = []
             for i in scoreboard_month:
                 data_month.append({
-                    i.get('module_digit'): i.get('month_quantity')
+                    i.get('module_digit'): i.get('month_quantity'),
+                    'workplace': i.get('workplace')
                 })
             return Response({'today': data_today, 'month': data_month})
         except Exception as ex:

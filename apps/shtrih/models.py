@@ -274,12 +274,12 @@ class ProductTransitions(models.Model):
 
 class ScoreboardView(models.Model):
     """
-    Score board view
 ALTER VIEW scoreboard_data AS
 SELECT
     p.[shift],
     m.[digit] as module_digit,
     p.[work_date],
+	w.[id] as workplace,
     COUNT(DISTINCT p.[product_id]) as quantity
 FROM [protocols] p
 JOIN [products] pr ON p.[product_id] = pr.[id]
@@ -287,7 +287,7 @@ JOIN [workplaces] w ON p.[workplace_id] = w.[id]
 JOIN [modules] m ON w.[module_id] = m.[id]
 WHERE
     pr.[state] = 0
-    AND w.type_of_work_id = 2
+	AND w.type_of_work_id = 2
     AND NOT EXISTS (
         SELECT 1
         FROM [product_transitions] pt
@@ -297,11 +297,13 @@ WHERE
 GROUP BY
     p.[shift],
     m.[digit],
+	w.[id],
     p.[work_date];
     """
     shift = models.CharField(max_length=1, db_column='shift')
     module_digit = models.IntegerField(db_column='module_digit')
     work_date = models.DateField(db_column='work_date')
+    workplace = models.IntegerField(db_column='workplace')
     quantity = models.IntegerField(db_column='quantity', primary_key=True)
 
     class Meta:
