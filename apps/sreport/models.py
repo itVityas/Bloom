@@ -1,15 +1,17 @@
 from django.db import models
 
+from apps.shtrih.models import Modules
+
 
 # Create your models here.
 class ReportStorage(models.Model):
     """
 CREATE VIEW report_storage AS
 SELECT name.id as model_name_id, name.name as name, COUNT(CASE WHEN pr.cleared is null THEN 1 END) as uncleared,
-	 COUNT(CASE WHEN pr.cleared is not null AND invoice.recipient_id != 4 THEN 1 END) as cleared,
-	 COUNT(CASE WHEN pt.new_product_id is not null THEN 1 END) as simple,
-	 COUNT(CASE WHEN invoice.recipient_id=4 THEN 1 END) as compensation,
-	 wt.warehouse_id as warehouse_id
+    COUNT(CASE WHEN pr.cleared is not null AND invoice.recipient_id != 4 THEN 1 END) as cleared,
+    COUNT(CASE WHEN pt.new_product_id is not null THEN 1 END) as simple,
+    COUNT(CASE WHEN invoice.recipient_id=4 THEN 1 END) as compensation,
+    wt.warehouse_id as warehouse_id
 FROM products as pr
 JOIN models as mod ON pr.model_id = mod.id
 JOIN model_names as name ON mod.name_id = name.id
@@ -34,3 +36,17 @@ GROUP BY name.id, name.name, wt.warehouse_id
         managed = False
         db_table = 'report_storage'
         ordering = ['model_name_id']
+
+
+class ProductPlan(models.Model):
+    module = models.ForeignKey(Modules, on_delete=models.CASCADE, db_constraint=False,)
+    shift = models.CharField(max_length=1)
+    month_count = models.PositiveIntegerField()
+    day_count = models.PositiveIntegerField()
+
+    class Meta:
+        ordering = ['module']
+        unique_together = ('module', 'shift')
+
+    def __str__(self):
+        return f"{self.id}: {self.module} {self.shift}"
