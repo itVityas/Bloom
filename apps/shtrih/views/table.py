@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -83,6 +83,7 @@ class TableDataView(APIView):
 
     def get(self, request):
         try:
+            date_time = datetime.today()
             end_date = request.query_params.get('end_date', None)
             start_date = request.query_params.get('start_date', None)
             if not end_date:
@@ -101,15 +102,16 @@ class TableDataView(APIView):
             for i in scoreboard_month:
                 today_quantity = 0
                 for day in scoreboard:
-                    if day.module_digit == i.get('module_digit') and day.workplace == i.get('workplace') and day.shift == i.get('shift'):
+                    if day.module_digit == i.get('module_digit') \
+                            and day.workplace == i.get('workplace') and day.shift == i.get('shift'):
                         today_quantity = day.quantity
                 data_month.append({
                     'module': i.get('module_digit'),
                     'month': i.get('month_quantity'),
                     'workplace': i.get('workplace'),
                     'shift': i.get('shift'),
-                    'today': today_quantity
+                    'today': today_quantity,
                 })
-            return Response({'scoretable': data_month})
+            return Response({'scoretable': data_month, 'date': date_time})
         except Exception as ex:
             return Response({'error': str(ex)})
