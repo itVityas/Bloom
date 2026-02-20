@@ -48,5 +48,10 @@ class ProductPlan(models.Model):
         ordering = ['module']
         unique_together = ('module', 'shift')
 
+    def save(self, *args, **kwargs):
+        if ProductPlan.objects.filter(module=self.module, shift=self.shift).exists():
+            ProductPlan.objects.filter(module=self.module, shift=self.shift).delete()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.id}: {self.module} {self.shift}"
