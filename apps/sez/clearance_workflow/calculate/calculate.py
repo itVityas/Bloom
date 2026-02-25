@@ -121,7 +121,7 @@ def clear_model_items(
                     .select_related("declaration")
                     .filter(item_code_1c__in=all_nomsigns, available_quantity__gt=0.0,
                             declaration__gifted=gifted, declaration__declaration_number__in=declaration_numbers)
-                    .order_by('item_code_1c', "declaration__declaration_date")
+                    .order_by('item_code_1c', "declaration__declaration_date", "declaration__declaration_number")
                 )
         else:
             di_qs = (
@@ -131,7 +131,7 @@ def clear_model_items(
                             available_quantity__gt=0.0,
                             declaration__gifted=gifted,
                             declaration__is_use=True)
-                    .order_by('item_code_1c', "declaration__declaration_date")
+                    .order_by('item_code_1c', "declaration__declaration_date", "declaration__declaration_number")
                 )
 
         for i in di_qs:
