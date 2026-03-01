@@ -10,12 +10,13 @@ django-cors-headers~=4.7.0
 weasyprint==52.5
 requests~=2.32.3
 mssql-django==1.5
-cx_Oracle==8.3.0
+# cx_Oracle==8.3.0
+oracledb
 asgiref==3.8.1
 pyodbc
 openpyxl==3.1.3
 num2words==0.5.14
-setuptools
+
 
 numpy==2.3.1  # Явно фиксируем версию для совместимости
 pandas==2.3.0  # Совместимая с numpy 1.21.6
