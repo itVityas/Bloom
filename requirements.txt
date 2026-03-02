@@ -4,14 +4,16 @@ djangorestframework~=3.15.2
 django-filter~=24.3
 Django~=4.2
 dbf~=0.99.9
+setuptools==80.9.0
 django-environ~=0.11.2
 djangorestframework_simplejwt~=5.5.0
 django-cors-headers~=4.7.0
 weasyprint==52.5
 requests~=2.32.3
 mssql-django==1.5
-cx_Oracle==8.3.0
-# oracledb
+# cx_Oracle==8.3.0
+# cx-Oracle2==8.3.1
+oracledb==1.4.2
 asgiref==3.8.1
 pyodbc
 openpyxl==3.1.3

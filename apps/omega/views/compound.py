@@ -45,25 +45,25 @@ class CompoundOfModelWithAnalogs(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
                 data={'error': 'model_id not fount'}
             )
-        try:
-            model = Models.objects.get(id=model_id)
-            sign = f"{model.letter_part}{model.numeric_part}{model.execution_part or ''}"
+        # try:
+        model = Models.objects.get(id=model_id)
+        sign = f"{model.letter_part}{model.numeric_part}{model.execution_part or ''}"
 
-            stockobjs = (
-                Stockobj.objects
-                .using('oracle_db')
-                .filter(sign=sign, subtype=1)
-                .values('sign', 'unvcode')
-            ).first()
+        stockobjs = (
+            Stockobj.objects
+            .using('oracle_db')
+            .filter(sign=sign, subtype=1)
+            .values('sign', 'unvcode')
+        ).first()
 
-            flat_list = []
-            if stockobjs:
-                flat_list = component_flat_list(stockobjs['unvcode'], None, 1)
+        flat_list = []
+        if stockobjs:
+            flat_list = component_flat_list(stockobjs['unvcode'], None, 1)
 
-            for item in flat_list:
-                item['analogs'] = fetch_analog_details(item['nomsign'])
+        for item in flat_list:
+            item['analogs'] = fetch_analog_details(item['nomsign'])
 
-            serializer = CompoundSerializer(flat_list, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        serializer = CompoundSerializer(flat_list, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        # except Exception as e:
+        #     return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

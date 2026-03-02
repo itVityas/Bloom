@@ -14,6 +14,8 @@ import os
 from datetime import timedelta
 from pathlib import Path
 import environ
+import oracledb
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -103,6 +105,8 @@ WSGI_APPLICATION = 'Bloom.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+
+sys.modules["cx_Oracle"] = oracledb
 
 DATABASES = {
     'default': {
