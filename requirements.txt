@@ -10,8 +10,8 @@ django-cors-headers~=4.7.0
 weasyprint==52.5
 requests~=2.32.3
 mssql-django==1.5
-# cx_Oracle==8.3.0
-oracledb
+cx_Oracle==8.3.0
+# oracledb
 asgiref==3.8.1
 pyodbc
 openpyxl==3.1.3
