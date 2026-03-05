@@ -55,15 +55,17 @@ ORDER BY [model_names].[short_name] ASC OFFSET 0 ROWS
 
         if ziro == 'true':
             queryset = Models.objects.exclude(
-                products__id__in=all_products_transitions
+                products__id__in=all_products_transitions,
             ).filter(
-                products__cleared__isnull=True
-            ).values('name__id', 'name__short_name', 'name__name', 'code').annotate(
+                products__cleared__isnull=True,
+                products__state=0
+                ).values('name__id', 'name__short_name', 'name__name', 'code').annotate(
                 real_amount=Count('products')
             ).filter(real_amount=0).order_by('name__short_name')
         else:
             queryset = Models.objects.filter(
-                products__cleared__isnull=True
+                products__cleared__isnull=True,
+                products__state=0
             ).extra(
                 where=[
                     "products.id NOT IN (%s)" % ','.join(str(id) for id in all_products_transitions)
