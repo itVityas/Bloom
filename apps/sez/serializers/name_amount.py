@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from apps.omega.models import OBJ_ATTR_VALUES_1000004
+from apps.shtrih.models import Models
 
 
 class NameAmountSerializer(serializers.Serializer):
@@ -21,8 +22,9 @@ class NameAmountSerializer(serializers.Serializer):
         weight = 0
         try:
             short_name = obj.get('name__short_name', None)
+            model = Models.objects.filter(name__short_name=short_name).first()
             omega_obj = OBJ_ATTR_VALUES_1000004.objects.using('oracle_db').filter(
-                A_3607=short_name).first()
+                A_2707=model.code).first()
             if omega_obj:
                 weight = omega_obj.A_2951
         finally:
@@ -32,8 +34,9 @@ class NameAmountSerializer(serializers.Serializer):
         weight = 0
         try:
             short_name = obj.get('name__short_name', None)
+            model = Models.objects.filter(name__short_name=short_name).first()
             omega_obj = OBJ_ATTR_VALUES_1000004.objects.using('oracle_db').filter(
-                A_3607=short_name).first()
+                A_2707=model.code).first()
             if omega_obj:
                 weight = omega_obj.A_2950
         finally:
