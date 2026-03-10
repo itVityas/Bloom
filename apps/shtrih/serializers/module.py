@@ -28,8 +28,22 @@ class WorkplacesLightSerializer(serializers.ModelSerializer):
 
 
 class ModulesWorkplacesSerializer(serializers.ModelSerializer):
-    workplaces_set = WorkplacesLightSerializer(many=True, read_only=True)
+    workplaces = serializers.SerializerMethodField('get_workplaces')
 
     class Meta:
         model = Modules
-        fields = ('id', 'number', 'digit', 'workplaces_set')
+        fields = ('id', 'number', 'digit', 'workplaces')
+
+    def get_workplaces(self, obj):
+        workplaces = Workplaces.objects.filter(module=obj)
+        request = self.context.get('request')
+        if request:
+            type_of_work_id = request.query_params.get('type_of_work_id')
+            computer_number = request.query_params.get('computer_number')
+
+            if type_of_work_id:
+                workplaces = workplaces.filter(type_of_work_id=type_of_work_id)
+            if computer_number:
+                workplaces = workplaces.filter(computer_number__iexact=computer_number)
+
+        return WorkplacesLightSerializer(workplaces, many=True).data

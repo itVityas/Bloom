@@ -7,6 +7,7 @@ from apps.shtrih.models import Modules
 from apps.shtrih.serializers.module import ModulesSerializer, ModulesWorkplacesSerializer
 from apps.shtrih.permission import StrihPermission
 from Bloom.paginator import StandartResultPaginator
+from apps.shtrih.filterset import ModulesWorkplacesFilter
 
 
 @extend_schema(tags=['Shtrih'])
@@ -52,7 +53,9 @@ class ModulesWorkpalacesListView(ListAPIView):
     serializer_class = ModulesWorkplacesSerializer
     queryset = Modules.objects.all()
     pagination_class = None
+    filter_backends = [DjangoFilterBackend,]
+    filterset_class = ModulesWorkplacesFilter
 
     def get(self, request, *args, **kwargs):
-        self.queryset = Modules.objects.prefetch_related('workplaces_set').all()
+        self.queryset = Modules.objects.all()
         return super().get(request, *args, **kwargs)
