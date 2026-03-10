@@ -1,7 +1,7 @@
 from django.urls import path
 
 from apps.shtrih.views.color import ColorsListView, ColorsByModelNameListView
-from apps.shtrih.views.module import ModulesListView, ModulesWorkpalacesListView
+from apps.shtrih.views.module import ModulesListView
 from apps.shtrih.views.production_code import ProductionCodeListView
 from apps.shtrih.views.model_name import (
     ModelNameListView,
@@ -11,12 +11,12 @@ from apps.shtrih.views.model import ModelListView
 from apps.shtrih.views.product import ProductListView, ProductUpdateClearedView
 from apps.shtrih.views.barcode_date import DateFromBarcodeView
 from apps.shtrih.views.table import TableDataView
+from apps.shtrih.views.workplace import WorkplaceListView
 
 urlpatterns = [
     path('strih/colors', ColorsListView.as_view()),
     path('strih/colors_by_model_name', ColorsByModelNameListView.as_view()),
     path('strih/modules', ModulesListView.as_view()),
-    path('strih/modules_workplaces/', ModulesWorkpalacesListView.as_view()),
     path('strih/production_code', ProductionCodeListView.as_view()),
     path('strih/model_name', ModelNameListView.as_view()),
     path('strih/model_name_by_production_id', ModelNameByProductCodeListView.as_view()),
@@ -26,4 +26,5 @@ urlpatterns = [
     path('strih/product_update_cleared/<int:pk>/', ProductUpdateClearedView.as_view()),
     path('strih/barcode_date/', DateFromBarcodeView.as_view()),
     path('strih/table_data/', TableDataView.as_view()),
+    path('strih/workplaces/', WorkplaceListView.as_view()),
 ]
