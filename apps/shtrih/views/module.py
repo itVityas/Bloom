@@ -4,7 +4,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.shtrih.models import Modules
-from apps.shtrih.serializers.module import ModulesSerializer
+from apps.shtrih.serializers.module import ModulesSerializer, ModulesWorkplacesSerializer
 from apps.shtrih.permission import StrihPermission
 from Bloom.paginator import StandartResultPaginator
 
@@ -38,3 +38,21 @@ class ModulesListView(ListAPIView):
     pagination_class = StandartResultPaginator
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['id', 'digit', 'digit']
+
+
+@extend_schema(tags=['Shtrih'])
+@extend_schema_view(
+    get=extend_schema(
+        summary='List modules and workplaces',
+        description="description='Permission: admin, strih"
+    )
+)
+class ModulesWorkpalacesListView(ListAPIView):
+    permission_classes = (IsAuthenticated, StrihPermission)
+    serializer_class = ModulesWorkplacesSerializer
+    queryset = Modules.objects.all()
+    pagination_class = None
+
+    def get(self, request, *args, **kwargs):
+        self.queryset = Modules.objects.prefetch_related('workplaces_set').all()
+        return super().get(request, *args, **kwargs)
