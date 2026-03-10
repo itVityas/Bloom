@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.shtrih.models import Modules
+from apps.shtrih.models import Modules, Workplaces
 
 
 # Create your models here.
@@ -41,16 +41,17 @@ GROUP BY name.id, name.name, wt.warehouse_id
 class ProductPlan(models.Model):
     module = models.ForeignKey(Modules, on_delete=models.CASCADE, db_constraint=False,)
     shift = models.CharField(max_length=1)
+    workplace = models.ForeignKey(Workplaces, on_delete=models.CASCADE, db_constraint=False,)
     month_count = models.PositiveIntegerField()
     day_count = models.PositiveIntegerField()
 
     class Meta:
         ordering = ['module']
-        unique_together = ('module', 'shift')
+        # unique_together = ('module', 'shift')
 
     def save(self, *args, **kwargs):
-        if ProductPlan.objects.filter(module=self.module, shift=self.shift).exists():
-            ProductPlan.objects.filter(module=self.module, shift=self.shift).delete()
+        if ProductPlan.objects.filter(module=self.module, shift=self.shift, workplace=self.workplace).exists():
+            ProductPlan.objects.filter(module=self.module, shift=self.shift, workplace=self.workplace).delete()
         super().save(*args, **kwargs)
 
     def __str__(self):
