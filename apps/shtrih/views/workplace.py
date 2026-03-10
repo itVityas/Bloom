@@ -17,6 +17,6 @@ from apps.shtrih.serializers.workplaces import WorkplacesSerializer
 class WorkplaceListView(ListAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = WorkplacesSerializer
-    queryset = Workplaces.objects.all()
+    queryset = Workplaces.objects.all().order_by('module__id', 'id')
     filter_backends = [DjangoFilterBackend]
     filterset_fields = '__all__'
