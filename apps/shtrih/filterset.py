@@ -1,6 +1,6 @@
 import django_filters as filter
 
-from .models import Products, ModelNames, Models, Modules
+from .models import Products, ModelNames, Models
 
 
 class ProductFilter(filter.FilterSet):
@@ -165,37 +165,4 @@ class ModelFilter(filter.FilterSet):
             'start_short_name',
             'end_short_name',
             'cont_short_name',
-        ]
-
-
-class ModulesWorkplacesFilter(filter.FilterSet):
-    pk = filter.NumberFilter(
-        field_name='id',
-        lookup_expr='exact',
-        help_text="Filter modules by ID",)
-    number = filter.NumberFilter(
-        field_name='number',
-        lookup_expr='exact',
-        help_text="Filter modules by number",)
-    digit = filter.NumberFilter(
-        field_name='digit',
-        lookup_expr='exact',
-        help_text="Filter modules by digit",)
-    type_of_work_id = filter.NumberFilter(
-        field_name='workplaces__type_of_work__id',
-        lookup_expr='exact',
-        help_text="Filter modules by type of work ID",)
-    computer_number = filter.CharFilter(
-        field_name='workplaces__computer_number',
-        lookup_expr='iexact',
-        help_text="Filter modules by computer number (case insensitive)",)
-
-    class Meta:
-        model = Modules
-        fields = [
-            'pk',
-            'number',
-            'digit',
-            'type_of_work_id',
-            'computer_number',
         ]
