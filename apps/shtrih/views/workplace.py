@@ -1,6 +1,6 @@
 from rest_framework.generics import ListAPIView
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
 from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.shtrih.models import Workplaces
@@ -15,7 +15,7 @@ from apps.shtrih.serializers.workplaces import WorkplacesSerializer
     )
 )
 class WorkplaceListView(ListAPIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     serializer_class = WorkplacesSerializer
     queryset = Workplaces.objects.all().order_by('module__id', 'id')
     filter_backends = [DjangoFilterBackend]
