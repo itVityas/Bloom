@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 # Список деклараций
 PRIHOD_DECL_FIELDS = [
-    ('G549',      'C',  18, 0),      # Номер декларации, Declaration.declaration_number
+    ('G549',      'C',  20, 0),      # Номер декларации, Declaration.declaration_number
     ('G011',      'C',   2, 0),      # Пусто
     ('G012',      'C',   2, 0),      # Пусто
     ('G013',      'C',   2, 0),      # Везде 7
@@ -203,7 +203,7 @@ def generate_prihod_decl_dbf(
             row = {}
             for name, ftype, *_ in PRIHOD_DECL_FIELDS:
                 if name == 'G549':
-                    value = decl.permit_number
+                    value = decl.declaration_number
                 elif name == 'G013':
                     value = '7'
                 elif name in ('G022', 'G082'):
