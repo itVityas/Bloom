@@ -95,7 +95,7 @@ def generate_norm_dbf_shipment(clearance_invoice_id: int, output_path: str, enco
             row = {
                 'GTDGA_O':    value,
                 'TOVGTDNO_O': item_index,
-                'GTDGA':      item.declared_item_id.declaration.declaration_number,
+                'GTDGA':      item.declared_item_id.declaration.permit_number,
                 'TOVGTDNO':   item.declared_item_id.ordinal_number,
                 'TOVCOUNT':   str(item.quantity),
                 'SUBCODE':    '',
