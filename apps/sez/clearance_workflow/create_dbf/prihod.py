@@ -203,7 +203,7 @@ def generate_prihod_decl_dbf(
             row = {}
             for name, ftype, *_ in PRIHOD_DECL_FIELDS:
                 if name == 'G549':
-                    value = decl.declaration_number
+                    value = decl.permit_number
                 elif name == 'G013':
                     value = '7'
                 elif name in ('G022', 'G082'):
