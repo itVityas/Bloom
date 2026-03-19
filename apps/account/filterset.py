@@ -44,8 +44,8 @@ class UserFilter(filters.FilterSet):
             ('position', 'position'),
             ('room', 'room'),
             ('is_active', 'is_active'),
-            ('created', 'created'),
-            ('role', 'role')
+            ('created_at', 'created_at'),
+            ('userroles__role__name', 'userroles__role__name')
         ),
     )
 
