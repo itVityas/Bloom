@@ -1,6 +1,5 @@
 from django.urls import path
 
-from apps.sgp.views.consignment import ConsignmentCreateView
 from apps.sgp.views.storage_limist import (
     StorageLimitsCreateView, StorageLimitsRUDView, StorageLimitsListView)
 from apps.sgp.views.shipment_bans import (
@@ -9,8 +8,6 @@ from apps.sgp.views.shipment_bans import (
 
 
 urlpatterns = [
-    path('consignment/', ConsignmentCreateView.as_view()),
-
     # StorageLimits
     path('storage-limits/', StorageLimitsListView.as_view()),
     path('storage-limits/create/', StorageLimitsCreateView.as_view()),
