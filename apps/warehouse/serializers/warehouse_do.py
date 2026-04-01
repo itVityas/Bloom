@@ -2,20 +2,19 @@ from rest_framework import serializers
 
 from apps.warehouse.models import (
     WarehouseDo,
-    WarehouseProduct,
     WarehouseTTN,
     Pallet
 )
 from apps.shtrih.models import Products
-from apps.warehouse.serializers.warehouse_products import WarehouseProductGetSerializer
 from apps.warehouse.serializers.warehouse_ttn import WarehouseTTNGetSerializer
 from apps.warehouse.utils.generate_barcode import generate_barcode
 from apps.warehouse.exceptions.barcode import WrongModel
+from apps.shtrih.serializers.products import ProductGetSerializer
 
 
 class WarehouseDoGetSerializer(serializers.ModelSerializer):
     warehouse_ttn = WarehouseTTNGetSerializer(read_only=True)
-    warehouse_product = WarehouseProductGetSerializer(many=False, read_only=True)
+    product = ProductGetSerializer(many=False, read_only=True)
 
     class Meta:
         model = WarehouseDo
@@ -27,7 +26,7 @@ class WarehouseDoPostSerializer(serializers.ModelSerializer):
         model = WarehouseDo
         fields = [
             'warehouse_ttn',
-            'warehouse_product',
+            'product',
             'quantity',
         ]
 
@@ -41,14 +40,14 @@ class WarehouseDoPalletSerializer(serializers.ModelSerializer):
     model_id = serializers.IntegerField(write_only=True, required=True)
 
     warehouse_ttn = WarehouseTTNGetSerializer(read_only=True)
-    warehouse_product = WarehouseProductGetSerializer(many=False, read_only=True)
+    product = ProductGetSerializer(many=False, read_only=True)
     quantity = serializers.IntegerField(required=False, default=1)
 
     class Meta:
         model = WarehouseDo
         fields = [
             'warehouse_ttn',
-            'warehouse_product',
+            'product',
             'quantity',
             'warehouse_ttn_number',
             'barcode',
@@ -80,11 +79,11 @@ class WarehouseDoPalletSerializer(serializers.ModelSerializer):
             )
 
         # получаем или создаем warehouse product
-        warehouse_product = WarehouseProduct.objects.filter(
-            product__barcode=barcode
+        product = Products.objects.filter(
+            barcode=barcode
         ).first()
-        if warehouse_product:
-            if model_id != warehouse_product.product.model.id:
+        if product:
+            if model_id != product.product.model.id:
                 raise WrongModel()
         else:
             product = Products.objects.filter(barcode=barcode).first()
@@ -92,15 +91,14 @@ class WarehouseDoPalletSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError('Продукт не найден')
             if model_id != product.model.id:
                 raise WrongModel()
-            warehouse_product = WarehouseProduct.objects.create(
+            product = Products.objects.create(
                 product=product,
                 quantity=quantity
             )
 
         warehouse_do = WarehouseDo.objects.create(
-            warehouse_product=warehouse_product,
+            product=product,
             warehouse_ttn=warehouse_ttn,
-            user=user,
             quantity=quantity
         )
 
