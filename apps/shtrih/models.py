@@ -124,6 +124,7 @@ class Products(models.Model):
     state = models.IntegerField()
     nameplate = models.IntegerField(blank=True, null=True)
     quantity = models.IntegerField()
+    available_quantity = models.IntegerField()
     cleared = models.ForeignKey(
         'sez.ClearanceInvoice',
         on_delete=models.SET_NULL,
@@ -133,6 +134,7 @@ class Products(models.Model):
         related_name='products',
         db_constraint=False
     )
+    is_shipment = models.BooleanField(default=False)
 
     class Meta:
         managed = False
