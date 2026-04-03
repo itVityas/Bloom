@@ -87,7 +87,7 @@ class ModelNamesFilter(filter.FilterSet):
     model_id = filter.NumberFilter(
         field_name='models__id',
         lookup_expr='exact',
-        help_text="Filter model names by ID",)
+        help_text="Filter model names by model ID",)
 
     class Meta:
         model = ModelNames
