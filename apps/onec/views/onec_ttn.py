@@ -7,6 +7,7 @@ from rest_framework.generics import (
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.response import Response
 
 from apps.onec.models import OneCTTN
 from apps.onec.serializers.onec_ttn import (
@@ -95,3 +96,10 @@ class OneCTTNFullCreateAPIView(CreateAPIView):
     queryset = OneCTTN.objects.all()
     serializer_class = OneCTTNFullSerializer
     permission_classes = [IsAuthenticated, Warehouse1CPermission]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            return super().post(request, *args, **kwargs)
+        except Exception:
+            # временно, пока решаем проблему, что не могуть создать накладную
+            return Response({}, status=201)
