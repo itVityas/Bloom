@@ -100,6 +100,6 @@ class OneCTTNFullCreateAPIView(CreateAPIView):
     def post(self, request, *args, **kwargs):
         try:
             return super().post(request, *args, **kwargs)
-        except Exception:
+        except Exception as e:
             # временно, пока решаем проблему, что не могуть создать накладную
-            return Response({}, status=201)
+            return Response({'error': str(e)}, status=400)

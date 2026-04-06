@@ -1,3 +1,5 @@
+from django.db import transaction
+
 from rest_framework import serializers
 
 from apps.onec.models import OneCTTN, OneCTTNItem
@@ -36,15 +38,26 @@ class OneCTTNFullSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        items_data = validated_data.pop('items', None)
-        OneCTTN.objects.create(**validated_data)
-        ttn = OneCTTN.objects.filter(**validated_data).first()
+        with transaction.atomic():
+            items_data = validated_data.pop('items', None)
+            number = validated_data.get('number', None)
+            series = validated_data.get('series', None)
+            if OneCTTN.objects.filter(number=number, series=series).exists():
+                raise serializers.ValidationError('TTN already exists')
+            OneCTTN.objects.create(**validated_data)
+            ttn = OneCTTN.objects.filter(**validated_data).first()
 
-        for item in items_data:
-            count = item.pop('count', None)
-            model = Models.objects.filter(design_code=item['desiner_code']).first()
-            if not count or not model:
-                raise serializers.ValidationError('no model or count')
-            OneCTTNItem.objects.create(onec_ttn=ttn, count=count, model_name=model.name)
+            for item in items_data:
+                count = item.get('count', None)
+                desiner_code = item.get('desiner_code', None)
+                name = item.get('name', None)
+                model = None
+                if desiner_code:
+                    model = Models.objects.filter(design_code=desiner_code).first()
+                if not model:
+                    model = Models.objects.filter(name=name).first()
+                if not count or not model:
+                    raise serializers.ValidationError('no model or count')
+                OneCTTNItem.objects.create(onec_ttn=ttn, count=count, model_name=model.name)
 
         return ttn
