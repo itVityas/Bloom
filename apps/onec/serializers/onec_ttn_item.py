@@ -18,7 +18,8 @@ class OneCTTNItemListSerializer(serializers.ModelSerializer):
         model = OneCTTNItem
         fields = [
             'model_name',
-            'count'
+            'count',
+            'available_quantity',
         ]
 
 
@@ -40,8 +41,9 @@ class OneCTTNItemDesinerSerializer(serializers.ModelSerializer):
         desiner_code = validated_data.pop('desiner_code', None)
         name = validated_data.pop('name', None)
         model = Models.objects.filter(design_code=desiner_code).first()
+        validated_data['available_quantity'] = validated_data['count']
         if not model:
-            model = Models.objects.filter(name=name).first()
+            model = Models.objects.filter(name__name=name).first()
             if not model:
                 raise serializers.ValidationError("Model with this design code does not exist")
         validated_data['model_name'] = model.name

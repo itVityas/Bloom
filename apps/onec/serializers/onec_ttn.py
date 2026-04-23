@@ -49,15 +49,17 @@ class OneCTTNFullSerializer(serializers.ModelSerializer):
 
             for item in items_data:
                 count = item.get('count', None)
+                available_quantity = count
                 desiner_code = item.get('desiner_code', None)
                 name = item.get('name', None)
                 model = None
                 if desiner_code:
                     model = Models.objects.filter(design_code=desiner_code).first()
                 if not model:
-                    model = Models.objects.filter(name=name).first()
+                    model = Models.objects.filter(name__name=name).first()
                 if not count or not model:
                     raise serializers.ValidationError('no model or count')
-                OneCTTNItem.objects.create(onec_ttn=ttn, count=count, model_name=model.name)
+                OneCTTNItem.objects.create(onec_ttn=ttn, count=count, model_name=model.name,
+                                           available_quantity=available_quantity)
 
         return ttn
