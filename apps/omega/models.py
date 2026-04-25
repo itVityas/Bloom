@@ -169,6 +169,7 @@ class VzNab(models.Model):
                                  db_comment='Код элемента спецификации')
     # color_code = models.ForeignKey(ColorSchema, models.DO_NOTHING, db_column='color_code', blank=True, null=True,
     #                                db_comment='Код схемы цвета')
+    color_code = models.IntegerField(blank=True, null=True, db_comment='Код схемы цвета')
     all9999 = models.BigIntegerField(db_comment='Признак -9999')
     pos = models.CharField(max_length=10, blank=True, null=True, db_comment='Позиция')
     cntnum = models.BigIntegerField(db_comment='Количество числитель')

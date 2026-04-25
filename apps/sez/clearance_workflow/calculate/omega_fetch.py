@@ -112,18 +112,24 @@ def fetch_vznab_stock_details(scp_unv: int) -> List[Dict[str, Optional[object]]]
                 nomsign=stock_nomsign_sq
             )
         )
-        raw = list(qs.values('spc_unv_id', 'item_sign', 'item_unv_id', 'quantity', 'name', 'nomsign'))
-        results = [
-            {
+        raw = list(qs.values('spc_unv_id', 'item_sign', 'item_unv_id', 'quantity', 'name', 'nomsign', 'color_code', 'change_mark'))
+        r_set = set()
+        results = []
+        for r in raw:
+            if r['item_unv_id'] in r_set:
+                continue
+            if r.get('change_mark') != 0 and r.get('change_mark') in r_set:
+                continue
+            r_set.add(r['item_unv_id'])
+            r_set.add(r['change_mark'])
+            results.append({
                 'scp_unv': r['spc_unv_id'],
                 'item_sign': r['item_sign'],
                 'item_unv': r['item_unv_id'],
                 'quantity': r['quantity'],
                 'name': r['name'],
                 'nomsign': r.get('nomsign'),
-            }
-            for r in raw
-        ]
+            })
         return results
 
     except Exception as exc:
