@@ -8,6 +8,7 @@ from apps.sez.serializers.full_clearance_workflow import (
     ClearanceDeleteInputSerializer,
     ClearanceCalculateInputSerializer
 )
+from apps.declaration.models import Declaration
 from apps.sez.permissions import STZPermission
 from apps.sez.clearance_workflow.calculate.clear import clear_invoice_calculate
 from apps.sez.clearance_workflow.calculate.calculate import begin_calculation
@@ -75,6 +76,8 @@ class FullClearanceWorkflowView(APIView):
                         raise NoMatchedTTNException()
 
                 begin_calculation(invoice_id, request.user)
+                declaration = Declaration.objects.exclude(declared_items__available_quantity__gt=0).distinct()
+                declaration.update(is_completed=True)
                 return Response({'message': 'Успешный расчет'}, status=status.HTTP_200_OK)
             except InvoiceNotFoundException as ex:
                 return Response({'error': str(ex)}, status=status.HTTP_404_NOT_FOUND)
