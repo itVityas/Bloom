@@ -231,3 +231,56 @@ class WarehouseTTNProductsByUserIdAPIView(APIView):
                 self.serializer_class(warehouse_ttn).data,
                 status=status.HTTP_200_OK
             )
+
+
+@extend_schema(tags=['WarehouseTTN'])
+@extend_schema_view(
+    get=extend_schema(
+        summary='Get all WarehouseTTN with WarehouseDo by 1C ttn number and series',
+        description='Permission: admin, warehouse, warehouse_writer',
+        parameters=[
+            OpenApiParameter(
+                name='number',
+                description='1C ttn number',
+                required=True,
+                type=str
+            ),
+            OpenApiParameter(
+                name='series',
+                description='1C ttn series',
+                required=True,
+                type=str
+            )
+        ],
+        responses={
+            200: WarehouseTTNProductSerializer,
+            404: OpenApiResponse(description='WarehouseTTN not found')
+        },
+    ),
+)
+class WarehouseTTNByNumberSeriesAPIView(APIView):
+    permission_classes = [IsAuthenticated, WarehousePermission]
+    serializer_class = WarehouseTTNProductSerializer
+
+    def get(self, request):
+        number = request.query_params.get('number')
+        series = request.query_params.get('series')
+        if not number or not series:
+            return Response(
+                {'error': 'number and series is required'},
+                status=status.HTTP_400_BAD_REQUEST
+                )
+
+        warehouse_ttn = WarehouseTTN.objects.filter(
+            onec_ttn__number=number,
+            onec_ttn__series=series
+            ).order_by('-create_at')
+        if not warehouse_ttn:
+            return Response(
+                {'error': 'WarehouseProduct not found'},
+                status=status.HTTP_404_NOT_FOUND)
+
+        return Response(
+                self.serializer_class(warehouse_ttn, many=True).data,
+                status=status.HTTP_200_OK
+            )

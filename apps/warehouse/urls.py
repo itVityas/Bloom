@@ -27,6 +27,7 @@ from apps.warehouse.views.warehouse_ttn import (
     WarehouseTTNByUserIdAPIView,
     WarehouseTTNProductsAPIView,
     WarehouseTTNProductsByUserIdAPIView,
+    WarehouseTTNByNumberSeriesAPIView,
 )
 from apps.warehouse.views.warehouse_do import (
     WarehouseDoCreateAPIView,
@@ -55,6 +56,7 @@ urlpatterns = [
     path('warehousettn/user/', WarehouseTTNByUserIdAPIView.as_view()),
     path('warehousettn/products/<str:ttn_number>/', WarehouseTTNProductsAPIView.as_view()),
     path('warehousettn/productsuser/', WarehouseTTNProductsByUserIdAPIView.as_view()),
+    path('warehousettn/by1c_number_series/', WarehouseTTNByNumberSeriesAPIView.as_view()),
     path('warehouse_do/create/', WarehouseDoCreateAPIView.as_view()),
     path('warehouse_do/list/', WarehouseDoListAPIView.as_view()),
     path('warehouse_do/detailed/<int:pk>/', WarehouseDoRetrieveAPIView.as_view()),
