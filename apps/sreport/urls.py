@@ -6,6 +6,7 @@ from apps.sreport.views.data_for_main_doc import DataForMainDocView
 from apps.sreport.views.report_storage import ReportStorageView
 from apps.sreport.views.name_count import ModelNameCountView
 from apps.sreport.views.product_plan import ProductPlanCreateView, ProductPlanListView, ProductPlanUpdateView
+from apps.sreport.views.onec_ttn_item_scaned_count import OneCTTNItemScanedCountAPIView
 
 
 urlpatterns = [
@@ -17,4 +18,5 @@ urlpatterns = [
     path('product_plan/create/', ProductPlanCreateView.as_view()),
     path('product_plan/list/', ProductPlanListView.as_view()),
     path('product_plan/update/<int:pk>/', ProductPlanUpdateView.as_view()),
+    path('warehouse/1c_ttn_item_scanned_count/', OneCTTNItemScanedCountAPIView.as_view()),
 ]
