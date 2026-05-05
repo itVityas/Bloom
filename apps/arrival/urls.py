@@ -2,7 +2,8 @@ from django.urls import path
 
 from apps.arrival.views.order import (
     OrderCreateAPIView, OrderListView, OrderDetailedView,
-    OrderAndContainerListView, OrderAndContainerDetailView
+    OrderAndContainerListView, OrderAndContainerDetailView,
+    OrderSimpleListView,
 )
 from apps.arrival.views.content import ContentListView, ContentDetailView
 from apps.arrival.views.container import (
@@ -40,6 +41,7 @@ urlpatterns = [
     path('order_and_container/', OrderAndContainerListView.as_view(), name='order-and-container-list'),
     path('order_and_container/<int:pk>/', OrderAndContainerDetailView.as_view(), name='order-and-container-detail'),
     path('order/report/', ReportCSVView.as_view()),
+    path('order/simple/', OrderSimpleListView.as_view()),
 
     # Container endpoints
     path('container/', ContainerListView.as_view()),

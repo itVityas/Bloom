@@ -46,6 +46,22 @@ class OrderListView(ListAPIView):
 @extend_schema(tags=['Orders'])
 @extend_schema_view(
     get=extend_schema(
+        summary='List all orders (simple)',
+        description='Permission: admin, arrival_reader, order_writer',
+    ),
+)
+class OrderSimpleListView(ListAPIView):
+    permission_classes = (IsAuthenticated, OrderPermission)
+    serializer_class = OrderSerializer
+    queryset = Order.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('name',)
+    pagination_class = StandartResultPaginator
+
+
+@extend_schema(tags=['Orders'])
+@extend_schema_view(
+    get=extend_schema(
         summary='Retrieve order by ID',
         description='Permission: admin, arrival_reader, order_writer',
     ),
