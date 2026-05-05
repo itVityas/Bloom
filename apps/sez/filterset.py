@@ -71,6 +71,10 @@ class ClearanceInvoiceFilter(filters.FilterSet):
         field_name='date_calc',
         lookup_expr='isnull',
         help_text=("Filter whether calculation date exists (true/false)"))
+    is_gifted = filters.BooleanFilter(
+        field_name='is_gifted',
+        lookup_expr='exact'
+    )
 
     class Meta:
         model = ClearanceInvoice
@@ -89,6 +93,7 @@ class ClearanceInvoiceFilter(filters.FilterSet):
             'end_recipient',
             'date_calc',
             'isnull_date_calc',
+            'is_gifted',
         ]
 
 
