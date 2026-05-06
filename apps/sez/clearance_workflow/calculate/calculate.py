@@ -187,9 +187,9 @@ def clear_model_items(
         raise NoClearedItemException(model_name=invoice_item.model_name_id.name)
 
     for item in components:
-        if str(item.get('nomsign')).startswith('638111111') and not item.get('clear') > 0:
+        if str(item.get('nomsign')).startswith('638111111') and item.get('clear') is False:
             logging.error(f"Panel components not cleared for model {invoice_item.model_name_id.name} "
-                          + "nomsign:{item.get('nomsign')}")
+                          + f"nomsign:{item.get('nomsign')}")
             raise PanelException(model_name=invoice_item.model_name_id.name, order='')
 
         if not item['clear'] and item.get('nomsign') and item.get('uncleared', 0) > 0:
@@ -223,7 +223,7 @@ def begin_calculation(invoice_id: int, user: User):
     update_item_codes_1c()
 
     invoice_items = ClearanceInvoiceItems.objects.filter(
-        clearance_invoice=invoice, model_name_id__isnull=False)
+        clearance_invoice=invoice, model_name_id__isnull=False).order_by('-id')
 
     with transaction.atomic():
         for item in invoice_items:
