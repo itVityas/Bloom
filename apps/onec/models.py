@@ -27,7 +27,7 @@ class OneCTTN(models.Model):
 
 class OneCTTNItem(models.Model):
     onec_ttn = models.ForeignKey(OneCTTN, on_delete=models.CASCADE)
-    model_name = models.ForeignKey(ModelNames, on_delete=models.CASCADE, null=True, blank=True, db_constraint=False)
+    model_name = models.ForeignKey(ModelNames, on_delete=models.CASCADE, db_constraint=False)
     count = models.PositiveIntegerField(default=1)
     available_quantity = models.PositiveIntegerField(default=1)
     create_at = models.DateTimeField(auto_now_add=True)
