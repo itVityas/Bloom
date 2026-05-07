@@ -236,7 +236,7 @@ class WarehouseTTNProductsByUserIdAPIView(APIView):
 @extend_schema(tags=['WarehouseTTN'])
 @extend_schema_view(
     get=extend_schema(
-        summary='Get all WarehouseTTN with WarehouseDo by 1C ttn number and series',
+        summary='Get views WarehouseTTN with WarehouseDo by 1C ttn number and series',
         description='Permission: admin, warehouse, warehouse_writer',
         parameters=[
             OpenApiParameter(
