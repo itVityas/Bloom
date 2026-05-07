@@ -277,7 +277,7 @@ class WarehouseTTNByNumberSeriesAPIView(APIView):
             ).order_by('-create_at')
         if not warehouse_ttn:
             return Response(
-                {'error': 'WarehouseProduct not found'},
+                {'error': 'WarehouseTTN not found'},
                 status=status.HTTP_404_NOT_FOUND)
 
         return Response(
