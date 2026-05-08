@@ -148,7 +148,7 @@ class BarcodlessProducts(models.Model):
 
 
 class BarcodlessDo(models.Model):
-    product = models.ForeignKey(BarcodlessProducts, on_delete=models.PROTECT)
+    barcodless_product = models.ForeignKey(BarcodlessProducts, on_delete=models.PROTECT)
     warehouse_ttn = models.ForeignKey(WarehouseTTN, on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField()
 
@@ -160,7 +160,7 @@ class BarcodlessDo(models.Model):
 
     def save(self, *args, **kwargs):
         ttn = WarehouseTTN.objects.select_related('warehouse_action').filter(ttn_number=self.warehouse_ttn).first()
-        barcodless_products = BarcodlessProducts.objects.filter(pk=self.product_id).first()
+        barcodless_products = BarcodlessProducts.objects.filter(pk=self.barcodless_product_id).first()
         if not barcodless_products:
             raise Exception("Безштриховой товар не найден")
         if not ttn:

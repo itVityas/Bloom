@@ -74,7 +74,7 @@ class BarcodlessDoCreateAPIView(CreateAPIView):
                         onec_ttn_id=serializer.validated_data['onec_ttn_id']
                     )
                 barcodless_do = BarcodlessDo.objects.create(
-                    product_id=barcodless_product.id,
+                    barcodless_product_id=barcodless_product.id,
                     warehouse_ttn=warehouse_ttn,
                     quantity=serializer.validated_data['quantity']
                 )

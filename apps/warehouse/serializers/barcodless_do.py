@@ -14,7 +14,7 @@ class BarcodlessDOUpdateSerializer(serializers.ModelSerializer):
 
 class BarcodlessDoFullSerializer(serializers.ModelSerializer):
     """Serializer for BarcodlessDO with linked models """
-    product = BarcodlessProductFullSerializer()
+    barcodless_product = BarcodlessProductFullSerializer()
     warehouse_ttn = WarehouseTTNGetSerializer()
 
     class Meta:
