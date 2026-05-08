@@ -90,6 +90,16 @@ class BarcodlessProductsFilter(filters.FilterSet):
     model_name_end = filters.CharFilter(field_name='model_name__name', lookup_expr='iendswith')
     warehouse_id = filters.NumberFilter(field_name='warehouse_id', lookup_expr='exact')
 
+    ordering = filters.OrderingFilter(
+        fields=(
+            ('pk', 'pk'),
+            ('model_name_id', 'model_name_id'),
+            ('warehouse_id', 'warehouse_id'),
+            ('create_at', 'create_at'),
+            ('update_at', 'update_at'),
+        ),
+    )
+
     class Meta:
         model = BarcodlessProducts
         fields = (
@@ -104,15 +114,24 @@ class BarcodlessProductsFilter(filters.FilterSet):
 
 class BarcodlessDoFilter(filters.FilterSet):
     pk = filters.NumberFilter(field_name='pk', lookup_expr='exact')
-    product_id = filters.NumberFilter(field_name='product_id', lookup_expr='exact')
+    barcode_product_id = filters.NumberFilter(field_name='barcode_product_id', lookup_expr='exact')
     warehouse_ttn_id = filters.NumberFilter(field_name='warehouse_ttn_id', lookup_expr='exact')
     ttn_number = filters.CharFilter(field_name='warehouse_ttn__ttn_number', lookup_expr='iexact')
+
+    ordering = filters.OrderingFilter(
+        fields=(
+            ('pk', 'pk'),
+            ('barcode_product_id', 'barcode_product_id'),
+            ('create_at', 'create_at'),
+            ('update_at', 'update_at'),
+        ),
+    )
 
     class Meta:
         model = BarcodlessDo
         fields = (
             'pk',
-            'product_id',
+            'barcode_product_id',
             'warehouse_ttn_id',
             'ttn_number',
         )

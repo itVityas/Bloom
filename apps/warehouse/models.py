@@ -151,6 +151,8 @@ class BarcodlessDo(models.Model):
     barcodless_product = models.ForeignKey(BarcodlessProducts, on_delete=models.PROTECT)
     warehouse_ttn = models.ForeignKey(WarehouseTTN, on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField()
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['-id']
