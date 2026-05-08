@@ -2,7 +2,9 @@ import django_filters as filters
 
 from apps.warehouse.models import (
     WarehouseTTN,
-    WarehouseDo
+    WarehouseDo,
+    BarcodlessProducts,
+    BarcodlessDo,
 )
 
 
@@ -25,8 +27,8 @@ class WarehouseTTNFilter(filters.FilterSet):
             ('warehouse_action', 'warehouse_action_id'),
             ('user', 'user_id'),
             ('id', 'id'),
-            ('created_at', 'created_at'),
-            ('updated_at', 'updated_at'),
+            ('create_at', 'create_at'),
+            ('update_at', 'update_at'),
         ),
     )
 
@@ -77,4 +79,40 @@ class WarehouseDoFilter(filters.FilterSet):
             'user',
             'warehouse_product',
             'warehouse_ttn',
+        )
+
+
+class BarcodlessProductsFilter(filters.FilterSet):
+    pk = filters.NumberFilter(field_name='pk', lookup_expr='exact')
+    model_name_id = filters.NumberFilter(field_name='model_name_id', lookup_expr='exact')
+    model_name = filters.CharFilter(field_name='model_name__name', lookup_expr='iexact')
+    model_name_start = filters.CharFilter(field_name='model_name__name', lookup_expr='istartswith')
+    model_name_end = filters.CharFilter(field_name='model_name__name', lookup_expr='iendswith')
+    warehouse_id = filters.NumberFilter(field_name='warehouse_id', lookup_expr='exact')
+
+    class Meta:
+        model = BarcodlessProducts
+        fields = (
+            'pk',
+            'model_name_id',
+            'model_name',
+            'model_name_start',
+            'model_name_end',
+            'warehouse_id',
+        )
+
+
+class BarcodlessDoFilter(filters.FilterSet):
+    pk = filters.NumberFilter(field_name='pk', lookup_expr='exact')
+    product_id = filters.NumberFilter(field_name='product_id', lookup_expr='exact')
+    warehouse_ttn_id = filters.NumberFilter(field_name='warehouse_ttn_id', lookup_expr='exact')
+    ttn_number = filters.CharFilter(field_name='warehouse_ttn__ttn_number', lookup_expr='iexact')
+
+    class Meta:
+        model = BarcodlessDo
+        fields = (
+            'pk',
+            'product_id',
+            'warehouse_ttn_id',
+            'ttn_number',
         )

@@ -36,6 +36,12 @@ from apps.warehouse.views.warehouse_do import (
     WarehouseDoRetrieveAPIView,
     WarehouseDoBarcodePalletAPIView
 )
+from apps.warehouse.views.barcodless_product import BarcodlessProductListAPIView
+from apps.warehouse.views.barcodless_do import (
+    BarcodlessDoCreateAPIView,
+    BarcodlessDoListAPIView,
+    BarcodlessDoRetrieveUpdateDestroyAPIView,
+)
 
 urlpatterns = [
     path('typeofwork/', TypeOfWorkListCreateView.as_view()),
@@ -62,4 +68,8 @@ urlpatterns = [
     path('warehouse_do/detailed/<int:pk>/', WarehouseDoRetrieveAPIView.as_view()),
     path('warehouse_do/update/<int:pk>/', WarehouseDoRetrieveUpdateDestroyAPIView.as_view()),
     path('warehouse_do/barcode_pallet/', WarehouseDoBarcodePalletAPIView.as_view()),
+    path('barcodlessproduct/list/', BarcodlessProductListAPIView.as_view()),
+    path('barcodlessdo/create/', BarcodlessDoCreateAPIView.as_view()),
+    path('barcodlessdo/list/', BarcodlessDoListAPIView.as_view()),
+    path('barcodlessdo/update/<int:pk>/', BarcodlessDoRetrieveUpdateDestroyAPIView.as_view()),
 ]

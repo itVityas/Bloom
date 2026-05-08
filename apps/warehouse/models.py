@@ -114,3 +114,64 @@ class WarehouseDo(models.Model):
 
     def __str__(self):
         return f'{self.id}'
+
+
+class BarcodlessProducts(models.Model):
+    model_name = models.ForeignKey('shtrih.ModelNames', on_delete=models.PROTECT, db_constraint=False)
+    color = models.ForeignKey(
+        'shtrih.Colors',
+        on_delete=models.SET_NULL,
+        db_constraint=False,
+        null=True,
+        blank=True)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.PROTECT)
+    quantity = models.PositiveIntegerField()
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-id']
+
+    def __str__(self):
+        return f'{self.id}'
+
+    def save(self, *args, **kwargs):
+        obj = BarcodlessProducts.objects.filter(
+            model_name=self.model_name,
+            color=self.color,
+            warehouse=self.warehouse
+        ).first()
+        if obj:
+            self.pk = obj.pk
+
+        return super().save(*args, **kwargs)
+
+
+class BarcodlessDo(models.Model):
+    product = models.ForeignKey(BarcodlessProducts, on_delete=models.PROTECT)
+    warehouse_ttn = models.ForeignKey(WarehouseTTN, on_delete=models.PROTECT)
+    quantity = models.PositiveIntegerField()
+
+    class Meta:
+        ordering = ['-id']
+
+    def __str__(self):
+        return f'{self.id}'
+
+    def save(self, *args, **kwargs):
+        ttn = WarehouseTTN.objects.select_related('warehouse_action').filter(ttn_number=self.warehouse_ttn).first()
+        barcodless_products = BarcodlessProducts.objects.filter(pk=self.product_id).first()
+        if not barcodless_products:
+            raise Exception("Безштриховой товар не найден")
+        if not ttn:
+            raise Exception("ТТН не найдена")
+        if ttn.is_close:
+            raise Exception("ТТН закрыта")
+        if ttn.warehouse_action.operation == '+':
+            barcodless_products.quantity += self.quantity
+        elif ttn.warehouse_action.operation == '-':
+            if barcodless_products.quantity < self.quantity:
+                raise Exception("Недостаточно товара на складе")
+            barcodless_products.quantity -= self.quantity
+        barcodless_products.save()
+        super().save(*args, **kwargs)
