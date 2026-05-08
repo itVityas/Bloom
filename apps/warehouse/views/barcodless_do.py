@@ -36,7 +36,9 @@ class BarcodlessDoListAPIView(ListAPIView):
 @extend_schema_view(
     post=extend_schema(
         summary='Create a new BarcodlessDo',
-        description='Permission: admin, warehouse_writer',
+        description='''
+        Permission: admin, warehouse_writer
+        Создает barcodless_do, если нету создает warehouse_ttn, и создает/изменяет barcodless_products (количество)''',
     ),
 )
 class BarcodlessDoCreateAPIView(CreateAPIView):
