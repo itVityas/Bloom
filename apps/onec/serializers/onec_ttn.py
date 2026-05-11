@@ -35,6 +35,7 @@ class OneCTTNFullSerializer(serializers.ModelSerializer):
             'number',
             'series',
             'receiver',
+            'shipment_date',
             'items',
         ]
 
