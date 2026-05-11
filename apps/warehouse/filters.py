@@ -29,6 +29,7 @@ class WarehouseTTNFilter(filters.FilterSet):
             ('id', 'id'),
             ('create_at', 'create_at'),
             ('update_at', 'update_at'),
+            ('barcode', 'warehouse_do__product__barcode')
         ),
     )
 
@@ -51,8 +52,6 @@ class WarehouseDoFilter(filters.FilterSet):
     quantity = filters.NumberFilter(field_name='quantity', lookup_expr='exact')
     create_at = filters.DateFilter(field_name='create_at', lookup_expr='exact')
     update_at = filters.DateFilter(field_name='update_at', lookup_expr='icontains')
-    warehouse_product = filters.NumberFilter(
-        field_name='warehouse_product', lookup_expr='exact')
     warehouse_ttn = filters.NumberFilter(
         field_name='warehouse_ttn', lookup_expr='exact')
     user = filters.NumberFilter(field_name='user', lookup_expr='exact')
@@ -64,7 +63,6 @@ class WarehouseDoFilter(filters.FilterSet):
             ('create_at', 'create_at'),
             ('quantity', 'quantity'),
             ('user', 'user_id'),
-            ('warehouse_product', 'warehouse_product_id'),
             ('warehouse_ttn', 'warehouse_ttn_id')
         ),
     )
@@ -77,7 +75,6 @@ class WarehouseDoFilter(filters.FilterSet):
             'create_at',
             'update_at',
             'user',
-            'warehouse_product',
             'warehouse_ttn',
         )
 
