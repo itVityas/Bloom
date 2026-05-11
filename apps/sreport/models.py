@@ -115,3 +115,35 @@ group by onec_onecttnitem.id,
         managed = False
         db_table = 'onec_onecttnitem_with_scanned_count'
         ordering = ['onec_ttn_item_id']
+
+
+class WarehouseTTNBarcode(models.Model):
+    """
+ALTER VIEW warehouse_ttn_barcode AS
+SELECT pr.id as product_id, pr.barcode as product_barcode, us.id as user_id, us.fio as user_fio, mn.id as model_name_id, mn.name as model_name_name, wr.id as warehouse_id, wr.name as warehouse_name, do.create_at as warehouse_do_create_at, wt.ttn_number as warehouse_ttn_ttn_number, onec.number as onec_number, onec.series as onec_series
+FROM dbo.products as pr
+JOIN dbo.warehouse_warehousedo as do ON do.product_id = pr.id
+JOIN dbo.warehouse_warehousettn as wt ON wt.ttn_number = do.warehouse_ttn_id
+JOIN dbo.warehouse_warehouse as wr ON wr.id = wt.warehouse_id
+JOIN dbo.account_user as us ON wt.user_id = us.id
+JOIN dbo.onec_onecttn as onec ON onec.id = wt.onec_ttn_id
+JOIN dbo.models as model ON model.id = pr.model_id
+JOIN dbo.model_names as mn ON model.name_id = mn.id
+    """
+    product_id = models.IntegerField(db_column='product_id', primary_key=True)
+    product_barcode = models.CharField(max_length=18, db_column='product_barcode')
+    user_id = models.IntegerField(db_column='user_id')
+    user_fio = models.CharField(max_length=255, db_column='user_fio', blank=True, null=True)
+    model_name_id = models.IntegerField(db_column='model_name_id')
+    model_name_name = models.CharField(max_length=100, db_column='model_name_name')
+    warehouse_id = models.IntegerField(db_column='warehouse_id')
+    warehouse_name = models.CharField(max_length=100, db_column='warehouse_name')
+    warehouse_do_create_at = models.DateTimeField(db_column='warehouse_do_create_at')
+    warehouse_ttn_ttn_number = models.CharField(max_length=50, db_column='warehouse_ttn_ttn_number')
+    onec_number = models.CharField(max_length=50, db_column='onec_number')
+    onec_series = models.CharField(max_length=50, db_column='onec_series')
+
+    class Meta:
+        managed = False
+        db_table = 'warehouse_ttn_barcode'
+        ordering = ['product_id']

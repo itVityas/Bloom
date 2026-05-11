@@ -20,7 +20,7 @@ from apps.warehouse.models import WarehouseTTN, WarehouseDo
 from apps.warehouse.serializers.warehouse_ttn import (
     WarehouseTTNGetSerializer,
     WarehouseTTNPostSerializer,
-    WarehouseTTNProductSerializer
+    WarehouseTTNProductSerializer,
 )
 from apps.shtrih.models import Products
 from apps.warehouse.permissions import WarehousePermission

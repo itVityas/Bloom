@@ -1,7 +1,7 @@
 import django_filters as filters
 from django.db.models import Sum
 
-from apps.sreport.models import ReportStorage
+from apps.sreport.models import ReportStorage, WarehouseTTNBarcode
 from apps.shtrih.models import ModelNames
 
 
@@ -50,3 +50,32 @@ class ReportStorageFilter(filters.FilterSet):
                 compensation=Sum('compensation')
             )
         return queryset.filter(warehouse_id=value)
+
+
+class WarehouseTTNBarcodeFilter(filters.FilterSet):
+    model_name_name = filters.NumberFilter(field_name='model_name_id')
+    warehouse_name = filters.NumberFilter(field_name='warehouse_id')
+    user_fio = filters.CharFilter(field_name='user_fio')
+    warehouse_do_create_at = filters.DateTimeFilter(field_name='warehouse_do_create_at')
+    warehouse_ttn_ttn_number = filters.CharFilter(field_name='warehouse_ttn_ttn_number')
+
+    ordering = filters.OrderingFilter(
+        fields=(
+            ('product_barcode', 'product_barcode'),
+            ('model_name_name', 'model_name_name'),
+            ('warehouse_name', 'warehouse_name'),
+            ('warehouse_do_create_at', 'warehouse_do_create_at'),
+            ('warehouse_ttn_ttn_number', 'warehouse_ttn_ttn_number'),
+            ('user_fio', 'user_fio'),
+        ),
+    )
+
+    class Meta:
+        model = WarehouseTTNBarcode
+        fields = [
+            'model_name_id',
+            'warehouse_id',
+            'warehouse_ttn_ttn_number',
+            'user_fio',
+            'warehouse_do_create_at',
+        ]
