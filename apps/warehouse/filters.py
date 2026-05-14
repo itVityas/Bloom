@@ -9,10 +9,10 @@ from apps.warehouse.models import (
 
 
 class WarehouseTTNFilter(filters.FilterSet):
-    number = filters.CharFilter(field_name='number', lookup_expr='iexact')
-    number_start = filters.CharFilter(field_name='number', lookup_expr='istartswith')
-    number_end = filters.CharFilter(field_name='number', lookup_expr='iendswith')
-    number_cont = filters.CharFilter(field_name='number', lookup_expr='icontains')
+    ttn_number = filters.CharFilter(field_name='ttn_number', lookup_expr='iexact')
+    ttn_number_start = filters.CharFilter(field_name='ttn_number', lookup_expr='istartswith')
+    ttn_number_end = filters.CharFilter(field_name='ttn_number', lookup_expr='iendswith')
+    ttn_number_cont = filters.CharFilter(field_name='ttn_number', lookup_expr='icontains')
     is_close = filters.BooleanFilter(field_name='is_close')
     date = filters.DateFilter(field_name='date', lookup_expr='exact')
     onec_number = filters.CharFilter(field_name='onec_ttn__number', lookup_expr='iexact')
@@ -21,7 +21,7 @@ class WarehouseTTNFilter(filters.FilterSet):
 
     ordering = filters.OrderingFilter(
         fields=(
-            ('number', 'number'),
+            ('ttn_number', 'ttn_number'),
             ('is_close', 'is_close'),
             ('date', 'date'),
             ('warehouse', 'warehouse_id'),
@@ -38,10 +38,10 @@ class WarehouseTTNFilter(filters.FilterSet):
     class Meta:
         model = WarehouseTTN
         fields = (
-            'number',
-            'number_start',
-            'number_end',
-            'number_cont',
+            'ttn_number',
+            'ttn_number_start',
+            'ttn_number_end',
+            'ttn_number_cont',
             'is_close',
             'date',
             'onec_number',
