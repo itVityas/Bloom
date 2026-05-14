@@ -17,6 +17,7 @@ class WarehouseTTNFilter(filters.FilterSet):
     date = filters.DateFilter(field_name='date', lookup_expr='exact')
     onec_number = filters.CharFilter(field_name='onec_ttn__number', lookup_expr='iexact')
     onec_series = filters.CharFilter(field_name='onec_ttn__series', lookup_expr='iexact')
+    warehouse_action_id = filters.NumberFilter(field_name='warehouse_action_id', lookup_expr='exact')
 
     ordering = filters.OrderingFilter(
         fields=(
@@ -29,7 +30,8 @@ class WarehouseTTNFilter(filters.FilterSet):
             ('id', 'id'),
             ('create_at', 'create_at'),
             ('update_at', 'update_at'),
-            ('barcode', 'warehouse_do__product__barcode')
+            ('barcode', 'warehouse_do__product__barcode'),
+            ('warehouse_action_id', 'warehouse_action_id'),
         ),
     )
 
@@ -44,6 +46,7 @@ class WarehouseTTNFilter(filters.FilterSet):
             'date',
             'onec_number',
             'onec_series',
+            'warehouse_action_id',
         )
 
 
