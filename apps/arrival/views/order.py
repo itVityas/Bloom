@@ -4,12 +4,13 @@ from rest_framework.generics import (
     ListAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView, RetrieveAPIView
 )
 from rest_framework.permissions import IsAuthenticated
+from django.db.models import Prefetch
 
 from Bloom.paginator import StandartResultPaginator
-from apps.arrival.models import Order
+from apps.arrival.models import Order, Container
 from apps.arrival.permissions import OrderPermission
 from apps.arrival.serializers.order import (
-    OrderSerializer, OrderListSerializer, OrderWithContainerSerializer
+    OrderSerializer, OrderListSerializer, OrderWithContainerSerializer, OrderWithContainerPrefetchSerializer
 )
 from apps.arrival.filters import OrderFilter
 
@@ -93,12 +94,24 @@ class OrderDetailedView(RetrieveUpdateDestroyAPIView):
 )
 class OrderAndContainerListView(ListAPIView):
     permission_classes = (IsAuthenticated, OrderPermission)
-    serializer_class = OrderWithContainerSerializer
-    queryset = Order.objects.all()
+    serializer_class = OrderWithContainerPrefetchSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = OrderFilter
     ordering = ['-id']
     pagination_class = StandartResultPaginator
+
+    def get_queryset(self):
+        containers_queryset = Container.objects.select_related('lot').prefetch_related(
+            'declarations',
+            'contents',
+            'invoicecontainer_set'
+        )
+
+        return Order.objects.prefetch_related(
+            Prefetch('containers', queryset=containers_queryset),
+            'lot_set',
+            'lot_set__traindoc_set'
+        ).all()
 
 
 @extend_schema(tags=['Orders'])

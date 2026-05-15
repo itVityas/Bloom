@@ -75,7 +75,7 @@ class Content(models.Model):
 
     def __str__(self):
         """Return the string representation of the Content."""
-        return self.shot_name
+        return self.short_name
 
 
 class LotModel(models.Model):

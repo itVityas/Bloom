@@ -3,7 +3,8 @@ from rest_framework import serializers
 from apps.arrival.models import Order, Container, Lot
 from apps.arrival.serializers.container import (
     ContainerFullSerializer,
-    ContainerAndDeclarationSerializer)
+    ContainerAndDeclarationSerializer,
+    ContainerAndDeclarationPrefetchSerializer)
 from apps.invoice.models import TrainDoc
 from apps.invoice.serializers.traindoc import TrainDocGetSerializer
 from apps.arrival.serializers.lot import LotPostSerializer
@@ -108,4 +109,26 @@ class OrderWithContainerSerializer(serializers.ModelSerializer):
         """
         # It is assumed that Container model has a ForeignKey to Order.
         lots = Lot.objects.filter(order=obj)
+        return LotPostSerializer(lots, many=True).data
+
+
+class OrderWithContainerPrefetchSerializer(serializers.ModelSerializer):
+    containers = ContainerAndDeclarationPrefetchSerializer(many=True, read_only=True)
+    traindoc = serializers.SerializerMethodField()
+    lots = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Order
+        fields = '__all__'
+
+    def get_traindoc(self, obj) -> dict:
+        all_lots = obj.lot_set.all()
+        for lot in all_lots:
+            traindoc = getattr(lot, 'traindoc_set').all().first()
+            if traindoc:
+                return TrainDocGetSerializer(traindoc).data
+        return {}
+
+    def get_lots(self, obj) -> list:
+        lots = obj.lot_set.all()
         return LotPostSerializer(lots, many=True).data

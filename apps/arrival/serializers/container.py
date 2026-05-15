@@ -240,6 +240,26 @@ class ContainerAndDeclarationSerializer(serializers.ModelSerializer):
         return InvoiceContainerSerializer(invoice).data
 
 
+class ContainerAndDeclarationPrefetchSerializer(serializers.ModelSerializer):
+    declarations = DeclarationSerializer(many=True, read_only=True)
+    count = serializers.SerializerMethodField()
+    invoice_container = serializers.SerializerMethodField()
+    lot = LotPostSerializer(read_only=True)
+
+    class Meta:
+        model = Container
+        fields = '__all__'
+
+    def get_count(self, obj) -> int:
+        return sum(content.count for content in obj.contents.all())
+
+    def get_invoice_container(self, obj) -> dict:
+        invoice = obj.invoicecontainer_set.all().first()
+        if not invoice:
+            return {}
+        return InvoiceContainerSerializer(invoice).data
+
+
 class ContainerBindSerializer(serializers.Serializer):
     """
     Serializer for binding containers to an order or unbinding them.
