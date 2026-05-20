@@ -11,6 +11,7 @@ from apps.sreport.views.onec_ttn_item_scaned_count import (
     OneCTTNItemScanedCountFullAPIView
 )
 from apps.sreport.views.warehouse_ttn_barcode import WarehouseTTNBarcodeListAPIView
+from apps.sreport.views.barcode_full_info import BarcodeFullInfoView
 
 
 urlpatterns = [
@@ -25,4 +26,5 @@ urlpatterns = [
     path('warehouse/1c_ttn_item_scanned_count_view/', OneCTTNItemScanedCountAPIView.as_view()),
     path('warehouse/1c_ttn_item_scanned_count_full/', OneCTTNItemScanedCountFullAPIView.as_view()),
     path('warehouse/warehouse_ttn_barcode/', WarehouseTTNBarcodeListAPIView.as_view()),
+    path('report/barcode_full_info/', BarcodeFullInfoView.as_view()),
 ]

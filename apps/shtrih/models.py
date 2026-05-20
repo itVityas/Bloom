@@ -226,10 +226,20 @@ class invoices(models.Model):
         return f"Invoice {self.invoice_number}"
 
 
+class ShtrihUser(models.Model):
+    login = models.CharField(max_length=15)
+    full_name = models.CharField(max_length=50)
+
+    class Meta:
+        managed = False
+        db_table = 'users'
+
+
 class Protocols(models.Model):
     """
     Protocol reference table for product components.
     """
+    user = models.ForeignKey(ShtrihUser, on_delete=models.CASCADE, db_column='user_id')
     product = models.ForeignKey(Products, on_delete=models.CASCADE, db_column='product_id')
     workplace = models.ForeignKey(Workplaces, on_delete=models.CASCADE, db_column='workplace_id')
     work_date = models.DateField(db_column='work_date')
