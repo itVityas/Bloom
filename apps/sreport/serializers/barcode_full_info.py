@@ -5,9 +5,10 @@ from apps.warehouse.serializers.warehouse_action import WarehouseActionPostSeria
 from apps.warehouse.serializers.warehouse import WarehouseSerializer
 from apps.account.serializers.user import UserSerializer
 from apps.onec.serializers.onec_ttn import OneCTTNPostSerializer
-from apps.shtrih.models import Protocols
+from apps.shtrih.models import Protocols, Models
 from apps.shtrih.serializers.workplaces import WorkplacesSerializer
 from apps.shtrih.serializers.user import ShtrihUserSerializer
+from apps.shtrih.serializers.model import ModelsSerializer
 
 
 class ProtocolReportSerializer(serializers.ModelSerializer):
@@ -42,6 +43,7 @@ class BarcodeInfoSerializer(serializers.Serializer):
     barcode = serializers.CharField(max_length=200)
     warehouse_do = serializers.SerializerMethodField()
     protocols = serializers.SerializerMethodField()
+    model = serializers.SerializerMethodField()
 
     def get_warehouse_do(self, obj) -> list:
         warehouse_do = WarehouseDo.objects.filter(product__barcode=obj['barcode'])
@@ -54,5 +56,12 @@ class BarcodeInfoSerializer(serializers.Serializer):
         protocols = Protocols.objects.filter(product__barcode=obj['barcode'])
         if protocols:
             serializer = ProtocolReportSerializer(protocols, many=True)
+            return serializer.data
+        return None
+
+    def get_model(self, obj) -> dict:
+        model = Models.objects.filter(products__barcode=obj['barcode']).distinct().first()
+        if model:
+            serializer = ModelsSerializer(model)
             return serializer.data
         return None
