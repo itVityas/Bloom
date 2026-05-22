@@ -62,6 +62,11 @@ class FullClearanceWorkflowView(APIView):
         if serializer.is_valid():
             invoice_id = serializer.validated_data['invoice_id']
             try:
+                # фикс бага, когда при удалении не перечитываются декларации что они завершены
+                Declaration.objects.all().update(is_completed=False)
+                declaration = Declaration.objects.exclude(declared_items__available_quantity__gt=0).distinct()
+                declaration.update(is_completed=True)
+
                 ClearedItem.objects.filter(clearance_invoice_items__clearance_invoice_id=invoice_id).delete()
                 invoice = ClearanceInvoice.objects.get(id=invoice_id)
                 invoice_items = ClearanceInvoiceItems.objects.filter(clearance_invoice=invoice)
@@ -76,6 +81,7 @@ class FullClearanceWorkflowView(APIView):
                         raise NoMatchedTTNException()
 
                 begin_calculation(invoice_id, request.user)
+                # проверяем на выполненные декларации
                 declaration = Declaration.objects.exclude(declared_items__available_quantity__gt=0).distinct()
                 declaration.update(is_completed=True)
                 return Response({'message': 'Успешный расчет'}, status=status.HTTP_200_OK)
