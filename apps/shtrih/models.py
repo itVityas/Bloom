@@ -69,6 +69,18 @@ class Models(models.Model):
         return f"{self.name} (Code: {self.code})"
 
 
+class Valuable_components(models.Model):
+    code = models.IntegerField(db_column='code', primary_key=True)
+    name = models.CharField(max_length=50, db_column='name')
+    active = models.BooleanField(db_column='active')
+    create_at = models.DateTimeField(db_column='create_at')
+
+    class Meta:
+        managed = False
+        db_table = 'valuable_components'
+        ordering = ['code']
+
+
 class Consignments(models.Model):
     """
     Represents product consignments with import declaration information.
@@ -80,6 +92,8 @@ class Consignments(models.Model):
     declaration_date = models.DateTimeField()
     G32 = models.SmallIntegerField()
     is_gift = models.BooleanField(null=True, blank=True)
+    valuable_components = models.ForeignKey(
+        Valuable_components, on_delete=models.CASCADE, db_column='valuable_component_code')
 
     class Meta:
         managed = False
@@ -325,3 +339,13 @@ GROUP BY
 
     def __str__(self):
         return f"Scoreboard {self.shift} {self.module_digit} {self.work_date} {self.quantity}"
+
+
+class Duplicates(models.Model):
+    product = models.ForeignKey(Products, on_delete=models.CASCADE, db_column='product_id')
+    count = models.SmallIntegerField(db_column='count')
+
+    class Meta:
+        managed = False
+        db_table = 'duplicates'
+        ordering = ['id']

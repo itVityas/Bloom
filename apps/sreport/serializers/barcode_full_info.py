@@ -1,14 +1,29 @@
 from rest_framework import serializers
+from django.db.models import Sum
 
 from apps.warehouse.models import WarehouseDo, WarehouseTTN
 from apps.warehouse.serializers.warehouse_action import WarehouseActionPostSerializer
 from apps.warehouse.serializers.warehouse import WarehouseSerializer
 from apps.account.serializers.user import UserSerializer
 from apps.onec.serializers.onec_ttn import OneCTTNPostSerializer
-from apps.shtrih.models import Protocols, Models
+from apps.shtrih.models import Protocols, Models, Consignments, Valuable_components, Duplicates
 from apps.shtrih.serializers.workplaces import WorkplacesSerializer
 from apps.shtrih.serializers.user import ShtrihUserSerializer
 from apps.shtrih.serializers.model import ModelsSerializer
+
+
+class ValuableComponentReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Valuable_components
+        fields = '__all__'
+
+
+class ConsigmentReportSerializer(serializers.ModelSerializer):
+    valuable_components = ValuableComponentReportSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = Consignments
+        fields = '__all__'
 
 
 class ProtocolReportSerializer(serializers.ModelSerializer):
@@ -44,6 +59,8 @@ class BarcodeInfoSerializer(serializers.Serializer):
     warehouse_do = serializers.SerializerMethodField()
     protocols = serializers.SerializerMethodField()
     model = serializers.SerializerMethodField()
+    consignmen = serializers.SerializerMethodField()
+    duplicates = serializers.SerializerMethodField()
 
     def get_warehouse_do(self, obj) -> list:
         warehouse_do = WarehouseDo.objects.filter(product__barcode=obj['barcode'])
@@ -65,3 +82,17 @@ class BarcodeInfoSerializer(serializers.Serializer):
             serializer = ModelsSerializer(model)
             return serializer.data
         return None
+
+    def get_consignmen(self, obj) -> dict:
+        consignment = Consignments.objects.filter(products__barcode=obj['barcode']).distinct().first()
+        if consignment:
+            serializer = ConsigmentReportSerializer(consignment)
+            return serializer.data
+        return None
+
+    def get_duplicates(self, obj) -> int:
+        duplicates = Duplicates.objects.filter(product__barcode=obj['barcode']).aggregate(total_sum=Sum('count'))
+        total_sum = duplicates['total_sum']
+        if total_sum:
+            return total_sum
+        return 0
