@@ -59,9 +59,23 @@ class ModelsWarehouseActionAPIView(APIView):
                 'name',
                 'model_sum'
             )
-            rez_list[action.name] = {
-                'action_id': action.id,
-                'action_name': action.name,
-                'models': list(response_list)
-            }
+            for i in response_list:
+                buf = rez_list.get(i['name'])
+                if buf:
+                    rez_list[i['name']].append({
+                        'id': i['id'],
+                        'model_name': i['name'],
+                        'quantity': int(i['model_sum']),
+                        'action': action.name,
+                        'action_id': action.id
+                    })
+                else:
+                    rez_list[i['name']] = [{
+                        'id': i['id'],
+                        'model_name': i['name'],
+                        'quantity': int(i['model_sum']),
+                        'action': action.name,
+                        'action_id': action.id
+                    }]
+
         return Response(rez_list, status=status.HTTP_200_OK)
