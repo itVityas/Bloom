@@ -11,7 +11,7 @@ from Bloom.paginator import StandartResultPaginator
 from apps.sreport.filters import WarehouseTTNBarcodeFilter
 
 
-@extend_schema(tags=['WarehouseTTN'])
+@extend_schema(tags=['WarehouseReport'])
 @extend_schema_view(
     get=extend_schema(
         summary='Get a Barcode by 1c series and number',
