@@ -36,6 +36,7 @@ class OneCTTNFullSerializer(serializers.ModelSerializer):
             'series',
             'receiver',
             'shipment_date',
+            'is_bel_receiver',
             'items',
         ]
 
@@ -43,8 +44,17 @@ class OneCTTNFullSerializer(serializers.ModelSerializer):
         with transaction.atomic():
             items_data = validated_data.pop('items', None)
 
-            OneCTTN.objects.create(**validated_data)
-            ttn = OneCTTN.objects.filter(**validated_data).first()
+            ttn = OneCTTN.objects.filter(
+                number=validated_data.get('number'),
+                series=validated_data.get('series')).first()
+            if ttn:
+                ttn.receiver = validated_data.get('receiver', ttn.receiver)
+                ttn.shipment_date = validated_data.get('shipment_date', ttn.shipment_date)
+                ttn.is_bel_receiver = validated_data.get('is_bel_receiver', ttn.is_bel_receiver)
+                ttn.save()
+                OneCTTNItem.objects.filter(onec_ttn=ttn).delete()
+            else:
+                ttn = OneCTTN.objects.create(**validated_data)
 
             for item in items_data:
                 count = item.get('count', None)
