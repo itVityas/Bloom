@@ -42,10 +42,7 @@ class OneCTTNFullSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         with transaction.atomic():
             items_data = validated_data.pop('items', None)
-            number = validated_data.get('number', None)
-            series = validated_data.get('series', None)
-            if OneCTTN.objects.filter(number=number, series=series).exists():
-                raise serializers.ValidationError('TTN already exists')
+
             OneCTTN.objects.create(**validated_data)
             ttn = OneCTTN.objects.filter(**validated_data).first()
 
