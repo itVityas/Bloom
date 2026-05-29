@@ -147,3 +147,52 @@ JOIN dbo.model_names as mn ON model.name_id = mn.id
         managed = False
         db_table = 'warehouse_ttn_barcode'
         ordering = ['product_id']
+
+
+class WarehouseMonthModelCount(models.Model):
+    """
+ALTER VIEW warehouse_month_count AS
+SELECT
+    names.id, names.name,
+    SUM(CASE WHEN ttn.date BETWEEN DATEADD(month, -1, GETDATE()) AND GETDATE() THEN prod.available_quantity ELSE 0 END) as month1,
+    SUM(CASE WHEN ttn.date BETWEEN DATEADD(month, -2, GETDATE()) AND DATEADD(month, -1, GETDATE()) THEN prod.available_quantity ELSE 0 END) as month2,
+    SUM(CASE WHEN ttn.date BETWEEN DATEADD(month, -3, GETDATE()) AND DATEADD(month, -2, GETDATE()) THEN prod.available_quantity ELSE 0 END) as month3,
+    SUM(CASE WHEN ttn.date BETWEEN DATEADD(month, -4, GETDATE()) AND DATEADD(month, -3, GETDATE()) THEN prod.available_quantity ELSE 0 END) as month4,
+    SUM(CASE WHEN ttn.date BETWEEN DATEADD(month, -5, GETDATE()) AND DATEADD(month, -4, GETDATE()) THEN prod.available_quantity ELSE 0 END) as month5,
+    SUM(CASE WHEN ttn.date BETWEEN DATEADD(month, -6, GETDATE()) AND DATEADD(month, -5, GETDATE()) THEN prod.available_quantity ELSE 0 END) as month6,
+    SUM(CASE WHEN ttn.date BETWEEN DATEADD(month, -7, GETDATE()) AND DATEADD(month, -6, GETDATE()) THEN prod.available_quantity ELSE 0 END) as month7,
+    SUM(CASE WHEN ttn.date BETWEEN DATEADD(month, -8, GETDATE()) AND DATEADD(month, -7, GETDATE()) THEN prod.available_quantity ELSE 0 END) as month8,
+    SUM(CASE WHEN ttn.date BETWEEN DATEADD(month, -9, GETDATE()) AND DATEADD(month, -8, GETDATE()) THEN prod.available_quantity ELSE 0 END) as month9,
+    SUM(CASE WHEN ttn.date BETWEEN DATEADD(month, -10, GETDATE()) AND DATEADD(month, -9, GETDATE()) THEN prod.available_quantity ELSE 0 END) as month10,
+    SUM(CASE WHEN ttn.date BETWEEN DATEADD(month, -11, GETDATE()) AND DATEADD(month, -10, GETDATE()) THEN prod.available_quantity ELSE 0 END) as month11,
+    SUM(CASE WHEN ttn.date BETWEEN DATEADD(month, -12, GETDATE()) AND DATEADD(month, -11, GETDATE()) THEN prod.available_quantity ELSE 0 END) as month12,
+    SUM(CASE WHEN ttn.date BETWEEN DATEADD(month, -24, GETDATE()) AND DATEADD(month, -12, GETDATE()) THEN prod.available_quantity ELSE 0 END) as month24,
+    SUM(CASE WHEN ttn.date < DATEADD(month, -24, GETDATE()) THEN prod.available_quantity ELSE 0 END) as month_more
+FROM dbo.model_names AS names
+JOIN dbo.models AS models ON models.name_id = names.id
+JOIN dbo.products AS prod ON prod.model_id = models.id
+JOIN dbo.warehouse_warehousedo AS do ON prod.id = do.product_id
+JOIN dbo.warehouse_warehousettn AS ttn ON ttn.ttn_number = do.warehouse_ttn_id
+WHERE ttn.onec_ttn_id IS null AND prod.available_quantity > 0
+GROUP BY names.id, names.name
+    """
+    model_name = models.CharField(db_column='name', max_length=100)
+    month1 = models.IntegerField(db_column='month1')
+    month2 = models.IntegerField(db_column='month2')
+    month3 = models.IntegerField(db_column='month3')
+    month4 = models.IntegerField(db_column='month4')
+    month5 = models.IntegerField(db_column='month5')
+    month6 = models.IntegerField(db_column='month6')
+    month7 = models.IntegerField(db_column='month7')
+    month8 = models.IntegerField(db_column='month8')
+    month9 = models.IntegerField(db_column='month9')
+    month10 = models.IntegerField(db_column='month10')
+    month11 = models.IntegerField(db_column='month11')
+    month12 = models.IntegerField(db_column='month12')
+    month24 = models.IntegerField(db_column='month24')
+    month_more = models.IntegerField(db_column='month_more')
+
+    class Meta:
+        managed = False
+        db_table = 'warehouse_month_count'
+        ordering = ['id']

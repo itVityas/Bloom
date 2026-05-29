@@ -14,6 +14,7 @@ from apps.sreport.views.warehouse_ttn_barcode import WarehouseTTNBarcodeListAPIV
 from apps.sreport.views.barcode_full_info import BarcodeFullInfoView
 from apps.sreport.views.models_warehouse_action import ModelsWarehouseActionAPIView
 from apps.sreport.views.warehouse_model_count import WarehouseModelCount
+from apps.sreport.views.warehouse_models_month_count import WarehouseModelMonthCount
 
 
 urlpatterns = [
@@ -31,4 +32,5 @@ urlpatterns = [
     path('report/barcode_full_info/', BarcodeFullInfoView.as_view()),
     path('report/models_warehouse_action/', ModelsWarehouseActionAPIView.as_view()),
     path('report/warehouse_model_count/', WarehouseModelCount.as_view()),
+    path('report/warehose_model_month_count', WarehouseModelMonthCount.as_view()),
 ]
