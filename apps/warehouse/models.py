@@ -182,7 +182,12 @@ class BarcodlessDo(models.Model):
 class NotPackaging(models.Model):
     product = models.ForeignKey(Products, on_delete=models.PROTECT, db_constraint=False)
     warehouse = models.ForeignKey(Warehouse, on_delete=models.PROTECT)
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    bloom_user = models.ForeignKey(User, on_delete=models.PROTECT)
+    factory_user = models.ForeignKey(
+        'shtrih.ShtrihUser',
+        on_delete=models.PROTECT,
+        db_constraint=False,
+        null=True, blank=True)
     found_date = models.DateTimeField(auto_now_add=True)
     solve_date = models.DateTimeField(blank=True, null=True)
     is_solved = models.BooleanField(default=False)
