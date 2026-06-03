@@ -79,6 +79,8 @@ class ShipmentBans(models.Model):
     pakaging_date_to = models.DateField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
     apply_to_belarus = models.BooleanField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['-id']
