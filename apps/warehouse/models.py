@@ -180,12 +180,12 @@ class BarcodlessDo(models.Model):
 
 
 class NotPackaging(models.Model):
-    product = models.ForeignKey(Products, on_delete=models.PROTECT, db_constraint=False)
-    warehouse = models.ForeignKey(Warehouse, on_delete=models.PROTECT)
-    bloom_user = models.ForeignKey(User, on_delete=models.PROTECT)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE, db_constraint=False)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
+    bloom_user = models.ForeignKey(User, on_delete=models.CASCADE)
     factory_user = models.ForeignKey(
         'shtrih.ShtrihUser',
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         db_constraint=False,
         null=True, blank=True)
     found_date = models.DateTimeField(auto_now_add=True)
