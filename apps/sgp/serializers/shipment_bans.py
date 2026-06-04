@@ -39,8 +39,6 @@ class ShipmentBansGetSerializer(serializers.ModelSerializer):
             'color_obj',
             'module_obj',
             'shift',
-            'assembly_date_from',
-            'assembly_date_to',
             'pakaging_date_from',
             'pakaging_date_to',
             'is_active',
