@@ -45,8 +45,8 @@ class OneCTTNFullSerializer(serializers.ModelSerializer):
             items_data = validated_data.pop('items', None)
 
             ttn = OneCTTN.objects.filter(
-                number=validated_data.get('number'),
-                series=validated_data.get('series')).first()
+                number=validated_data.get('number').strip(),
+                series=validated_data.get('series').strip()).first()
             if ttn:
                 ttn.receiver = validated_data.get('receiver', ttn.receiver)
                 ttn.shipment_date = validated_data.get('shipment_date', ttn.shipment_date)
@@ -54,7 +54,13 @@ class OneCTTNFullSerializer(serializers.ModelSerializer):
                 ttn.save()
                 OneCTTNItem.objects.filter(onec_ttn=ttn).delete()
             else:
-                ttn = OneCTTN.objects.create(**validated_data)
+                ttn = OneCTTN.objects.create(
+                    number=validated_data.get('number').strip(),
+                    series=validated_data.get('series').strip(),
+                    receiver=validated_data.get('receiver'),
+                    shipment_date=validated_data.get('shipment_date'),
+                    is_bel_receiver=validated_data.get('is_bel_receiver'),
+                )
 
             for item in items_data:
                 count = item.get('count', None)
@@ -67,7 +73,7 @@ class OneCTTNFullSerializer(serializers.ModelSerializer):
                 if not model:
                     model = Models.objects.filter(name__name=name).first()
                 if not count or not model:
-                    raise serializers.ValidationError('no model or count')
+                    raise serializers.ValidationError(f'no model or count count: {count} model: {model}')
                 OneCTTNItem.objects.create(onec_ttn=ttn, count=count, model_name=model.name,
                                            available_quantity=available_quantity)
 
