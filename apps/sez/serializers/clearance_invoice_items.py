@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from django.db.models import Q
 
 from apps.sez.models import ClearanceInvoiceItems
 from apps.shtrih.serializers.model_name import ModelNamesSerializer
@@ -58,10 +57,10 @@ class ClearanceInvoiceItemsFullSerializer(serializers.ModelSerializer):
         order_list = obj.clearance_invoice.order.values_list('id', flat=True)
         is_gifted = obj.clearance_invoice.is_gifted
         process_transitions_list = ProductTransitions.objects.filter(
-            Q(old_product__cleared__isnull=False) | Q(new_product__cleared__isnull=False)
+                old_product__cleared__isnull=False
             ).values_list('old_product')
         process_transitions_list_2 = ProductTransitions.objects.filter(
-            Q(old_product__cleared__isnull=False) | Q(new_product__cleared__isnull=False)
+                old_product__cleared__isnull=False
             ).values_list('new_product')
         products = Products.objects.filter(
             cleared__isnull=True,
