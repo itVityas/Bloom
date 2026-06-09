@@ -2,7 +2,7 @@ from drf_spectacular.utils import (
     extend_schema, extend_schema_view, OpenApiParameter)
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
-from django.db.models import Count
+from django.db.models import Count, Q
 from rest_framework.response import Response
 
 from apps.sez.permissions import STZPermission
@@ -44,7 +44,9 @@ HAVING COUNT_BIG([products].[id]) = 0
 ORDER BY [model_names].[short_name] ASC OFFSET 0 ROWS
         """
         ziro = request.query_params.get('ziro', 'false').lower()
-        prod_trans = ProductTransitions.objects.all().values_list(
+        prod_trans = ProductTransitions.objects.filter(
+            Q(old_product__cleared__isnull=False) | Q(new_product__cleared__isnull=False)
+            ).values_list(
                         'old_product', 'new_product'
                      )
         all_products_transitions = []
