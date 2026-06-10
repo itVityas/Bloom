@@ -1,6 +1,6 @@
 from rest_framework.generics import (
     ListCreateAPIView,
-    RetrieveUpdateDestroyAPIView,
+    RetrieveUpdateAPIView,
     CreateAPIView
 )
 from rest_framework.permissions import IsAuthenticated
@@ -49,13 +49,9 @@ class PalletListCreateAPIView(ListCreateAPIView):
     patch=extend_schema(
         summary='update pallet',
         description='Permission: admin, warehouse_writer'
-    ),
-    delete=extend_schema(
-        summary='delete pallet',
-        description='Permission: admin, warehouse_writer'
     )
 )
-class PalletRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+class PalletRetrieveUpdateDestroyView(RetrieveUpdateAPIView):
     queryset = Pallet.objects.all()
     serializer_class = PalletSerializer
     permission_classes = (IsAuthenticated, WarehousePermission)

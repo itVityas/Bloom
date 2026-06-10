@@ -55,6 +55,7 @@ class WarehouseDoPalletSerializer(serializers.ModelSerializer):
             'warehouse_id',
             'warehouse_action_id',
             'model_id',
+            'is_deleted',
         ]
 
     def create(self, validated_data):

@@ -2,7 +2,7 @@ from rest_framework.generics import (
     ListAPIView,
     RetrieveAPIView,
     CreateAPIView,
-    RetrieveUpdateDestroyAPIView
+    RetrieveUpdateAPIView
 )
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
@@ -54,13 +54,9 @@ class WarehouseActionCreateView(CreateAPIView):
     put=extend_schema(
         summary='update warehouse_action',
         description='Permission: admin, warehouse_writer'
-    ),
-    delete=extend_schema(
-        summary='delete warehouse_action',
-        description='Permission: admin, warehouse_writer'
-    ),
+    )
 )
-class WarehouseActionRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+class WarehouseActionRetrieveUpdateDestroyView(RetrieveUpdateAPIView):
     queryset = WarehouseAction.objects.all()
     serializer_class = WarehouseActionPostSerializer
     permission_classes = [IsAuthenticated, WarehousePermission]
