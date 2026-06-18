@@ -61,10 +61,11 @@ class OracleException(ValidationError):
 
 
 class PanelException(ValidationError):
-    def __init__(self, model_name, order='', detail=None, code=None):
+    def __init__(self, model_name, order='', detail=None, code=None, panel_code=None):
         if not detail:
             detail = f'''Панели для модели {model_name} не найдены в заказе {order}
 Решение: Проверьте правильность заказа
+1С код код панели: {panel_code}
             '''
         self.detail = detail
         self.code = code

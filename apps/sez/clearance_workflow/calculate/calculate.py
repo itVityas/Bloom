@@ -69,6 +69,7 @@ def clear_model_items(
     '''
     components = component_flat_list(model_code, None, quantity)
     has_panel = False
+    panel_code = None
 
     # find in TV components panel or Exception
     if is_tv:
@@ -148,6 +149,8 @@ def clear_model_items(
                 consignments = Consignments.objects.filter(
                     products__model__id=model_id).values('declaration_number', 'G32').distinct()
                 decl_panel = None
+                model = Models.objects.filter(id=model_id).first()
+                panel_code = str(di.item_code_1c) + f' партия: {model.variant_code}'
                 if consignments:
                     for consignment in consignments:
                         decl_panel = di_qs.filter(
@@ -179,8 +182,9 @@ def clear_model_items(
             item['uncleared'] = remaining
 
     if is_tv and not has_panel:
+        print(model_code, panel_code)
         logging.error(f"256:Panel components not found for TV model {model_code}")
-        raise PanelException(model_name=invoice_item.model_name_id.name, order='')
+        raise PanelException(model_name=invoice_item.model_name_id.name, order='', panel_code=panel_code)
 
     if ClearedItem.objects.filter(clearance_invoice_items=invoice_item).count() == 0:
         logging.error(f"No cleared items found for model {invoice_item.model_name_id.name}")
@@ -190,7 +194,7 @@ def clear_model_items(
         if str(item.get('nomsign')).startswith('638111111') and item.get('clear') is False:
             logging.error(f"Panel components not cleared for model {invoice_item.model_name_id.name} "
                           + f"nomsign:{item.get('nomsign')}")
-            raise PanelException(model_name=invoice_item.model_name_id.name, order='')
+            raise PanelException(model_name=invoice_item.model_name_id.name, order='', panel_code=panel_code)
 
         if not item['clear'] and item.get('nomsign') and item.get('uncleared', 0) > 0:
             ClearanceUncleared.objects.create(
