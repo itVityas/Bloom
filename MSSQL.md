@@ -502,7 +502,7 @@ MinProtocol = TLSv1.2
 CipherString = DEFAULT@SECLEVEL=0
 
 
-## ubuntu 22.06
+## ubuntu 26.04
 Изменяем настройки TLS, редактируем файл /etc/ssl/openssl.cnf, добавив в него следующие строчки:
 
 #
