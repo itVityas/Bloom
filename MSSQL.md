@@ -500,3 +500,174 @@ system_default = system_default_sect
 [system_default_sect]
 MinProtocol = TLSv1.2
 CipherString = DEFAULT@SECLEVEL=0
+
+
+## ubuntu 22.06
+Изменяем настройки TLS, редактируем файл /etc/ssl/openssl.cnf, добавив в него следующие строчки:
+
+#
+# OpenSSL example configuration file.
+# This is mostly being used for generation of certificate requests.
+#
+
+# This definition stops the following lines choking if HOME isn't
+# defined.
+HOME			= .
+
+# Extra embedded config to fix SQL Server connection error 0x2746
+openssl_conf = openssl_init
+
+# Minimal configuration to satisfy the compiler
+oid_section		= new_oids
+
+# To use this configuration file from the command line, use the
+# '-config' option. For example:
+#
+# openssl req -config openssl.cnf -new -x509 -out cert.pem
+
+[ new_oids ]
+# We can add new OIDs here.
+# testoid1=1.2.3.4
+
+####################################################################
+[ openssl_init ]
+providers = provider_sect
+ssl_conf = ssl_sect
+
+[ provider_sect ]
+default = default_sect
+# The legacy provider enables support for old algorithms such as MD5
+# and RC4. You can uncomment it if your database requires it.
+legacy = legacy_sect
+
+[ default_sect ]
+activate = 1
+
+[ legacy_sect ]
+activate = 1
+
+####################################################################
+[ req ]
+default_bits		= 2048
+default_keyfile 	= privkey.pem
+distinguished_name	= req_distinguished_name
+attributes		= req_attributes
+x509_extensions	= v3_ca	# The extensions to add to the self signed cert
+
+# Passwords for private keys if not present they will be prompted for
+# input_password = secret
+# output_password = secret
+
+# This sets a mask for permitted string types. There are several options.
+# default: PrintableString, T61String, BMPString.
+# pkix  : PrintableString, BMPString.
+# utf8only: only UTF8Strings.
+# nombstr : PrintableString, T61String (no BMPStrings or UTF8Strings).
+# MSTRING : PrintableString, UTCTime, UTF8String (default since 1.0.2)
+string_mask = utf8only
+
+# req_extensions = v3_req # The extensions to add to a certificate request
+
+[ req_distinguished_name ]
+countryName			= Country Name (2 letter code)
+countryName_default		= AU
+countryName_min			= 2
+countryName_max			= 2
+
+stateOrProvinceName		= State or Province Name (full name)
+stateOrProvinceName_default	= Some-State
+
+localityName			= Locality Name (eg, city)
+
+0.organizationName		= Organization Name (eg, company)
+0.organizationName_default	= Internet Widgits Pty Ltd
+
+# we can do this but it is not needed normally
+#1.organizationName		= Second Organization Name
+
+organizationalUnitName		= Organizational Unit Name (eg, section)
+#organizationalUnitName_default	=
+
+commonName			= Common Name (e.g. server FQDN or YOUR name)
+commonName_max			= 64
+
+emailAddress			= Email Address
+emailAddress_max		= 64
+
+# SET-like display components
+# issuerAltName		= issuerAltName
+
+[ req_attributes ]
+challengePassword		= A challenge password
+challengePassword_min		= 4
+challengePassword_max		= 20
+
+unstructuredName		= An optional company name
+
+[ v3_req ]
+# Extensions to add to a certificate request
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+
+[ v3_ca ]
+# Extensions for a typical CA
+# PKIX recommendation
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid:always,issuer
+basicConstraints = critical,CA:true
+
+# Key usage: this is typical for a CA certificate.
+# However, as it's a CA, it should really be critical and go
+# into non-critical code paths only if absolutely needed.
+# keyUsage = cRLSign, keyCertSign
+
+# Include email address in subject alt name: due to security considerations
+# this should be omitted from CAs unless you really know what you are doing.
+# subjectAltName=email:copy
+# issuerAltName=issuer:copy
+
+# obj=DER:OBJ:FLAGS:content
+
+[ crl_ext ]
+# CRL extensions.
+# Only issuerAltName and authorityKeyIdentifier make any sense in a CRL.
+# authoriKeyIdentifier=keyid:always
+authorityKeyIdentifier=keyid:always,issuer
+
+[ proxy_cert_ext ]
+# These extensions are added when a proxy certificate is issued
+basicConstraints=critical,CA:FALSE
+keyUsage=nonRepudiation, digitalSignature, keyEncipherment
+proxyCertInfo=critical,language:id-ppl-anyLanguage,pathlen:3,policy:foo
+
+[ tsa ]
+default_tsa = tsa_config1	# the default TSA section
+
+[ tsa_config1 ]
+# These are used for the TSA notification
+dir		= ./demoCA		# TSA root directory
+serial		= $dir/tsaserial	# The current serial number (mandatory)
+crypto_device	= builtin		# OpenSSL engine to use for signing
+signer_cert	= $dir/tsacert.pem 	# The TSA signing certificate (optional)
+certs		= $dir/cacert.pem	# Certificate chain to include in reply (optional)
+signer_key	= $dir/tsakey.pem	# The TSA private key (optional)
+signer_digest  = sha256		# Signing digest to use (optional)
+default_policy	= tsa_policy1		# Policy if request doesn't specify it (optional)
+other_policies	= tsa_policy2, tsa_policy3	# acceptable policies (optional)
+digests		= sha1, sha256, sha384, sha512  # Acceptable digests (mandatory)
+accuracy	= secs:1, millisecs:500, microsecs:100	# (optional)
+clock_precision_digits = 0	# number of clock precision digits (optional)
+ordering		= yes	# Is ordering defined for timestamps? (optional, default: no)
+tsa_name		= yes	# Must the TSA name be included in the reply? (optional, default: no)
+ess_cert_id_chain	= no	# Must the ESS cert id chain be included? (optional, default: no)
+ess_cert_id_alg		= sha1	# algorithm to compute certificate identifiers (optional, default: sha1)
+
+####################################################################
+# Настройки совместимости для подключения к старым серверам БД (MSSQL)
+####################################################################
+[ ssl_sect ]
+system_default = system_default_sect
+
+[ system_default_sect ]
+CipherString = DEFAULT@SECLEVEL=0
+MinProtocol = TLSv1
