@@ -15,6 +15,8 @@ from apps.sreport.views.barcode_full_info import BarcodeFullInfoView
 from apps.sreport.views.models_warehouse_action import ModelsWarehouseActionAPIView
 from apps.sreport.views.warehouse_model_count import WarehouseModelCount
 from apps.sreport.views.warehouse_models_month_count import WarehouseModelMonthCount
+from apps.sreport.views.month_product_plan import MonthProductPlanDetailView, MonthProductPlanListView
+from apps.sreport.views.year_product_plan import YearProductPlanListView, YearProductPlanDetailView
 
 
 urlpatterns = [
@@ -33,4 +35,8 @@ urlpatterns = [
     path('report/models_warehouse_action/', ModelsWarehouseActionAPIView.as_view()),
     path('report/warehouse_model_count/', WarehouseModelCount.as_view()),
     path('report/warehose_model_month_count', WarehouseModelMonthCount.as_view()),
+    path('month_plan/list/', MonthProductPlanListView.as_view()),
+    path('month_plan/detail/<int:pk>/', MonthProductPlanDetailView.as_view()),
+    path('year_plan/list/', YearProductPlanListView.as_view()),
+    path('year_plan/detail/<int:pk>/', YearProductPlanDetailView.as_view()),
 ]

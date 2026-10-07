@@ -57,6 +57,39 @@ class ProductPlan(models.Model):
         return f"{self.id}: {self.module} {self.shift}"
 
 
+class MonthProductPlan(models.Model):
+    count = models.PositiveIntegerField()
+    year = models.PositiveIntegerField(db_index=True)
+    month = models.PositiveIntegerField(db_index=True)
+
+    class Meta:
+        ordering = ['-id']
+
+    def save(self, *args, **kwargs):
+        if MonthProductPlan.objects.filter(year=self.year, month=self.month).exists():
+            MonthProductPlan.objects.filter(year=self.year, month=self.month).delete()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.id}: {self.year}-{self.month}"
+
+
+class YearProductPlan(models.Model):
+    count = models.PositiveIntegerField()
+    year = models.PositiveIntegerField(db_index=True)
+
+    class Meta:
+        ordering = ['-id']
+
+    def save(self, *args, **kwargs):
+        if YearProductPlan.objects.filter(year=self.year).exists():
+            YearProductPlan.objects.filter(year=self.year).delete()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.id}: {self.year}"
+
+
 class OneCTTNItemScanedCount(models.Model):
     """
 create view [dbo].[onec_onecttnitem_with_scanned_count]
