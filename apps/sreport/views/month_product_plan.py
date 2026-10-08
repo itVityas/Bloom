@@ -5,6 +5,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 
 from apps.sreport.models import MonthProductPlan
 from apps.sreport.serializers.month_product_plan import MonthProductPlanSerializer
+from apps.sreport.permission import ProductPlanPermission
 
 
 @extend_schema(tags=['ProductPlan'])
@@ -19,7 +20,7 @@ from apps.sreport.serializers.month_product_plan import MonthProductPlanSerializ
     ),
 )
 class MonthProductPlanListView(ListCreateAPIView):
-    permission_classes = [AllowAny, ]
+    permission_classes = [AllowAny, ProductPlanPermission]
     serializer_class = MonthProductPlanSerializer
     queryset = MonthProductPlan.objects.all()
     filter_backends = [DjangoFilterBackend]
@@ -46,6 +47,6 @@ class MonthProductPlanListView(ListCreateAPIView):
     )
 )
 class MonthProductPlanDetailView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [AllowAny, ]
+    permission_classes = [AllowAny, ProductPlanPermission]
     serializer_class = MonthProductPlanSerializer
     queryset = MonthProductPlan.objects.all()
