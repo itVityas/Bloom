@@ -318,7 +318,7 @@ WHERE
         SELECT 1
         FROM [product_transitions] pt
         WHERE (pt.old_product_id = pr.id OR
-               (pt.new_product_id = pr.id AND pt.action_id = 2))
+               (pt.new_product_id = pr.id AND pt.action_id = 1))
     )
 GROUP BY
     p.[shift],
