@@ -229,3 +229,37 @@ GROUP BY names.id, names.name
         managed = False
         db_table = 'warehouse_month_count'
         ordering = ['id']
+
+
+class ScoreboardDayCount(models.Model):
+    """
+CREATE VIEW scoreboard_day_count AS
+SELECT
+    p.[work_date],
+    COUNT(DISTINCT p.[product_id]) as quantity
+FROM [protocols] p
+JOIN [products] pr ON p.[product_id] = pr.[id]
+JOIN [workplaces] w ON p.[workplace_id] = w.[id]
+WHERE
+    pr.[state] = 0
+    AND w.type_of_work_id = 2
+    AND NOT EXISTS (
+        SELECT 1
+        FROM [product_transitions] pt
+        WHERE (pt.old_product_id = pr.id OR
+               (pt.new_product_id = pr.id AND pt.action_id = 1))
+    )
+GROUP BY
+    p.[work_date];
+
+    """
+    work_date = models.DateField(db_column='work_date', primary_key=True)
+    quantity = models.IntegerField(db_column='quantity')
+
+    class Meta:
+        managed = False
+        db_table = 'scoreboard_day_count'
+        ordering = ['work_date']
+
+    def __str__(self):
+        return f"{self.work_date}: {self.quantity}"

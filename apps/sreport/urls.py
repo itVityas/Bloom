@@ -17,6 +17,7 @@ from apps.sreport.views.warehouse_model_count import WarehouseModelCount
 from apps.sreport.views.warehouse_models_month_count import WarehouseModelMonthCount
 from apps.sreport.views.month_product_plan import MonthProductPlanDetailView, MonthProductPlanListView
 from apps.sreport.views.year_product_plan import YearProductPlanListView, YearProductPlanDetailView
+from apps.sreport.views.scoreboard_day_count import ScoreboardDayCountView
 
 
 urlpatterns = [
@@ -39,4 +40,5 @@ urlpatterns = [
     path('month_plan/detail/<int:pk>/', MonthProductPlanDetailView.as_view()),
     path('year_plan/list/', YearProductPlanListView.as_view()),
     path('year_plan/detail/<int:pk>/', YearProductPlanDetailView.as_view()),
+    path('scoreboard/full_count/', ScoreboardDayCountView.as_view()),
 ]
